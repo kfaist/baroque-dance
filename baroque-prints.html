@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baroque Mirror: Dance & Enrobe - Prints & NFTs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(135deg, #0a0608 0%, #1a1018 50%, #0a0608 100%);
+            color: #f4e4ba;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, rgba(212,175,55,0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #d4af37;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(244,228,186,0.8);
+            font-style: italic;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #d4af37;
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .back-link:hover { color: #f4e4ba; }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #d4af37;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '⚜';
+            display: block;
+            margin-top: 15px;
+            font-size: 1rem;
+            opacity: 0.6;
+        }
+        
+        .captures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .capture-card {
+            background: rgba(15,10,12,0.9);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .capture-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 30px rgba(212,175,55,0.2);
+            transform: translateY(-5px);
+        }
+        .capture-card.empty {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .capture-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #0a0608;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(212,175,55,0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .capture-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .capture-info {
+            padding: 20px;
+        }
+        .capture-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(212,175,55,0.6);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        .capture-style {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+        
+        .purchase-options {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid rgba(212,175,55,0.5);
+            background: transparent;
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+        }
+        .btn.primary {
+            background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+        }
+        
+        .info-section {
+            background: rgba(20,15,25,0.5);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 60px;
+            backdrop-filter: blur(10px);
+        }
+        .info-section h3 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        .info-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: rgba(244,228,186,0.9);
+        }
+        
+        .contact-footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(212,175,55,0.2);
+            margin-top: 60px;
+        }
+        .contact-footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.6);
+            margin-bottom: 8px;
+        }
+        .contact-footer a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚜ Prints & NFTs ⚜</h1>
+        <p>Baroque Mirror: Dance & Enrobe Collection</p>
+        <a href="index.html" class="back-link">← Return to Experience</a>
+    </div>
+    
+    <div class="main-content">
+        <h2 class="section-title">Your Captured Moments</h2>
+        
+        <div class="captures-grid" id="capturesGrid">
+            <!-- Captures loaded dynamically -->
+        </div>
+        
+        <div class="info-section">
+            <h3>About the Collection</h3>
+            <p>Each captured moment from The Baroque Mirror represents a unique intersection of historical artistic tradition and real-time AI transformation. Your golden sculpture portraits carry the visual DNA of centuries of artistic practice.</p>
+            <p><strong>Archival Prints:</strong> Museum-quality giclée prints on Hahnemühle fine art paper, available in sizes from 8×10" to 30×40". Each print includes a certificate of authenticity.</p>
+            <p><strong>NFT Editions:</strong> Mint your captures as unique digital collectibles on the blockchain. Each NFT includes the high-resolution original, metadata about the transformation parameters, and perpetual exhibition rights.</p>
+        </div>
+        
+        <div class="info-section">
+            <h3>Exhibition License</h3>
+            <p>The Mirror's Echo operates as an unlimited edition under open-source principles (AGPL-3.0). Exhibition licenses and institutional partnerships support the continued evolution of networked digital art practices.</p>
+            <p>For gallery installations, museum exhibitions, or commercial licensing inquiries, please contact us directly.</p>
+        </div>
+    </div>
+    
+    <div class="contact-footer">
+        <p>Artist / Technical: <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+        <p>Curatorial / Institutional: <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+    </div>
+    
+    <script>
+        function loadCaptures() {
+            const grid = document.getElementById('capturesGrid');
+            const stored = localStorage.getItem('goldenCaptures');
+            const captures = stored ? JSON.parse(stored) : {};
+            
+            for (let i = 1; i <= 12; i++) {
+                const capture = captures[i];
+                const card = document.createElement('div');
+                card.className = 'capture-card' + (capture ? '' : ' empty');
+                
+                if (capture) {
+                    card.innerHTML = `
+                        <div class="capture-image">
+                            <img src="${capture.image}" alt="Capture ${i}">
+                        </div>
+                        <div class="capture-info">
+                            <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
+                            <div class="capture-style">${capture.style ? capture.style.toUpperCase() : 'BAROQUE'} Style</div>
+                            <div class="purchase-options">
+                                <button class="btn primary" onclick="orderPrint(${i})">Order Print</button>
+                                <button class="btn" onclick="mintNFT(${i})">Mint NFT</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="capture-image">EXP_${String(i).padStart(2, '0')} - Empty</div>
+                        <div class="capture-info">
+                            <div class="capture-label">EXP_${String(i).padStart(2, '0')}</div>
+                            <div class="capture-style">No Capture</div>
+                        </div>
+                    `;
+                }
+                grid.appendChild(card);
+            }
+        }
+        
+        function orderPrint(slot) {
+            alert(`Print ordering coming soon!\n\nYour EXP_${String(slot).padStart(2, '0')} capture will be available as:\n• 8×10" - $45\n• 16×20" - $125\n• 30×40" - $350\n\nContact kristabluedoor@gmail.com for pre-orders.`);
+        }
+        
+        function mintNFT(slot) {
+            alert(`NFT minting coming soon!\n\nYour EXP_${String(slot).padStart(2, '0')} capture will be minted on Ethereum.\n\nMint price: 0.01 ETH\n\nContact kristabluedoor@gmail.com for early access.`);
+        }
+        
+        window.addEventListener('load', loadCaptures);
+    </script>
+</body>
+</html>
