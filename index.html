@@ -106,41 +106,80 @@
             background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
             border: 1px solid rgba(212,175,55,0.3) !important;
             position: relative;
-            padding-left: 18px !important;
-            padding-right: 18px !important;
+            padding-left: 28px !important;
+            padding-right: 28px !important;
+            border-radius: 4px !important;
         }
+        
+        /* Sprocket track containers with checkered background */
         .capture-panel::before,
         .capture-panel::after {
             content: '';
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 12px;
+            width: 18px;
             background: 
                 repeating-linear-gradient(
-                    180deg,
-                    transparent 0px,
-                    transparent 8px,
-                    rgba(244,228,186,0.15) 8px,
-                    rgba(244,228,186,0.15) 20px,
-                    transparent 20px,
-                    transparent 28px
+                    45deg,
+                    rgba(30,25,20,0.9) 0px,
+                    rgba(30,25,20,0.9) 4px,
+                    rgba(15,12,10,0.9) 4px,
+                    rgba(15,12,10,0.9) 8px
                 );
-            z-index: 1;
+            z-index: 0;
         }
-        .capture-panel::before { left: 2px; }
-        .capture-panel::after { right: 2px; }
+        .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
+        .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
+        
+        /* Sprocket holes - cut out effect */
+        .sprocket-track {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            width: 18px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+        .sprocket-track.left { left: 0; }
+        .sprocket-track.right { right: 0; }
+        
+        .sprocket-hole {
+            width: 10px;
+            height: 14px;
+            background: rgba(0,0,0,0.95);
+            border-radius: 2px;
+            box-shadow: 
+                inset 0 1px 2px rgba(255,255,255,0.1),
+                0 0 3px rgba(0,0,0,0.8);
+            flex-shrink: 0;
+        }
         
         .capture-slot {
             border: 1px solid rgba(139,105,20,0.5);
-            background: rgba(10,8,6,0.9);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            background: rgba(10,8,6,0.95);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            border-radius: 2px;
+        }
+        .capture-slot:hover {
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3);
         }
         .capture-slot-number {
             font-family: 'JetBrains Mono', 'Courier New', monospace !important;
-            color: rgba(212,175,55,0.5) !important;
-            font-size: 0.5rem !important;
+            color: rgba(212,175,55,0.6) !important;
+            font-size: 0.55rem !important;
             letter-spacing: 1px;
+            bottom: 4px;
+            left: 6px;
+        }
+        
+        .capture-grid {
+            position: relative;
+            z-index: 3;
         }
         
         /* Statement Section - shimmery transparent glass effect */
@@ -347,6 +386,30 @@
             </div>
             
             <div class="capture-panel">
+                <div class="sprocket-track left">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
+                <div class="sprocket-track right">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
                 <a href="baroque-prints.html" class="purchase-btn-large"><span class="purchase-line">Shop Prints</span><span class="purchase-divider">⚜</span><span class="purchase-line">Mint NFTs</span></a>
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 <div class="capture-grid">
@@ -356,6 +419,8 @@
                     <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Capture 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
                     <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Capture 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
                     <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Capture 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Capture 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Capture 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
                 </div>
             </div>
         </div>
