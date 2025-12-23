@@ -383,210 +383,180 @@
         @media (max-width: 900px) {
             .main {
                 grid-template-columns: 1fr;
-                padding: 15px;
-                gap: 15px;
+                padding: 0;
+                gap: 0;
             }
-            .controls, .capture-panel {
-                grid-column: 1;
-            }
+            
+            /* FULL SCREEN VIDEO AT TOP */
             .output-area {
-                order: -1;
+                order: -10;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* Hide capture panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 10px;
+                border-radius: 12px;
             }
         }
         
         @media (max-width: 768px) {
+            /* MINIMAL HEADER */
             .header {
-                padding: 12px 10px;
+                padding: 10px;
             }
             .header-top {
-                flex-wrap: wrap;
-                gap: 8px 15px;
-                font-size: 0.6rem;
-                letter-spacing: 1px;
+                display: none;
             }
             .header h1 {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
                 letter-spacing: 2px;
             }
             .header h1 .subtitle {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
                 letter-spacing: 3px;
             }
             .header-sub, .header-credit {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
             }
             
-            .main {
-                padding: 10px;
-                gap: 10px;
-            }
-            
-            /* VIDEO FIRST ON MOBILE */
-            .output-area {
-                order: -2;
+            /* HIDE LESS IMPORTANT SECTIONS */
+            .section:nth-child(n+5) {
+                display: none;
             }
             
             .controls {
-                padding: 12px;
-                border-radius: 10px;
+                padding: 16px;
             }
             
             .section {
-                margin-bottom: 12px;
-                padding-bottom: 12px;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
             }
             
+            /* DOUBLE SIZE HEADINGS */
             .section h3 {
-                font-size: 0.8rem;
-                margin-bottom: 10px;
+                font-size: 1.2rem;
+                margin-bottom: 14px;
             }
             
-            /* Session button - big touch target */
+            /* GIANT SESSION BUTTON */
             .session-btn {
-                padding: 16px 20px;
-                font-size: 0.95rem;
-                letter-spacing: 2px;
-                min-height: 54px;
+                padding: 24px 28px;
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+                min-height: 70px;
             }
             
-            /* Gold presets - 2x2 grid with good touch targets */
+            /* BIGGER GOLD PRESETS - 2 columns */
             .gold-presets {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
+                gap: 12px;
             }
             .gold-btn {
-                padding: 12px 10px;
-                font-size: 0.8rem;
-                min-height: 50px;
+                padding: 18px 14px;
+                font-size: 1.1rem;
+                min-height: 65px;
             }
             .gold-btn .icon {
-                font-size: 1.1rem;
+                font-size: 1.4rem;
+                margin-bottom: 4px;
             }
             
-            /* Background grid */
+            /* Background grid - bigger */
             .bg-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
+                gap: 10px;
+            }
+            .bg-thumb .label {
+                font-size: 0.8rem;
+                padding: 6px;
             }
             
-            /* Sliders - bigger touch area */
+            /* BIGGER SLIDERS */
             .slider-row {
-                margin-bottom: 16px;
+                margin-bottom: 20px;
             }
             .slider-row label {
-                font-size: 0.75rem;
-                margin-bottom: 8px;
+                font-size: 1rem;
+                margin-bottom: 12px;
             }
             input[type="range"] {
-                height: 8px;
+                height: 12px;
             }
             input[type="range"]::-webkit-slider-thumb {
-                width: 24px;
-                height: 24px;
+                width: 32px;
+                height: 32px;
             }
             
-            /* Capture panel */
-            .capture-panel {
-                padding: 12px;
-            }
-            
-            /* Capture grid - horizontal scroll */
-            .capture-grid {
-                display: flex !important;
-                flex-direction: row !important;
-                overflow-x: auto !important;
-                gap: 8px !important;
-                padding-bottom: 8px;
-                -webkit-overflow-scrolling: touch;
-            }
-            .capture-slot {
-                flex: 0 0 80px;
-                min-height: 50px;
-            }
-            
-            /* Purchase button */
+            /* Purchase button - BIG */
             .purchase-btn-large {
-                padding: 14px 12px !important;
-                min-height: 50px;
+                padding: 20px 24px !important;
+                font-size: 1rem !important;
+                min-height: 65px;
+            }
+            .purchase-btn-large .purchase-line {
+                font-size: 1rem !important;
             }
             
+            /* Hide statement on mobile */
             .shimmer-block {
-                padding: 18px 14px;
-            }
-            .shimmer-block h2 {
-                font-size: 0.9rem;
-                letter-spacing: 2px;
-            }
-            .shimmer-block p {
-                font-size: 0.9rem;
-                line-height: 1.6;
+                display: none;
             }
         }
         
         @media (max-width: 480px) {
-            .header {
-                padding: 10px 8px;
-            }
-            .header-top {
-                font-size: 0.5rem;
-                gap: 5px 10px;
-            }
-            .header-top span:nth-child(2) {
-                display: none;
-            }
             .header h1 {
-                font-size: 1rem;
-                letter-spacing: 1px;
+                font-size: 1.1rem;
             }
             .header h1 .subtitle {
-                font-size: 0.7rem;
-                letter-spacing: 2px;
+                font-size: 0.75rem;
             }
             .header-sub, .header-credit {
-                font-size: 0.7rem;
-            }
-            
-            .main {
-                padding: 8px;
-                gap: 8px;
+                font-size: 0.8rem;
             }
             
             .controls {
-                padding: 10px;
+                margin: 8px;
+                padding: 14px;
             }
             
             .section h3 {
-                font-size: 0.75rem;
+                font-size: 1.1rem;
             }
             
             .session-btn {
-                padding: 14px 16px;
-                font-size: 0.85rem;
-                min-height: 50px;
+                padding: 20px 24px;
+                font-size: 1.2rem;
+                min-height: 60px;
             }
             
             .gold-btn {
-                padding: 10px 8px;
-                font-size: 0.7rem;
-                min-height: 44px;
+                padding: 14px 10px;
+                font-size: 0.95rem;
+                min-height: 55px;
             }
             .gold-btn .icon {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
             
-            .capture-slot {
-                flex: 0 0 65px;
-                min-height: 44px;
+            .slider-row label {
+                font-size: 0.9rem;
             }
             
-            .shimmer-block {
-                padding: 14px 10px;
-            }
-            .shimmer-block h2 {
-                font-size: 0.8rem;
-            }
-            .shimmer-block p {
-                font-size: 0.8rem;
+            .purchase-btn-large {
+                padding: 16px 20px !important;
+                min-height: 55px;
             }
         }
     </style>
