@@ -367,6 +367,164 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .main {
+                grid-template-columns: 1fr 200px;
+                grid-template-rows: auto 1fr;
+            }
+            .controls {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 15px;
+            }
+            .controls, .capture-panel {
+                grid-column: 1;
+            }
+            .capture-panel {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 10px;
+            }
+            .header-top {
+                flex-wrap: wrap;
+                gap: 10px 20px;
+                font-size: 0.65rem;
+                letter-spacing: 2px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+            }
+            .header h1 .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 4px;
+            }
+            .header-sub {
+                font-size: 0.9rem;
+            }
+            .header-credit {
+                font-size: 0.8rem;
+            }
+            
+            .main {
+                padding: 10px;
+                gap: 12px;
+            }
+            
+            .controls, .capture-panel {
+                padding: 15px;
+                border-radius: 8px;
+            }
+            
+            .section h3 {
+                font-size: 0.85rem;
+            }
+            
+            .session-btn {
+                padding: 14px 16px;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+            
+            .gold-presets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .gold-btn {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .bg-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            
+            .slider-row label {
+                font-size: 0.75rem;
+            }
+            
+            .capture-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            .capture-slot {
+                min-height: 60px;
+            }
+            
+            .shimmer-block {
+                padding: 20px 15px;
+            }
+            .shimmer-block h2 {
+                font-size: 0.95rem;
+                letter-spacing: 2px;
+            }
+            .shimmer-block p {
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
+            }
+            .header h1 .subtitle {
+                font-size: 0.75rem;
+                letter-spacing: 3px;
+            }
+            .header-top {
+                font-size: 0.55rem;
+                letter-spacing: 1px;
+            }
+            .header-top span:nth-child(2) {
+                display: none;
+            }
+            
+            .gold-presets {
+                grid-template-columns: 1fr 1fr;
+            }
+            .gold-btn {
+                padding: 8px 6px;
+                font-size: 0.75rem;
+            }
+            .gold-btn .icon {
+                font-size: 1rem;
+            }
+            
+            .bg-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .capture-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            
+            .shimmer-block {
+                padding: 15px 12px;
+            }
+            .shimmer-block h2 {
+                font-size: 0.85rem;
+            }
+            .shimmer-block p {
+                font-size: 0.85rem;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
