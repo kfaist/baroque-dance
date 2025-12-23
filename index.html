@@ -3,7 +3,7 @@
 <head>
     <title>Baroque Mirror: Dance & Enrobe - CMA Wonderball 2026</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -119,6 +119,82 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* Statement Section - responsive under video */
+        .statement-section {
+            margin-top: 25px;
+            padding: 30px;
+            background: rgba(15,10,12,0.85);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5);
+            width: 100%;
+        }
+        .statement-heading {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin: 0 0 15px 0;
+        }
+        .statement-section h2:not(:first-of-type) {
+            margin-top: 25px;
+        }
+        .statement-section p {
+            color: #f4e4ba;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0 0 12px 0;
+        }
+        .contact-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212,175,55,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.7);
+        }
+        .contact-label {
+            color: rgba(212,175,55,0.8);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .main { grid-template-columns: 350px 1fr 180px; gap: 20px; padding: 20px; }
+        }
+        @media (max-width: 1200px) {
+            .main { grid-template-columns: 300px 1fr 160px; gap: 15px; padding: 15px; }
+            .statement-section { padding: 25px; }
+        }
+        @media (max-width: 1024px) {
+            .main { grid-template-columns: 1fr; gap: 20px; }
+            .controls { order: 2; }
+            .output-area { order: 1; }
+            .capture-panel { order: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .capture-panel-header { grid-column: 1 / -1; }
+            .capture-grid { display: contents; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; letter-spacing: 3px; }
+            .header-top { flex-direction: column; gap: 5px; }
+            .statement-section { padding: 20px; }
+            .statement-heading { font-size: 1rem; letter-spacing: 3px; }
+            .statement-section p { font-size: 0.95rem; }
+        }
+        @media (max-width: 480px) {
+            .main { padding: 10px; }
+            .header h1 { font-size: 1.4rem; }
+            .statement-section { padding: 15px; }
+            .contact-footer { font-size: 0.7rem; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -210,10 +286,26 @@
                     <div class="frame-overlay"></div>
                     <div class="webcam-pip"><video id="local" autoplay muted playsinline></video></div>
                 </div>
+                
+                <!-- Statement Section -->
+                <div class="statement-section">
+                    <h2 class="statement-heading">The Baroque Dance</h2>
+                    <p>The Baroque dance was never just a dance. It was a social machine disguised as choreography. Every step displayed rank, every turn measured vanity, every flourish reminded the room who glittered brightest. Satire hid in the wings.</p>
+                    <p>Dancers exaggerated their poise to the point of parody, and the entire spectacle drifted toward caricature long before any artist put pen to paper. In that gilded world, movement became mockery and elegance brushed dangerously close to self-satire. This project borrows that rhythm.</p>
+                    
+                    <h2 class="statement-heading">Multisensory Opulence</h2>
+                    <p>Baroque culture delighted in overstimulation. Sound, movement, scent, silk, candlelight, painted ceilings, mirrored halls — extravagant environments built to overwhelm the senses and blur the line between art and experience.</p>
+                    <p>A multisensory installation becomes its own kind of palace architecture: a room that performs back at the viewer, shifting with proximity, gesture, and emotion. It is opulence reinterpreted as sensor logic.</p>
+                    
+                    <div class="contact-footer">
+                        <span class="contact-label">CONTACT</span>
+                        <span>Artist / Technical: kristabluedoor@gmail.com</span>
+                        <span>Curatorial / Institutional: chaoscontemporarycraft@gmail.com</span>
+                    </div>
+                </div>
             </div>
             
             <div class="capture-panel">
-                <a href="baroque-prints.html" class="purchase-btn-large"><span class="purchase-line">Shop Prints</span><span class="purchase-divider">⚜</span><span class="purchase-line">Mint NFTs</span></a>
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 <div class="capture-grid">
                     <div class="capture-slot" data-slot="1"><span class="capture-slot-number">I</span><img src="" alt="Capture 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
