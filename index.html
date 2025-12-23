@@ -3,7 +3,7 @@
 <head>
     <title>Baroque Mirror: Dance & Enrobe - CMA Wonderball 2026</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -100,36 +100,87 @@
         
         .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
         .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
-        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
-        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
-        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
-        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
-        .capture-grid { display: flex; flex-direction: column; gap: 10px; }
-        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; background: rgba(0,0,0,0.5); overflow: hidden; position: relative; transition: all 0.3s ease; }
-        .capture-slot:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
-        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .capture-slot.has-image img { display: block; }
-        .capture-slot.has-image .capture-btn { opacity: 0; }
-        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
-        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
-        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
-        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-size: 0.55rem; color: rgba(212,175,55,0.6); font-family: 'Cinzel', serif; }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        /* Film Strip Styling */
+        .capture-panel {
+            background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
+            border: 1px solid rgba(212,175,55,0.3) !important;
+            position: relative;
+            padding-left: 18px !important;
+            padding-right: 18px !important;
+        }
+        .capture-panel::before,
+        .capture-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+            background: 
+                repeating-linear-gradient(
+                    180deg,
+                    transparent 0px,
+                    transparent 8px,
+                    rgba(244,228,186,0.15) 8px,
+                    rgba(244,228,186,0.15) 20px,
+                    transparent 20px,
+                    transparent 28px
+                );
+            z-index: 1;
+        }
+        .capture-panel::before { left: 2px; }
+        .capture-panel::after { right: 2px; }
         
-        /* Statement Section - responsive under video */
+        .capture-slot {
+            border: 1px solid rgba(139,105,20,0.5);
+            background: rgba(10,8,6,0.9);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .capture-slot-number {
+            font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+            color: rgba(212,175,55,0.5) !important;
+            font-size: 0.5rem !important;
+            letter-spacing: 1px;
+        }
+        
+        /* Statement Section - shimmery transparent glass effect */
         .statement-section {
             margin-top: 25px;
-            padding: 30px;
-            background: rgba(15,10,12,0.85);
-            border: 1px solid rgba(212,175,55,0.4);
-            border-radius: 12px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5);
+            padding: 35px 40px;
+            background: rgba(20, 15, 25, 0.4);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .statement-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(212, 175, 55, 0.03) 25%,
+                rgba(255, 200, 150, 0.05) 50%,
+                rgba(212, 175, 55, 0.03) 75%,
+                transparent 100%
+            );
+            animation: shimmerSweep 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes shimmerSweep {
+            0%, 100% { transform: translateX(-25%); }
+            50% { transform: translateX(25%); }
         }
         .statement-heading {
             color: #d4af37;
@@ -166,35 +217,25 @@
             margin-bottom: 4px;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 1400px) {
-            .main { grid-template-columns: 350px 1fr 180px; gap: 20px; padding: 20px; }
-        }
-        @media (max-width: 1200px) {
-            .main { grid-template-columns: 300px 1fr 160px; gap: 15px; padding: 15px; }
-            .statement-section { padding: 25px; }
-        }
-        @media (max-width: 1024px) {
-            .main { grid-template-columns: 1fr; gap: 20px; }
-            .controls { order: 2; }
-            .output-area { order: 1; }
-            .capture-panel { order: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-            .capture-panel-header { grid-column: 1 / -1; }
-            .capture-grid { display: contents; }
-        }
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8rem; letter-spacing: 3px; }
-            .header-top { flex-direction: column; gap: 5px; }
-            .statement-section { padding: 20px; }
-            .statement-heading { font-size: 1rem; letter-spacing: 3px; }
-            .statement-section p { font-size: 0.95rem; }
-        }
-        @media (max-width: 480px) {
-            .main { padding: 10px; }
-            .header h1 { font-size: 1.4rem; }
-            .statement-section { padding: 15px; }
-            .contact-footer { font-size: 0.7rem; }
-        }
+        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
+        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
+        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-grid { display: flex; flex-direction: column; gap: 10px; }
+        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; background: rgba(0,0,0,0.5); overflow: hidden; position: relative; transition: all 0.3s ease; }
+        .capture-slot:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image .capture-btn { opacity: 0; }
+        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
+        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
+        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-size: 0.55rem; color: rgba(212,175,55,0.6); font-family: 'Cinzel', serif; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -252,10 +293,10 @@
                 <div class="section">
                     <h3>⚜ Interactive Background</h3>
                     <div class="bg-grid">
-                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" muted loop></video><span class="label">Flow I</span></div>
-                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" muted loop></video><span class="label">Flow II</span></div>
-                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" muted loop></video><span class="label">Flow III</span></div>
-                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" muted loop></video><span class="label">Flow IV</span></div>
+                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" autoplay muted loop playsinline></video><span class="label">Flow I</span></div>
+                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" autoplay muted loop playsinline></video><span class="label">Flow II</span></div>
+                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" autoplay muted loop playsinline></video><span class="label">Flow III</span></div>
+                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" autoplay muted loop playsinline></video><span class="label">Flow IV</span></div>
                     </div>
                     <div style="margin-top: 12px;">
                         <div class="slider-row"><label>BG Opacity <span class="val" id="bgOpacityVal">60%</span></label><input type="range" id="bgOpacitySlider" min="20" max="100" value="60"></div>
@@ -306,14 +347,15 @@
             </div>
             
             <div class="capture-panel">
+                <a href="baroque-prints.html" class="purchase-btn-large"><span class="purchase-line">Shop Prints</span><span class="purchase-divider">⚜</span><span class="purchase-line">Mint NFTs</span></a>
                 <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">I</span><img src="" alt="Capture 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">II</span><img src="" alt="Capture 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">III</span><img src="" alt="Capture 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">IV</span><img src="" alt="Capture 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">V</span><img src="" alt="Capture 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">VI</span><img src="" alt="Capture 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Capture 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Capture 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Capture 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Capture 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Capture 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Capture 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
                 </div>
             </div>
         </div>
@@ -658,6 +700,11 @@ window.addEventListener('load', () => {
         if (!localStream) animationId = requestAnimationFrame(demoAnimate);
     }
     demoAnimate();
+    
+    // Auto-play all thumbnail videos
+    document.querySelectorAll('.bg-thumb video').forEach(v => {
+        v.play().catch(e => console.log('Video autoplay blocked:', e));
+    });
 });
 </script>
 </body>
