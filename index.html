@@ -187,15 +187,21 @@
             font-size: 0.55rem !important;
             letter-spacing: 1px;
             z-index: 2;
+            pointer-events: none;
         }
         .capture-slot img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: none;
+            pointer-events: none;
         }
         .capture-slot.has-image img {
             display: block;
+            pointer-events: auto;
         }
         .capture-slot.has-image .capture-btn {
             opacity: 0;
