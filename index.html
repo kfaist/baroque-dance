@@ -112,6 +112,7 @@
             padding-left: 28px !important;
             padding-right: 28px !important;
             border-radius: 4px !important;
+            z-index: 100;
         }
         
         /* Sprocket track containers with checkered background */
@@ -226,7 +227,8 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             white-space: nowrap;
-            z-index: 10;
+            z-index: 1000;
+            pointer-events: auto !important;
         }
         .capture-btn:hover {
             background: linear-gradient(135deg, #d4af37, #8b6914);
@@ -747,6 +749,7 @@ const styles = {
 function log(msg, type = '') { const div = document.getElementById('log'); const line = document.createElement('div'); line.className = type; line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`; div.appendChild(line); div.scrollTop = div.scrollHeight; }
 
 function captureStill(slotNumber) {
+    console.log('captureStill called with slot:', slotNumber);
     const outputVideo = document.getElementById('output');
     const canvas = document.getElementById('captureCanvas');
     const ctx = canvas.getContext('2d');
