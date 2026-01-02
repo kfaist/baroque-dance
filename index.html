@@ -754,11 +754,29 @@ function captureStill(slotNumber) {
     const canvas = document.getElementById('captureCanvas');
     const ctx = canvas.getContext('2d');
     if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
-    canvas.width = outputVideo.videoWidth; canvas.height = outputVideo.videoHeight;
-    ctx.drawImage(outputVideo, 0, 0);
-    const dataUrl = canvas.toDataURL('image/png');
+    
+    // Scale down for storage (max 800px wide)
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    
+    // Use JPEG with 70% quality instead of PNG (much smaller)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
     capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
-    localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+    
+    try {
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+    } catch (e) {
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('goldenCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
+    }
+    
     const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
     slot.querySelector('img').src = dataUrl;
     slot.classList.add('has-image');
