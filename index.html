@@ -784,8 +784,10 @@ function captureStill(slotNumber) {
 }
 
 function loadCapturedStills() {
-    const stored = localStorage.getItem('goldenCaptures');
-    if (stored) { capturedStills = JSON.parse(stored); Object.keys(capturedStills).forEach(n => { const slot = document.querySelector(`.capture-slot[data-slot="${n}"]`); if (slot && capturedStills[n]) { slot.querySelector('img').src = capturedStills[n].image; slot.classList.add('has-image'); } }); }
+    // Clear old captures on each new session
+    localStorage.removeItem('goldenCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
 }
 
 // Audio analysis from mic input only (no sound output)
