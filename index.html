@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Baroque Mirror: Dance & Enrobe - CMA Wonderball 2026</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
@@ -571,6 +572,22 @@
             .purchase-btn-large {
                 padding: 16px 20px !important;
                 min-height: 55px;
+            }
+        }
+
+        /* LANDSCAPE MODE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header { display: none; }
+            .video-container { max-height: 90vh; }
+            .controls { max-height: 80vh; overflow-y: auto; }
+        }
+        
+        /* Sticky header on mobile */
+        @media (max-width: 900px) {
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
             }
         }
     </style>
