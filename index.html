@@ -290,78 +290,72 @@
         }
         
         /* Statement Section - shimmery transparent glass effect */
-        .statement-section {
-            margin-top: 25px;
-            padding: 35px 40px;
-            background: rgba(20, 15, 25, 0.4);
-            border: 1px solid rgba(212,175,55,0.25);
-            border-radius: 16px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-            width: 100%;
+        .statement-section { margin-top: 12px; width: 100%; position: relative; }
+        
+        /* Layer 1: LIGHTER/more transparent outer shimmer background */
+        .shimmer-bg {
             position: relative;
+            padding: 20px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
             overflow: hidden;
         }
-        .statement-section::before {
-            content: '';
+        .shimmer-bg::before {
+            content: "";
             position: absolute;
             top: 0;
-            left: -100%;
+            left: -150%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(212, 175, 55, 0.03) 25%,
-                rgba(255, 200, 150, 0.05) 50%,
-                rgba(212, 175, 55, 0.03) 75%,
-                transparent 100%
-            );
-            animation: shimmerSweep 8s ease-in-out infinite;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
+            animation: shimmer 8s infinite;
             pointer-events: none;
         }
-        @keyframes shimmerSweep {
-            0%, 100% { transform: translateX(-25%); }
-            50% { transform: translateX(25%); }
+        
+        /* Layer 2: DARKER inner text block */
+        .shimmer-block {
+            position: relative;
+            background: rgba(0,0,0,0.85);
+            padding: 36px 44px;
+            overflow: hidden;
         }
-        .statement-heading {
-            color: #d4af37;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin: 0 0 15px 0;
+        .shimmer-block::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent);
+            animation: shimmer 6s infinite;
+            pointer-events: none;
         }
-        .statement-section h2:not(:first-of-type) {
-            margin-top: 25px;
+        
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
         }
-        .statement-section p {
-            color: #f4e4ba;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 1rem;
-            line-height: 1.7;
-            margin: 0 0 12px 0;
-        }
-        .contact-footer {
-            margin-top: 30px;
-            padding-top: 20px;
+        
+        .shimmer-block h2 { position: relative; color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
+        .shimmer-block h2:not(:first-of-type) { margin-top: 25px; }
+        .shimmer-block p { position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin-bottom: 12px; color: #f4e4ba; }
+        .shimmer-block p:last-of-type { margin-bottom: 0; }
+        .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
+        .shimmer-block a:hover { border-bottom-color: #fff; }
+        .shimmer-block .section-divider { position: relative; text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
+        .shimmer-block .contact-info { 
+            position: relative; 
+            margin-top: 30px; 
+            padding-top: 20px; 
             border-top: 1px solid rgba(212,175,55,0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
             font-family: 'JetBrains Mono', 'Courier New', monospace;
             font-size: 0.75rem;
             color: rgba(244,228,186,0.7);
         }
-        .contact-label {
-            color: rgba(212,175,55,0.8);
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-        }
+        .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.75rem; }
+        .shimmer-block .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
+        .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
+
         
         .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
         .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
@@ -582,8 +576,8 @@
             .controls { max-height: 80vh; overflow-y: auto; }
         }
         
-        /* ========== FLOATING MOBILE CAPTURE BUTTON ========== */
-        .mobile-capture-btn {
+        /* Mobile Action Bar - hidden on desktop */
+        .mobile-action-bar {
             display: none;
         }
         
@@ -601,7 +595,7 @@
                 display: contents;
             }
             
-            /* ORDER: 1=Session, 2=Video, 3+=Controls */
+            /* ORDER: 1=Session, 2=Video, 3=Action Bar, 4+=Controls */
             .session-section {
                 order: 1;
                 background: rgba(15,10,12,0.95);
@@ -615,6 +609,57 @@
                 order: 2;
                 width: 100vw;
                 margin-left: calc(-50vw + 50%);
+            }
+            
+            .mobile-action-bar {
+                display: flex;
+                order: 3;
+                gap: 12px;
+                padding: 15px 10px;
+                margin: 0 10px;
+                background: rgba(15,10,12,0.95);
+                border-left: 1px solid rgba(212,175,55,0.4);
+                border-right: 1px solid rgba(212,175,55,0.4);
+            }
+            
+            .mobile-action-btn {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 18px 16px;
+                border: 2px solid #d4af37;
+                border-radius: 10px;
+                font-family: 'Cinzel', serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                min-height: 65px;
+            }
+            
+            .mobile-action-btn.capture {
+                background: linear-gradient(180deg, #d4af37, #8b6914);
+                color: #0a0608;
+                box-shadow: 0 4px 15px rgba(212,175,55,0.4);
+            }
+            
+            .mobile-action-btn.capture:active {
+                transform: scale(0.97);
+                box-shadow: 0 2px 8px rgba(212,175,55,0.3);
+            }
+            
+            .mobile-action-btn.shop {
+                background: rgba(20,15,18,0.9);
+                color: #d4af37;
+            }
+            
+            .mobile-action-btn.shop:active {
+                background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
             }
             
             .section {
@@ -636,41 +681,6 @@
                 border-bottom: 1px solid rgba(212,175,55,0.4);
                 border-radius: 0 0 12px 12px;
                 margin-bottom: 10px;
-            }
-            
-            /* Floating capture button */
-            .mobile-capture-btn {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 1000;
-                padding: 16px 24px;
-                background: linear-gradient(180deg, #d4af37, #8b6914);
-                color: #0a0608;
-                border: 2px solid #d4af37;
-                border-radius: 50px;
-                font-family: 'Cinzel', serif;
-                font-size: 1.1rem;
-                font-weight: 700;
-                letter-spacing: 2px;
-                cursor: pointer;
-                box-shadow: 0 4px 20px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.3);
-                animation: capture-pulse 2s infinite;
-                text-transform: uppercase;
-            }
-            
-            .mobile-capture-btn:active {
-                transform: scale(0.95);
-                box-shadow: 0 2px 10px rgba(212,175,55,0.4);
-            }
-            
-            @keyframes capture-pulse {
-                0%, 100% { box-shadow: 0 4px 20px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.3); }
-                50% { box-shadow: 0 4px 30px rgba(212,175,55,0.7), 0 0 60px rgba(212,175,55,0.5); }
             }
             
             /* Hide statement on mobile */
@@ -704,11 +714,17 @@
         }
         
         @media (max-width: 480px) {
-            .mobile-capture-btn {
-                padding: 14px 20px;
-                font-size: 1rem;
-                bottom: 15px;
-                right: 15px;
+            .mobile-action-bar {
+                gap: 8px;
+                padding: 12px 8px;
+                margin: 0 8px;
+            }
+            
+            .mobile-action-btn {
+                padding: 14px 12px;
+                font-size: 0.95rem;
+                letter-spacing: 1px;
+                min-height: 55px;
             }
             
             .gold-presets {
@@ -745,7 +761,7 @@
             <div class="controls">
                 <div class="session-section">
                     <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
-                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
+                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
                 </div>
                 
                 <div class="section">
@@ -781,23 +797,38 @@
                 <div class="section">
                     <h3>⚜ Interactive Background</h3>
                     <div class="bg-grid">
-                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" autoplay muted loop playsinline></video><span class="label">Flow I</span></div>
-                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" autoplay muted loop playsinline></video><span class="label">Flow II</span></div>
-                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" autoplay muted loop playsinline></video><span class="label">Flow III</span></div>
-                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" autoplay muted loop playsinline></video><span class="label">Flow IV</span></div>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <div class="slider-row"><label>BG Opacity <span class="val" id="bgOpacityVal">60%</span></label><input type="range" id="bgOpacitySlider" min="20" max="100" value="60"></div>
-                        <div class="slider-row"><label>BG Speed <span class="val" id="bgSpeedVal">1.0x</span></label><input type="range" id="bgSpeedSlider" min="25" max="200" value="100"></div>
+                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" muted loop autoplay playsinline></video><span class="label">Golden Shimmer</span></div>
+                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" muted loop autoplay playsinline></video><span class="label">Dark Void</span></div>
+                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" muted loop autoplay playsinline></video><span class="label">Ethereal Glow</span></div>
+                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" muted loop autoplay playsinline></video><span class="label">Baroque Swirl</span></div>
                     </div>
                 </div>
                 
                 <div class="section">
-                    <h3>⚜ Audio & Motion Reactivity</h3>
-                    <div class="slider-row"><label>Mic Sensitivity <span class="val" id="audioVal">70%</span></label><input type="range" id="audioSlider" min="0" max="100" value="70"></div>
+                    <h3>⚜ Reactivity</h3>
                     <div class="slider-row"><label>Motion Sensitivity <span class="val" id="motionVal">60%</span></label><input type="range" id="motionSlider" min="0" max="100" value="60"></div>
                     <div class="slider-row"><label>Particle Density <span class="val" id="particleVal">50%</span></label><input type="range" id="particleSlider" min="10" max="100" value="50"></div>
                     <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
+                
+                <!-- Statement Section -->
+                <div class="statement-section">
+                    <div class="shimmer-bg">
+                        <div class="shimmer-block">
+                            <h2>Statement</h2>
+                            <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
+                            <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
+                            <div class="section-divider">. . .</div>
+                            <h2>About</h2>
+                            <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
+                            <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
+                            <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
+                            <div class="contact-info">
+                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="log">⚜ Golden Mirror ready...</div>
@@ -814,6 +845,12 @@
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
                 </div>
+            </div>
+            
+            <!-- Mobile Action Bar - appears between video and controls on mobile -->
+            <div class="mobile-action-bar">
+                <button class="mobile-action-btn capture" onclick="captureNextSlot()">📸 Capture</button>
+                <a href="/prints" class="mobile-action-btn shop">🛒 Shop Prints</a>
             </div>
             
             <div class="capture-panel">
@@ -849,55 +886,339 @@
                     <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
                     <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
                 </div>
-                <a href="baroque-prints.html" class="purchase-btn-large"><span class="purchase-line">Shop Prints</span><span class="purchase-divider">⚜</span><span class="purchase-line">Mint NFTs</span></a>
-                <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+                
+                <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
+                    <span class="purchase-line">Shop Prints</span>
+                    <span class="purchase-divider">⚜</span>
+                    <span class="purchase-line">Mint NFTs</span>
+                </a>
+                
+                <div class="capture-panel-header">
+                    <h3>⚜ Captures</h3>
+                </div>
+                
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Capture 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Capture 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Capture 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Capture 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Capture 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Capture 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Capture 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Capture 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Capture 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Capture 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="11"><span class="capture-slot-number">EXP_11</span><img src="" alt="Capture 11"><button class="capture-btn" onclick="captureStill(11)">Capture Still</button></div>
-                    <div class="capture-slot" data-slot="12"><span class="capture-slot-number">EXP_12</span><img src="" alt="Capture 12"><button class="capture-btn" onclick="captureStill(12)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="1">
+                        <span class="capture-slot-number">EXP_01</span>
+                        <img src="" alt="Captured still 1">
+                        <button class="capture-btn" onclick="captureStill(1)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="2">
+                        <span class="capture-slot-number">EXP_02</span>
+                        <img src="" alt="Captured still 2">
+                        <button class="capture-btn" onclick="captureStill(2)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="3">
+                        <span class="capture-slot-number">EXP_03</span>
+                        <img src="" alt="Captured still 3">
+                        <button class="capture-btn" onclick="captureStill(3)">Capture Still</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <canvas id="captureCanvas" style="display:none;"></canvas>
 
 <script>
+// ============================================
+// DAYDREAM API CONFIGURATION
+// ============================================
 const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
 const API_BASE = 'https://api.daydream.live/v1';
 const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 
-let localStream, inputPC, streamId, playbackId, hls, pollTimer;
-let audioContext, analyser, audioDataArray;
-let currentStyle = 'polished';
-let params = { strength: 30, pose: 0.50, edge: 0.35, depth: 0.45 };
-let audioParams = { intensity: 0.70, particleDensity: 0.50, motionSensitivity: 0.60 };
-let bgParams = { opacity: 0.60, speed: 1.0 };
-let capturedStills = {};
-let smoothedAudio = new Array(32).fill(0);
-let bassLevel = 0, midLevel = 0, highLevel = 0;
+let hls = null;
+let inputPC = null;
+let localStream = null;
+let streamId = null;
+let playbackId = null;
+let pollTimer = null;
+let audioContext, analyser, audioData;
 let particles = [];
-const MAX_PARTICLES = 200;
-let animationId, time = 0;
+let motionSensitivity = 0.6;
+let particleDensity = 0.5;
+let capturedStills = {};
+let currentStyle = 'polished';
 
-const styles = {
-    polished: { prompt: "ISOLATED golden statue on PURE BLACK VOID, solid 24k gold human figure sculpture, gleaming polished metallic gold surface, dramatic spotlight from above, deep black empty background, museum display lighting, hyper-realistic golden sheen, sharp shadows on black", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
-    antique: { prompt: "ISOLATED bronze statue on PURE BLACK VOID, ancient Greek golden patina sculpture, museum spotlight on black background, classical human figure, oxidized bronze with gold highlights, empty black surroundings, dramatic museum lighting", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
-    liquid: { prompt: "ISOLATED liquid gold figure on PURE BLACK VOID, flowing molten metal human form, mercury-like golden surface, dramatic rim lighting on black, metallic fluid sculpture, empty black background, spotlight illumination", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
-    baroque: { prompt: "ISOLATED baroque gold statue on PURE BLACK VOID, ornate gilded human sculpture, Bernini style golden figure, elaborate rococo details, cathedral spotlight on black background, dramatic shadows into blackness", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
-    celestial: { prompt: "ISOLATED radiant gold deity on PURE BLACK VOID, divine golden human figure, heavenly aureate glow, ethereal rim lighting on black, angelic gold sculpture, luminous against pure darkness, spotlight from above", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, clouds, heaven scene" },
-    obsidian: { prompt: "ISOLATED obsidian figure on PURE BLACK VOID, black glass human sculpture with molten gold veins, glowing gold cracks on dark form, volcanic glass and gold, dramatic lighting on pure black background", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, blue, green, red, purple, white background, grey background, gradient, texture behind subject" }
+const goldStyles = {
+    polished: { prompt: 'golden polished metal sculpture, mirror finish, reflective gold surface' },
+    antique: { prompt: 'antique gold patina, aged golden bronze, weathered gilded surface' },
+    liquid: { prompt: 'liquid gold, molten metal flowing, mercury gold reflections' },
+    baroque: { prompt: 'baroque gold ornament, rococo gilded details, ornate golden frame' },
+    celestial: { prompt: 'celestial gold, divine golden light rays, heavenly gilded aureole' },
+    obsidian: { prompt: 'black gold obsidian, dark gilded volcanic glass, shadowy golden veins' }
 };
 
-function log(msg, type = '') { const div = document.getElementById('log'); const line = document.createElement('div'); line.className = type; line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`; div.appendChild(line); div.scrollTop = div.scrollHeight; }
+function log(msg, type = '') {
+    const logEl = document.getElementById('log');
+    const time = new Date().toLocaleTimeString();
+    logEl.innerHTML += `<div class="${type}">[${time}] ${msg}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+async function startSession() {
+    log('Initializing golden transformation...', 'info');
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('stopBtn').style.display = 'block';
+    
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, 
+            audio: true 
+        });
+        document.getElementById('local').srcObject = localStream;
+        log('Camera and mic activated', 'success');
+        
+        initAudioAnalysis(localStream);
+        
+        // Create Daydream stream
+        log('Creating Daydream stream...', 'info');
+        const createRes = await fetch(`${API_BASE}/streams`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify({ pipeline_id: PIPELINE_ID })
+        });
+        
+        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        
+        const data = await createRes.json();
+        streamId = data.id;
+        playbackId = data.output_playback_id;
+        log(`Stream created: ${streamId.slice(-8)}`, 'success');
+        
+        // Connect WebRTC via WHIP
+        log('Connecting WebRTC...', 'info');
+        await connectWHIP(data.whip_url);
+        log('Video streaming to AI', 'success');
+        
+        // Wait for AI to initialize
+        log('AI initializing...', 'info');
+        await new Promise(r => setTimeout(r, 3000));
+        
+        // Set initial parameters
+        await setParams();
+        log('Style applied', 'success');
+        
+        // Start polling for output
+        log('Waiting for output...', 'info');
+        startPolling();
+        
+    } catch (err) {
+        log(`Error: ${err.message}`, 'error');
+        stopSession();
+    }
+}
+
+async function connectWHIP(whipUrl) {
+    inputPC = new RTCPeerConnection({
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ]
+    });
+    
+    inputPC.oniceconnectionstatechange = () => {
+        log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info');
+    };
+    
+    localStream.getTracks().forEach(track => {
+        inputPC.addTrack(track, localStream);
+    });
+    
+    const offer = await inputPC.createOffer();
+    await inputPC.setLocalDescription(offer);
+    
+    // Wait for ICE gathering
+    await new Promise(resolve => {
+        if (inputPC.iceGatheringState === 'complete') {
+            resolve();
+        } else {
+            inputPC.onicegatheringstatechange = () => {
+                if (inputPC.iceGatheringState === 'complete') resolve();
+            };
+            setTimeout(resolve, 3000);
+        }
+    });
+    
+    const res = await fetch(whipUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: inputPC.localDescription.sdp
+    });
+    
+    if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
+    
+    const answer = await res.text();
+    await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
+}
+
+async function setParams() {
+    const style = goldStyles[currentStyle];
+    const prompt = style.prompt;
+    const negPrompt = "photograph, photorealistic, modern, digital, flat, cartoon, anime, low quality, blurry";
+    
+    const body = {
+        model_id: "streamdiffusion",
+        pipeline: "live-video-to-video",
+        params: {
+            model_id: "stabilityai/sd-turbo",
+            prompt: prompt,
+            negative_prompt: negPrompt,
+            num_inference_steps: parseInt(document.getElementById('strengthSlider').value),
+            seed: 42,
+            controlnets: [
+                { conditioning_scale: document.getElementById('poseSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" },
+                { conditioning_scale: document.getElementById('edgeSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" },
+                { conditioning_scale: document.getElementById('depthSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }
+            ]
+        }
+    };
+    
+    try {
+        await fetch(`${API_BASE}/streams/${streamId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify(body)
+        });
+    } catch (e) {
+        log(`Params: ${e.message}`, 'info');
+    }
+}
+
+function startPolling() {
+    let attempts = 0;
+    const maxAttempts = 120;
+    let hlsConnected = false;
+    
+    const poll = async () => {
+        attempts++;
+        try {
+            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
+            const data = await res.json();
+            
+            if (attempts % 5 === 0) {
+                log(`Waiting for AI output (${attempts})...`, 'info');
+            }
+            
+            if (data.meta?.live === 1 && !hlsConnected) {
+                log('STREAM LIVE!', 'success');
+                const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url;
+                if (hlsUrl) {
+                    hlsConnected = true;
+                    setTimeout(() => connectHLS(hlsUrl), 1500);
+                } else {
+                    log('Waiting for HLS URL...', 'info');
+                }
+            }
+            
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+            }
+        } catch (e) {
+            log(`Poll: ${e.message}`, 'info');
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, 3000);
+            }
+        }
+    };
+    
+    pollTimer = setTimeout(poll, 3000);
+}
+
+function connectHLS(url) {
+    log(`Connecting HLS...`, 'info');
+    const video = document.getElementById('output');
+    
+    if (Hls.isSupported()) {
+        if (hls) hls.destroy();
+        
+        hls = new Hls({ 
+            lowLatencyMode: true,
+            liveSyncDuration: 1,
+            liveMaxLatencyDuration: 5,
+            liveDurationInfinity: true,
+            highBufferWatchdogPeriod: 2,
+            manifestLoadingTimeOut: 20000,
+            manifestLoadingMaxRetry: 6,
+            manifestLoadingRetryDelay: 1000,
+            levelLoadingTimeOut: 20000,
+            levelLoadingMaxRetry: 6,
+            levelLoadingRetryDelay: 1000,
+            fragLoadingTimeOut: 30000,
+            fragLoadingMaxRetry: 6,
+            fragLoadingRetryDelay: 1000,
+            enableWorker: true,
+            startLevel: -1
+        });
+        
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            log('Stream manifest loaded', 'success');
+            video.play().then(() => {
+                log('⚜ GOLDEN TRANSFORMATION ACTIVE!', 'success');
+            }).catch(e => {
+                log(`Autoplay blocked - click video to play`, 'info');
+                video.muted = true;
+                video.play().catch(() => {});
+            });
+        });
+        
+        hls.on(Hls.Events.ERROR, (e, data) => {
+            log(`HLS: ${data.type} - ${data.details}`, 'info');
+            if (data.fatal) {
+                switch (data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        log('Network error - retrying...', 'info');
+                        setTimeout(() => hls.startLoad(), 2000);
+                        break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        log('Media error - recovering...', 'info');
+                        hls.recoverMediaError();
+                        break;
+                    default:
+                        log('Fatal error - please restart', 'error');
+                        break;
+                }
+            }
+        });
+        
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.addEventListener('loadedmetadata', () => {
+            video.play().catch(() => {
+                video.muted = true;
+                video.play();
+            });
+        });
+        log('Native HLS playing', 'success');
+    }
+}
+
+function stopSession() {
+    log('Ending session...', 'info');
+    
+    if (pollTimer) clearTimeout(pollTimer);
+    if (hls) { hls.destroy(); hls = null; }
+    if (inputPC) { inputPC.close(); inputPC = null; }
+    if (localStream) {
+        localStream.getTracks().forEach(t => t.stop());
+        localStream = null;
+    }
+    if (audioContext) { audioContext.close(); audioContext = null; }
+    
+    document.getElementById('local').srcObject = null;
+    document.getElementById('output').src = '';
+    document.getElementById('startBtn').style.display = 'block';
+    document.getElementById('stopBtn').style.display = 'none';
+    
+    streamId = null;
+    playbackId = null;
+    
+    log('Session ended', 'info');
+}
 
 function captureStill(slotNumber) {
     console.log('captureStill called with slot:', slotNumber);
@@ -934,6 +1255,18 @@ function captureStill(slotNumber) {
     log(`Still captured to slot ${slotNumber}`, 'success');
 }
 
+// Auto-capture to next empty slot (for mobile button)
+function captureNextSlot() {
+    for (let i = 1; i <= 3; i++) {
+        if (!capturedStills[i]) {
+            captureStill(i);
+            return;
+        }
+    }
+    // All slots full, replace slot 1
+    captureStill(1);
+}
+
 function loadCapturedStills() {
     // Clear old captures on each new session
     localStorage.removeItem('goldenCaptures');
@@ -954,291 +1287,181 @@ function initAudioAnalysis(stream) {
         micSource.connect(analyser);
         // DO NOT connect to audioContext.destination - this keeps it silent
         
-        audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+        audioData = new Uint8Array(analyser.frequencyBinCount);
         
-        // Create audio meter bars
-        const meter = document.getElementById('audioMeter'); 
-        meter.innerHTML = '';
-        for (let i = 0; i < 32; i++) { 
-            const bar = document.createElement('div'); 
-            bar.className = 'audio-bar'; 
-            bar.style.height = '4px'; 
-            meter.appendChild(bar); 
+        const meterEl = document.getElementById('audioMeter');
+        meterEl.innerHTML = '';
+        for (let i = 0; i < 32; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'audio-bar';
+            bar.style.height = '2px';
+            meterEl.appendChild(bar);
         }
-        log('Mic analysis active (no sound output)', 'success');
-    } catch (e) { 
-        log(`Audio error: ${e.message}`, 'error'); 
+        
+        updateAudioMeter();
+        log('Audio analysis active (mic only, no output)', 'success');
+    } catch (err) {
+        log('Audio analysis unavailable', 'error');
     }
 }
 
-// Motion detection variables
-let motionCanvas, motionCtx, prevFrameData;
-let motionLevel = 0, motionSmoothed = 0;
-
-function initMotionDetection() {
-    motionCanvas = document.createElement('canvas');
-    motionCanvas.width = 64;
-    motionCanvas.height = 48;
-    motionCtx = motionCanvas.getContext('2d', { willReadFrequently: true });
-    log('Motion detection active', 'success');
-}
-
-function detectMotion() {
-    const video = document.getElementById('local');
-    if (!video.videoWidth || !motionCtx) return;
-    
-    motionCtx.drawImage(video, 0, 0, 64, 48);
-    const imageData = motionCtx.getImageData(0, 0, 64, 48);
-    const data = imageData.data;
-    
-    if (prevFrameData) {
-        let diff = 0;
-        for (let i = 0; i < data.length; i += 4) {
-            diff += Math.abs(data[i] - prevFrameData[i]);
-            diff += Math.abs(data[i + 1] - prevFrameData[i + 1]);
-            diff += Math.abs(data[i + 2] - prevFrameData[i + 2]);
-        }
-        motionLevel = (diff / (data.length * 255 / 4)) * audioParams.motionSensitivity;
-        motionSmoothed = motionSmoothed * 0.85 + motionLevel * 0.15;
-    }
-    
-    prevFrameData = new Uint8ClampedArray(data);
-}
-
-function updateAudio() {
+function updateAudioMeter() {
     if (!analyser) return;
-    analyser.getByteFrequencyData(audioDataArray);
-    const binCount = audioDataArray.length, bassEnd = Math.floor(binCount * 0.15), midEnd = Math.floor(binCount * 0.5);
-    let bassSum = 0, midSum = 0, highSum = 0;
-    for (let i = 0; i < binCount; i++) { const val = audioDataArray[i] / 255; if (i < bassEnd) bassSum += val; else if (i < midEnd) midSum += val; else highSum += val; }
-    bassLevel = (bassSum / bassEnd) * audioParams.intensity; 
-    midLevel = (midSum / (midEnd - bassEnd)) * audioParams.intensity; 
-    highLevel = (highSum / (binCount - midEnd)) * audioParams.intensity;
-    for (let i = 0; i < 32; i++) { const idx = Math.floor(i * binCount / 32); smoothedAudio[i] = smoothedAudio[i] * 0.7 + (audioDataArray[idx] / 255) * 0.3; }
-    document.querySelectorAll('.audio-bar').forEach((bar, i) => { bar.style.height = Math.max(4, smoothedAudio[i] * 36) + 'px'; });
+    analyser.getByteFrequencyData(audioData);
     
-    // Detect motion from webcam
-    detectMotion();
+    const bars = document.querySelectorAll('.audio-bar');
+    const step = Math.floor(audioData.length / bars.length);
+    let totalEnergy = 0;
     
-    // Combined audio + motion reactivity for gold pulse
-    const combinedIntensity = Math.max(bassLevel * 0.7, motionSmoothed * 3);
-    document.getElementById('goldPulse').style.opacity = combinedIntensity * 0.6;
-    document.getElementById('pulseOverlay').style.opacity = combinedIntensity * 0.4;
+    bars.forEach((bar, i) => {
+        const value = audioData[i * step];
+        const height = Math.max(2, (value / 255) * 100);
+        bar.style.height = `${height}%`;
+        totalEnergy += value;
+    });
     
-    // React background video playback speed to audio + motion
-    const bgSpeed = bgParams.speed * (1 + bassLevel * 0.5 + motionSmoothed * 2);
-    document.getElementById('interactiveBg').playbackRate = Math.min(3, bgSpeed);
-    document.getElementById('containerBg').playbackRate = Math.min(3, bgSpeed);
+    // Pulse overlay based on audio energy
+    const avgEnergy = totalEnergy / bars.length / 255;
+    document.getElementById('goldPulse').style.opacity = avgEnergy * 0.5;
     
-    // React background opacity/brightness to audio
-    const bgBrightness = 1 + midLevel * 0.3 + motionSmoothed;
-    document.getElementById('interactiveBg').style.filter = `brightness(${bgBrightness})`;
-    document.getElementById('containerBg').style.filter = `brightness(${bgBrightness})`;
+    requestAnimationFrame(updateAudioMeter);
 }
 
+// Particle system
 function initParticles() {
-    const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } resize(); window.addEventListener('resize', resize);
-    class Particle {
-        constructor() { this.reset(); }
-        reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2; this.size = Math.random() * 3 + 1; this.life = 1; this.decay = Math.random() * 0.01 + 0.005; this.hue = Math.random() * 40 + 35; }
-        update() { 
-            // React to both audio bass and motion
-            const reactivity = bassLevel * 3 + motionSmoothed * 8;
-            this.vx += (Math.random() - 0.5) * reactivity; 
-            this.vy += (Math.random() - 0.5) * reactivity; 
-            this.vx *= 0.98; 
-            this.vy *= 0.98; 
-            this.x += this.vx; 
-            this.y += this.vy; 
-            this.life -= this.decay; 
-            if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); 
-        }
-        draw(ctx) { 
-            const alpha = this.life * 0.6;
-            // Size reacts to mid frequencies and motion
-            const size = this.size * (1 + midLevel * 2 + motionSmoothed * 3); 
-            ctx.save(); 
-            ctx.globalAlpha = alpha; 
-            const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, size * 3); 
-            g.addColorStop(0, `hsla(${this.hue}, 80%, 70%, 1)`); 
-            g.addColorStop(0.4, `hsla(${this.hue}, 70%, 50%, 0.5)`); 
-            g.addColorStop(1, `hsla(${this.hue}, 60%, 30%, 0)`); 
-            ctx.fillStyle = g; 
-            ctx.beginPath(); 
-            ctx.arc(this.x, this.y, size * 3, 0, Math.PI * 2); 
-            ctx.fill(); 
-            ctx.restore(); 
-        }
-    }
-    return { canvas, ctx, Particle };
-}
-
-let particleSystem;
-function drawParticles() {
-    if (!particleSystem) return;
-    const { canvas, ctx, Particle } = particleSystem; ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const targetCount = Math.floor(MAX_PARTICLES * audioParams.particleDensity);
-    while (particles.length < targetCount) particles.push(new Particle());
-    while (particles.length > targetCount) particles.pop();
-    particles.forEach(p => { p.update(); p.draw(ctx); });
-}
-
-function animate() { time++; updateAudio(); drawParticles(); animationId = requestAnimationFrame(animate); }
-
-// UI Handlers
-document.querySelectorAll('.gold-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.gold-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentStyle = btn.dataset.style; log(`Style: ${currentStyle.toUpperCase()}`, 'info'); if (streamId) setParams(); }; });
-document.querySelectorAll('.bg-thumb').forEach(thumb => { thumb.onclick = () => { document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); const src = thumb.dataset.bg; document.getElementById('interactiveBg').src = src; document.getElementById('containerBg').src = src; log(`Background: ${thumb.querySelector('.label').textContent}`, 'info'); }; thumb.onmouseenter = () => thumb.querySelector('video').play(); thumb.onmouseleave = () => thumb.querySelector('video').pause(); });
-document.getElementById('depthSlider').oninput = function() { params.depth = this.value / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
-document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
-document.getElementById('edgeSlider').oninput = function() { params.edge = this.value / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
-document.getElementById('poseSlider').oninput = function() { params.pose = this.value / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
-document.getElementById('blendSelect').onchange = function() { document.getElementById('output').style.mixBlendMode = this.value; document.getElementById('blendVal').textContent = this.options[this.selectedIndex].text.split(' ')[0]; log('Blend: ' + this.value, 'info'); };
-document.getElementById('contrastSlider').oninput = function() { const v = this.value / 100; document.getElementById('contrastVal').textContent = v.toFixed(1); updateOutputFilters(); };
-document.getElementById('brightnessSlider').oninput = function() { const v = this.value / 100; document.getElementById('brightnessVal').textContent = v.toFixed(1); updateOutputFilters(); };
-function updateOutputFilters() { const c = document.getElementById('contrastSlider').value / 100; const b = document.getElementById('brightnessSlider').value / 100; document.getElementById('output').style.filter = `contrast(${c}) saturate(1.4) brightness(${b})`; }
-document.getElementById('bgOpacitySlider').oninput = function() { bgParams.opacity = this.value / 100; document.getElementById('bgOpacityVal').textContent = this.value + '%'; document.getElementById('interactiveBg').style.opacity = bgParams.opacity; document.getElementById('containerBg').style.opacity = bgParams.opacity; };
-document.getElementById('bgSpeedSlider').oninput = function() { bgParams.speed = this.value / 100; document.getElementById('bgSpeedVal').textContent = bgParams.speed.toFixed(2) + 'x'; document.getElementById('interactiveBg').playbackRate = bgParams.speed; document.getElementById('containerBg').playbackRate = bgParams.speed; };
-document.getElementById('audioSlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioVal').textContent = this.value + '%'; };
-document.getElementById('motionSlider').oninput = function() { audioParams.motionSensitivity = this.value / 100; document.getElementById('motionVal').textContent = this.value + '%'; };
-document.getElementById('particleSlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleVal').textContent = this.value + '%'; };
-document.getElementById('startBtn').onclick = start;
-document.getElementById('stopBtn').onclick = stop;
-document.getElementById('fullscreenBtn').onclick = function() { const c = document.getElementById('videoContainer'); if (!document.fullscreenElement) c.requestFullscreen?.(); else document.exitFullscreen?.(); };
-document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '✕' : '⛶'; });
-
-async function start() {
-    document.getElementById('startBtn').disabled = true;
-    try {
-        log('Getting camera & mic...', 'info');
-        // Get video for AI processing, audio ONLY for analysis (not output)
-        localStream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, 
-            audio: true 
-        });
-        document.getElementById('local').srcObject = localStream;
-        log('Camera ready', 'success');
-        
-        // Initialize audio analysis from mic (input only, no output)
-        initAudioAnalysis(localStream);
-        
-        // Initialize motion detection
-        initMotionDetection();
-        
-        particleSystem = initParticles();
-        if (!animationId) animate();
-        
-        log('Creating stream...', 'info');
-        // Send ONLY video to Daydream (no audio)
-        const videoOnlyStream = new MediaStream(localStream.getVideoTracks());
-        
-        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
-        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
-        const data = await createRes.json(); streamId = data.id; playbackId = data.output_playback_id;
-        log(`Stream: ${streamId.slice(-8)}`, 'success');
-        log('Connecting WebRTC...', 'info');
-        await connectWHIP(data.whip_url, videoOnlyStream);
-        log('Video streaming', 'success');
-        await new Promise(r => setTimeout(r, 3000));
-        await setParams();
-        document.getElementById('startBtn').style.display = 'none';
-        document.getElementById('stopBtn').style.display = 'block';
-        startPolling();
-    } catch (e) { log(`ERROR: ${e.message}`, 'error'); document.getElementById('startBtn').disabled = false; }
-}
-
-async function connectWHIP(whipUrl, streamToSend) {
-    inputPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-    inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); };
-    // Send only the provided stream (video only)
-    streamToSend.getTracks().forEach(track => inputPC.addTrack(track, streamToSend));
-    const offer = await inputPC.createOffer(); await inputPC.setLocalDescription(offer);
-    await new Promise(resolve => { if (inputPC.iceGatheringState === 'complete') resolve(); else { inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; setTimeout(resolve, 3000); } });
-    const res = await fetch(whipUrl, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
-    if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
-    await inputPC.setRemoteDescription({ type: 'answer', sdp: await res.text() });
-}
-
-async function setParams() {
-    const style = styles[currentStyle]; log(`Setting: ${currentStyle}`, 'info');
-    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: style.prompt, negative_prompt: style.negative, num_inference_steps: params.strength, seed: 42, controlnets: [
-        { conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" },
-        { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" },
-        { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }
-    ]}};
-    try { const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); if (res.ok) log('Params set OK', 'success'); else log(`Params error ${res.status}`, 'error'); } catch (e) { log(`Error: ${e.message}`, 'error'); }
-}
-
-function startPolling() {
-    let attempts = 0, hlsConnected = false;
-    const poll = async () => {
-        attempts++;
-        try {
-            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
-            const data = await res.json();
-            if (attempts % 5 === 0) log(`Waiting (${attempts})...`, 'info');
-            if (data.meta?.live === 1 && !hlsConnected) { log('LIVE!', 'success'); const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url; if (hlsUrl) { hlsConnected = true; setTimeout(() => connectHLS(hlsUrl), 1500); } }
-            if (attempts < 120) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
-        } catch (e) { if (attempts < 120) pollTimer = setTimeout(poll, 3000); }
-    };
-    pollTimer = setTimeout(poll, 3000);
-}
-
-function connectHLS(url) {
-    log('Connecting HLS...', 'info');
-    const video = document.getElementById('output');
-    if (Hls.isSupported()) {
-        if (hls) hls.destroy();
-        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true });
-        hls.loadSource(url); hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { 
-            log('Manifest loaded', 'success'); 
-            video.muted = true; // Ensure no sound output
-            video.play().then(() => log('Golden sculpture live!', 'success')).catch(() => { video.play(); }); 
-        });
-        hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal) { if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(() => hls.startLoad(), 2000); else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); } });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.muted = true; video.addEventListener('loadedmetadata', () => video.play()); }
-}
-
-function stop() {
-    if (pollTimer) clearTimeout(pollTimer);
-    if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
-    if (inputPC) { inputPC.close(); inputPC = null; }
-    if (hls) { hls.destroy(); hls = null; }
-    if (audioContext) { audioContext.close(); audioContext = null; }
-    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-    document.getElementById('local').srcObject = null;
-    document.getElementById('output').src = '';
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('startBtn').style.display = 'block';
-    document.getElementById('stopBtn').style.display = 'none';
-    streamId = null; playbackId = null; particles = [];
-    document.getElementById('particleCanvas').getContext('2d').clearRect(0, 0, window.innerWidth, window.innerHeight);
-    log('Session ended', 'info');
-}
-
-window.addEventListener('load', () => {
-    loadCapturedStills();
-    particleSystem = initParticles();
-    function demoAnimate() {
-        time++;
-        bassLevel = 0.1 + Math.sin(time * 0.02) * 0.05;
-        midLevel = 0.1 + Math.sin(time * 0.03) * 0.05;
-        highLevel = 0.05 + Math.sin(time * 0.04) * 0.03;
-        drawParticles();
-        if (!localStream) animationId = requestAnimationFrame(demoAnimate);
-    }
-    demoAnimate();
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
     
-    // Auto-play all thumbnail videos
-    document.querySelectorAll('.bg-thumb video').forEach(v => {
-        v.play().catch(e => console.log('Video autoplay blocked:', e));
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    for (let i = 0; i < 50; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 3 + 1,
+            alpha: Math.random() * 0.5 + 0.2
+        });
+    }
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.x += p.vx * motionSensitivity;
+            p.y += p.vy * motionSensitivity;
+            
+            if (p.x < 0) p.x = canvas.width;
+            if (p.x > canvas.width) p.x = 0;
+            if (p.y < 0) p.y = canvas.height;
+            if (p.y > canvas.height) p.y = 0;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * particleDensity, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha})`;
+            ctx.fill();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', startSession);
+document.getElementById('stopBtn').addEventListener('click', stopSession);
+
+document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    const container = document.getElementById('videoContainer');
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        container.requestFullscreen();
+    }
+});
+
+document.querySelectorAll('.gold-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.gold-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStyle = btn.dataset.style;
+        log(`Style: ${currentStyle}`, 'info');
+        if (streamId) setParams();
     });
 });
-</script>
 
-<!-- Mobile Floating Capture Button -->
-<button class="mobile-capture-btn" onclick="captureStill(0)">📸 Capture</button>
+document.querySelectorAll('.bg-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+        document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+        const bgSrc = thumb.dataset.bg;
+        document.getElementById('containerBg').src = bgSrc;
+        document.getElementById('interactiveBg').src = bgSrc;
+        log(`Background: ${bgSrc}`, 'info');
+    });
+});
+
+// Sliders
+document.getElementById('depthSlider').addEventListener('input', e => {
+    document.getElementById('depthVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('strengthSlider').addEventListener('input', e => {
+    document.getElementById('strengthVal').textContent = e.target.value;
+    if (streamId) setParams();
+});
+document.getElementById('edgeSlider').addEventListener('input', e => {
+    document.getElementById('edgeVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('poseSlider').addEventListener('input', e => {
+    document.getElementById('poseVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('motionSlider').addEventListener('input', e => {
+    motionSensitivity = e.target.value / 100;
+    document.getElementById('motionVal').textContent = e.target.value + '%';
+});
+document.getElementById('particleSlider').addEventListener('input', e => {
+    particleDensity = e.target.value / 100;
+    document.getElementById('particleVal').textContent = e.target.value + '%';
+});
+
+document.getElementById('blendSelect').addEventListener('change', e => {
+    const video = document.getElementById('output');
+    video.style.mixBlendMode = e.target.value;
+    document.getElementById('blendVal').textContent = e.target.options[e.target.selectedIndex].text.split(' ')[0];
+});
+
+document.getElementById('contrastSlider').addEventListener('input', e => {
+    const val = e.target.value / 100;
+    document.getElementById('contrastVal').textContent = val.toFixed(1);
+    updateVideoFilter();
+});
+
+document.getElementById('brightnessSlider').addEventListener('input', e => {
+    const val = e.target.value / 100;
+    document.getElementById('brightnessVal').textContent = val.toFixed(1);
+    updateVideoFilter();
+});
+
+function updateVideoFilter() {
+    const contrast = document.getElementById('contrastSlider').value / 100;
+    const brightness = document.getElementById('brightnessSlider').value / 100;
+    document.getElementById('output').style.filter = `contrast(${contrast}) saturate(1.5) brightness(${brightness})`;
+}
+
+// Initialize
+loadCapturedStills();
+initParticles();
+log('⚜ Baroque Mirror: Dance & Enrobe ready', 'success');
+</script>
 
 </body>
 </html>
