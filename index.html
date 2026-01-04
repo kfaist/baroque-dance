@@ -311,6 +311,19 @@
             border-color: #d4af37; 
         }
         
+        /* Style statement */
+        .style-statement {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: rgba(244,228,186,0.7);
+            line-height: 1.4;
+        }
+        
         /* Sliders */
         .slider-row { margin-bottom: 14px; }
         .slider-row label { 
@@ -504,7 +517,7 @@
         
         <!-- 5. CONTROLS -->
         <div class="controls-section">
-            <!-- Custom Prompt -->
+            <!-- Custom Prompt with its slider -->
             <div class="control-group">
                 <h3>⚜ Custom Prompt</h3>
                 <div class="prompt-row">
@@ -518,7 +531,7 @@
                 </div>
             </div>
             
-            <!-- Style Presets -->
+            <!-- Style Presets with statement and slider -->
             <div class="control-group">
                 <h3>⚜ Style Presets</h3>
                 <div class="style-presets">
@@ -529,15 +542,16 @@
                     <button class="style-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
                     <button class="style-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
                 </div>
-            </div>
-            
-            <!-- Sliders -->
-            <div class="control-group">
-                <h3>⚜ Controls</h3>
-                <div class="slider-row">
+                <div class="style-statement" id="styleStatement">golden polished metal sculpture, mirror finish, reflective gold surface</div>
+                <div class="slider-row" style="margin-top: 12px;">
                     <label>3D Depth <span class="val" id="depthVal">0.45</span></label>
                     <input type="range" id="depthSlider" min="20" max="80" value="45">
                 </div>
+            </div>
+            
+            <!-- Additional Controls -->
+            <div class="control-group">
+                <h3>⚜ Controls</h3>
                 <div class="slider-row">
                     <label>Edge Detail <span class="val" id="edgeVal">0.35</span></label>
                     <input type="range" id="edgeSlider" min="10" max="60" value="35">
@@ -877,6 +891,7 @@ document.querySelectorAll('.style-btn').forEach(btn => {
         currentStyle = btn.dataset.style;
         customPrompt = ''; // Clear custom prompt when selecting preset
         document.getElementById('customPrompt').value = '';
+        document.getElementById('styleStatement').textContent = goldStyles[currentStyle];
         if (streamId) setParams();
         log(`Style: ${currentStyle}`, 'info');
     });
