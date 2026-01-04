@@ -32,7 +32,13 @@
         .header-sub { font-size: 1rem; color: rgba(244,228,186,0.8); margin-top: 8px; font-style: italic; }
         .header-credit { font-size: 0.9rem; color: #d4af37; margin-top: 5px; font-weight: 600; }
         
-        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
+        .main { display: grid; grid-template-columns: 400px 1fr; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; align-items: start; }
+        
+        /* Right content: video + captures side by side, statement below */
+        .right-content { display: grid; grid-template-columns: 1fr 200px; gap: 25px; align-items: start; }
+        
+        /* Wrapper keeps video and statement stacked together */
+        .video-statement-wrapper { display: flex; flex-direction: column; gap: 25px; }
         
         .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
         .capture-panel { padding: 15px; }
@@ -811,29 +817,13 @@
                     <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
                 </div>
                 
-                <!-- Statement Section -->
-                <div class="statement-section">
-                    <div class="shimmer-bg">
-                        <div class="shimmer-block">
-                            <h2>Statement</h2>
-                            <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
-                            <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
-                            <div class="section-divider">. . .</div>
-                            <h2>About</h2>
-                            <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
-                            <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
-                            <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
-                            <div class="contact-info">
-                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 <div id="log">⚜ Golden Mirror ready...</div>
             </div>
             
+            <!-- Right content area: video + captures + statement -->
+            <div class="right-content">
+            <!-- Video and Statement wrapper -->
+            <div class="video-statement-wrapper">
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
@@ -846,6 +836,27 @@
                     <div class="frame-overlay"></div>
                 </div>
             </div>
+            
+            <!-- Statement Section -->
+            <div class="statement-section">
+                <div class="shimmer-bg">
+                    <div class="shimmer-block">
+                        <h2>Statement</h2>
+                        <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
+                        <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
+                        <div class="section-divider">. . .</div>
+                        <h2>About</h2>
+                        <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
+                        <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
+                        <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
+                        <div class="contact-info">
+                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- close video-statement-wrapper -->
             
             <!-- Mobile Action Bar - appears between video and controls on mobile -->
             <div class="mobile-action-bar">
@@ -915,6 +926,7 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- close right-content -->
         </div>
     </div>
     
