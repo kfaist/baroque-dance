@@ -269,6 +269,20 @@
             letter-spacing: 1px;
         }
         .prompt-submit:active { transform: scale(0.97); }
+        .dice-btn {
+            padding: 12px 14px;
+            border: 2px solid rgba(212,175,55,0.5);
+            background: rgba(20,15,18,0.9);
+            color: #d4af37;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dice-btn:hover, .dice-btn:active { 
+            background: rgba(212,175,55,0.2); 
+            border-color: #d4af37; 
+        }
         
         /* Style Presets */
         .style-presets {
@@ -498,6 +512,7 @@
                 <div class="prompt-row">
                     <input type="text" class="prompt-input" id="customPrompt" placeholder="golden baroque sculpture...">
                     <button class="prompt-submit" id="promptSubmit">Apply</button>
+                    <button class="dice-btn" id="diceBtn" title="Random prompt">🎲</button>
                 </div>
             </div>
             
@@ -832,6 +847,28 @@ document.getElementById('promptSubmit').addEventListener('click', () => {
 
 document.getElementById('customPrompt').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') document.getElementById('promptSubmit').click();
+});
+
+// Random prompts
+const randomPrompts = [
+    'golden baroque angel sculpture with flowing robes',
+    'molten gold liquid metal dripping renaissance',
+    'gilded rococo cherub with golden wings',
+    'antique bronze statue weathered patina',
+    'celestial golden sun rays divine light',
+    'obsidian black gold veined marble sculpture',
+    'venetian gold mask ornate carnival',
+    'golden phoenix rising flames rebirth',
+    'art nouveau golden flowing organic forms',
+    'byzantine gold mosaic sacred icon'
+];
+
+document.getElementById('diceBtn').addEventListener('click', () => {
+    const randomPrompt = randomPrompts[Math.floor(Math.random() * randomPrompts.length)];
+    document.getElementById('customPrompt').value = randomPrompt;
+    customPrompt = randomPrompt;
+    if (streamId) setParams();
+    log(`Random: ${randomPrompt}`, 'info');
 });
 
 // Style presets
