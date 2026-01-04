@@ -1,5 +1,880 @@
-{
-  "message": "Not Found",
-  "documentation_url": "https://docs.github.com/rest/repos/contents#get-repository-content",
-  "status": "404"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baroque Mirror: Dance & Enrobe - CMA Wonderball 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Background effects */
+        #interactiveBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.4; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 6, 8, 0.5); z-index: 1; pointer-events: none; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        
+        .content { position: relative; z-index: 10; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* ========== HEADER ========== */
+        .header { 
+            text-align: center; 
+            padding: 12px 15px; 
+            border-bottom: 1px solid rgba(212,175,55,0.3); 
+            background: linear-gradient(180deg, rgba(114,47,55,0.6) 0%, rgba(10,6,8,0.9) 100%); 
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 { 
+            color: #d4af37; 
+            font-size: 1.1rem; 
+            letter-spacing: 3px; 
+            font-family: 'Cinzel', serif; 
+            text-shadow: 0 0 20px rgba(212,175,55,0.5);
+        }
+        .header-sub { font-size: 0.75rem; color: rgba(244,228,186,0.7); margin-top: 2px; }
+        
+        /* ========== SESSION BUTTON ========== */
+        .session-section {
+            padding: 12px 15px;
+            background: rgba(15,10,12,0.9);
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        .session-btn { 
+            width: 100%; 
+            padding: 18px 20px; 
+            border: 2px solid #d4af37; 
+            background: linear-gradient(180deg, rgba(114,47,55,0.9), rgba(74,31,36,0.95)); 
+            color: #d4af37; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            font-family: 'Cinzel', serif; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            box-shadow: 0 0 25px rgba(212,175,55,0.2);
+            transition: all 0.3s ease;
+        }
+        .session-btn:hover, .session-btn:active { 
+            background: linear-gradient(180deg, #d4af37, #8b6914); 
+            color: #0a0608; 
+            box-shadow: 0 0 40px rgba(212,175,55,0.5); 
+        }
+        .session-btn.stop { 
+            background: linear-gradient(180deg, rgba(139,0,0,0.9), rgba(74,0,0,0.95)); 
+            border-color: #8b0000; 
+            color: #ff6b6b; 
+        }
+        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; }
+        
+        /* ========== VIDEO OUTPUT ========== */
+        .video-section {
+            position: relative;
+            width: 100%;
+            background: #000;
+        }
+        .video-container { 
+            position: relative; 
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden; 
+            box-shadow: 0 0 40px rgba(212,175,55,0.15);
+        }
+        .container-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+        .output-video { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+            mix-blend-mode: screen; 
+            z-index: 1; 
+            filter: contrast(2.0) saturate(1.5) brightness(1.2); 
+        }
+        .gold-pulse-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, transparent 70%); transition: opacity 0.1s; }
+        .frame-overlay { 
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+            pointer-events: none; 
+            border: 4px solid transparent; 
+            border-image: linear-gradient(135deg, #d4af37, #8b6914, #d4af37) 1; 
+            z-index: 5; 
+        }
+        .fullscreen-btn { 
+            position: absolute; top: 10px; right: 10px; 
+            width: 36px; height: 36px; 
+            border: 1px solid rgba(212,175,55,0.6); 
+            background: rgba(10,6,8,0.8); 
+            color: #d4af37; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-size: 1rem; 
+            z-index: 20;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* ========== ACTION ROW (Capture + Shop) ========== */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(15,10,12,0.95);
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+        }
+        
+        /* Shop button - LEFT */
+        .shop-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 12px;
+            border: 2px solid #d4af37;
+            background: rgba(20,15,18,0.9);
+            color: #d4af37;
+            border-radius: 10px;
+            font-family: 'Cinzel', serif;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 2px;
+        }
+        .shop-btn:hover, .shop-btn:active {
+            background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+        }
+        .shop-btn .line1 { font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; }
+        .shop-btn .line2 { font-size: 0.7rem; opacity: 0.8; }
+        
+        /* Capture button with thumbnail - RIGHT */
+        .capture-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .capture-btn-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 12px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            border-radius: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .capture-btn-main:active {
+            transform: scale(0.97);
+        }
+        .capture-btn-main .counter {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        
+        /* Last capture thumbnail */
+        .last-capture {
+            width: 70px;
+            height: 50px;
+            border: 2px solid rgba(212,175,55,0.5);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .last-capture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .last-capture.has-image img { display: block; }
+        .last-capture .placeholder {
+            font-size: 0.6rem;
+            color: rgba(212,175,55,0.4);
+            text-align: center;
+        }
+        .last-capture.has-image .placeholder { display: none; }
+        
+        /* ========== CONTROLS SECTION ========== */
+        .controls-section {
+            padding: 15px;
+            background: rgba(15,10,12,0.95);
+            flex: 1;
+        }
+        
+        .control-group {
+            margin-bottom: 18px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+        }
+        .control-group:last-child { border-bottom: none; margin-bottom: 0; }
+        .control-group h3 {
+            color: #d4af37;
+            font-size: 0.85rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        
+        /* Custom Prompt Input */
+        .prompt-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .prompt-input {
+            flex: 1;
+            padding: 12px 14px;
+            background: rgba(20,15,18,0.9);
+            border: 1px solid rgba(212,175,55,0.5);
+            border-radius: 8px;
+            color: #f4e4ba;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+        }
+        .prompt-input::placeholder { color: rgba(244,228,186,0.4); }
+        .prompt-input:focus { outline: none; border-color: #d4af37; }
+        .prompt-submit {
+            padding: 12px 18px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .prompt-submit:active { transform: scale(0.97); }
+        
+        /* Style Presets */
+        .style-presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .style-btn {
+            padding: 12px 8px;
+            border: 1px solid rgba(212,175,55,0.5);
+            background: rgba(20,15,18,0.8);
+            color: #f4e4ba;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .style-btn .icon { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+        .style-btn:hover, .style-btn:active { background: rgba(212,175,55,0.15); border-color: #d4af37; }
+        .style-btn.active { 
+            background: linear-gradient(135deg, #d4af37, #8b6914); 
+            color: #0a0608; 
+            font-weight: 700; 
+            border-color: #d4af37; 
+        }
+        
+        /* Sliders */
+        .slider-row { margin-bottom: 14px; }
+        .slider-row label { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 0.9rem; 
+            margin-bottom: 8px; 
+            color: rgba(244,228,186,0.9); 
+        }
+        .slider-row .val { color: #d4af37; font-weight: 700; }
+        input[type="range"] { 
+            width: 100%; 
+            height: 8px; 
+            border-radius: 4px; 
+            background: linear-gradient(90deg, #722f37, #d4af37); 
+            -webkit-appearance: none; 
+            cursor: pointer; 
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); 
+            cursor: pointer; 
+            box-shadow: 0 0 10px rgba(212,175,55,0.6); 
+        }
+        
+        /* Webcam preview (small) */
+        .webcam-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .webcam-preview video {
+            width: 80px;
+            height: 60px;
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 6px;
+            object-fit: cover;
+        }
+        .webcam-preview span {
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.6);
+        }
+        
+        /* Log - collapsed on mobile */
+        #log { 
+            display: none;
+            background: rgba(0,0,0,0.6); 
+            padding: 10px; 
+            height: 80px; 
+            overflow-y: auto; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.65rem; 
+            border: 1px solid rgba(212,175,55,0.2); 
+            border-radius: 6px; 
+            margin-top: 10px; 
+        }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .info { color: #60a5fa; }
+        
+        /* ========== DESKTOP STYLES ========== */
+        @media (min-width: 900px) {
+            .content {
+                display: grid;
+                grid-template-columns: 320px 1fr 200px;
+                grid-template-rows: auto 1fr;
+                min-height: 100vh;
+            }
+            
+            .header {
+                grid-column: 1 / -1;
+                padding: 15px 20px;
+            }
+            .header h1 { font-size: 1.8rem; letter-spacing: 5px; }
+            .header-sub { font-size: 0.9rem; }
+            
+            /* Left column: Session + Controls */
+            .left-column {
+                display: contents;
+            }
+            .session-section {
+                grid-column: 1;
+                grid-row: 2;
+                border-bottom: none;
+                border-right: 1px solid rgba(212,175,55,0.3);
+            }
+            .controls-section {
+                grid-column: 1;
+                grid-row: 3;
+                border-right: 1px solid rgba(212,175,55,0.3);
+                overflow-y: auto;
+                max-height: calc(100vh - 200px);
+            }
+            
+            /* Center: Video */
+            .video-section {
+                grid-column: 2;
+                grid-row: 2 / 4;
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            }
+            .video-container {
+                border-radius: 12px;
+                border: 2px solid rgba(212,175,55,0.6);
+            }
+            
+            /* Right column: Actions */
+            .action-row {
+                grid-column: 3;
+                grid-row: 2 / 4;
+                flex-direction: column;
+                padding: 20px 15px;
+                border-bottom: none;
+                border-left: 1px solid rgba(212,175,55,0.3);
+            }
+            .capture-area {
+                flex-direction: column;
+            }
+            .last-capture {
+                width: 100%;
+                height: 100px;
+            }
+            
+            #log { display: block; }
+        }
+        
+        /* Fullscreen */
+        .video-container:fullscreen { 
+            border-radius: 0; 
+            border: none; 
+            width: 100vw; 
+            height: 100vh; 
+        }
+        .video-container:fullscreen .output-video { object-fit: contain; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <video id="interactiveBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
+    <div class="bg-overlay"></div>
+    <canvas id="particleCanvas"></canvas>
+    
+    <div class="content">
+        <!-- 1. HEADER -->
+        <div class="header">
+            <h1>⚜ BAROQUE MIRROR ⚜</h1>
+            <div class="header-sub">Dance & Enrobe • CMA Wonderball 2026 • by Krista Faist</div>
+        </div>
+        
+        <!-- 2. START/STOP SESSION -->
+        <div class="session-section">
+            <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
+            <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
+        </div>
+        
+        <!-- 3. VIDEO OUTPUT -->
+        <div class="video-section">
+            <div class="video-container" id="videoContainer">
+                <video class="container-bg" id="containerBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
+                <video class="output-video" id="output" autoplay playsinline muted></video>
+                <div class="gold-pulse-overlay" id="goldPulse"></div>
+                <div class="frame-overlay"></div>
+                <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+            </div>
+        </div>
+        
+        <!-- 4. ACTION ROW: Shop (left) + Capture with thumbnail (right) -->
+        <div class="action-row">
+            <a href="/prints" class="shop-btn">
+                <span class="line1">🛒 Shop Prints</span>
+                <span class="line2">& Mint NFTs</span>
+            </a>
+            <div class="capture-area">
+                <button class="capture-btn-main" id="captureBtn" onclick="captureStill()">
+                    📸 Capture
+                    <span class="counter" id="captureCounter">(0/10)</span>
+                </button>
+                <div class="last-capture" id="lastCapture">
+                    <img src="" alt="Last capture" id="lastCaptureImg">
+                    <span class="placeholder">No<br>captures</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 5. CONTROLS -->
+        <div class="controls-section">
+            <!-- Custom Prompt -->
+            <div class="control-group">
+                <h3>⚜ Custom Prompt</h3>
+                <div class="prompt-row">
+                    <input type="text" class="prompt-input" id="customPrompt" placeholder="golden baroque sculpture...">
+                    <button class="prompt-submit" id="promptSubmit">Apply</button>
+                </div>
+            </div>
+            
+            <!-- Style Presets -->
+            <div class="control-group">
+                <h3>⚜ Style Presets</h3>
+                <div class="style-presets">
+                    <button class="style-btn active" data-style="polished"><span class="icon">✨</span>Polished</button>
+                    <button class="style-btn" data-style="antique"><span class="icon">🏺</span>Antique</button>
+                    <button class="style-btn" data-style="liquid"><span class="icon">💧</span>Liquid</button>
+                    <button class="style-btn" data-style="baroque"><span class="icon">👑</span>Baroque</button>
+                    <button class="style-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
+                    <button class="style-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
+                </div>
+            </div>
+            
+            <!-- Sliders -->
+            <div class="control-group">
+                <h3>⚜ Controls</h3>
+                <div class="slider-row">
+                    <label>Gold Intensity <span class="val" id="strengthVal">30</span></label>
+                    <input type="range" id="strengthSlider" min="10" max="50" value="30">
+                </div>
+                <div class="slider-row">
+                    <label>3D Depth <span class="val" id="depthVal">0.45</span></label>
+                    <input type="range" id="depthSlider" min="20" max="80" value="45">
+                </div>
+                <div class="slider-row">
+                    <label>Edge Detail <span class="val" id="edgeVal">0.35</span></label>
+                    <input type="range" id="edgeSlider" min="10" max="60" value="35">
+                </div>
+                
+                <!-- Webcam preview -->
+                <div class="webcam-preview">
+                    <video id="local" autoplay muted playsinline></video>
+                    <span>Live input</span>
+                </div>
+            </div>
+            
+            <div id="log">⚜ Ready...</div>
+        </div>
+    </div>
+    
+    <canvas id="captureCanvas" style="display:none;"></canvas>
+
+<script>
+// ============================================
+// DAYDREAM API CONFIGURATION
+// ============================================
+const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
+const API_BASE = 'https://api.daydream.live/v1';
+const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
+
+let hls = null;
+let inputPC = null;
+let localStream = null;
+let streamId = null;
+let playbackId = null;
+let pollTimer = null;
+let captureCount = 0;
+const MAX_CAPTURES = 10;
+let currentStyle = 'polished';
+let customPrompt = '';
+
+const goldStyles = {
+    polished: 'golden polished metal sculpture, mirror finish, reflective gold surface',
+    antique: 'antique gold patina, aged golden bronze, weathered gilded surface',
+    liquid: 'liquid gold, molten metal flowing, mercury gold reflections',
+    baroque: 'baroque gold ornament, rococo gilded details, ornate golden frame',
+    celestial: 'celestial gold, divine golden light rays, heavenly gilded aureole',
+    obsidian: 'black gold obsidian, dark gilded volcanic glass, shadowy golden veins'
+};
+
+function log(msg, type = '') {
+    const logEl = document.getElementById('log');
+    if (!logEl) return;
+    const time = new Date().toLocaleTimeString();
+    logEl.innerHTML += `<div class="${type}">[${time}] ${msg}</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
 }
+
+async function startSession() {
+    log('Starting...', 'info');
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('stopBtn').style.display = 'block';
+    
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, 
+            audio: true 
+        });
+        document.getElementById('local').srcObject = localStream;
+        log('Camera active', 'success');
+        
+        log('Creating stream...', 'info');
+        const createRes = await fetch(`${API_BASE}/streams`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify({ pipeline_id: PIPELINE_ID })
+        });
+        
+        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        
+        const data = await createRes.json();
+        streamId = data.id;
+        playbackId = data.output_playback_id;
+        log(`Stream: ${streamId.slice(-8)}`, 'success');
+        
+        await connectWHIP(data.whip_url);
+        log('WebRTC connected', 'success');
+        
+        await new Promise(r => setTimeout(r, 2000));
+        await setParams();
+        
+        startPolling();
+        
+    } catch (err) {
+        log(`Error: ${err.message}`, 'error');
+        stopSession();
+    }
+}
+
+async function connectWHIP(whipUrl) {
+    inputPC = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    });
+    
+    localStream.getTracks().forEach(track => inputPC.addTrack(track, localStream));
+    
+    const offer = await inputPC.createOffer();
+    await inputPC.setLocalDescription(offer);
+    
+    await new Promise(resolve => {
+        if (inputPC.iceGatheringState === 'complete') resolve();
+        else {
+            inputPC.onicegatheringstatechange = () => {
+                if (inputPC.iceGatheringState === 'complete') resolve();
+            };
+            setTimeout(resolve, 3000);
+        }
+    });
+    
+    const res = await fetch(whipUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: inputPC.localDescription.sdp
+    });
+    
+    if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
+    
+    const answer = await res.text();
+    await inputPC.setRemoteDescription({ type: 'answer', sdp: answer });
+}
+
+async function setParams() {
+    const prompt = customPrompt || goldStyles[currentStyle];
+    const negPrompt = "photograph, photorealistic, modern, digital, flat, cartoon, anime, low quality, blurry";
+    
+    const body = {
+        model_id: "streamdiffusion",
+        pipeline: "live-video-to-video",
+        params: {
+            model_id: "stabilityai/sd-turbo",
+            prompt: prompt,
+            negative_prompt: negPrompt,
+            num_inference_steps: parseInt(document.getElementById('strengthSlider').value),
+            seed: 42,
+            controlnets: [
+                { conditioning_scale: document.getElementById('depthSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" },
+                { conditioning_scale: document.getElementById('edgeSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }
+            ]
+        }
+    };
+    
+    try {
+        await fetch(`${API_BASE}/streams/${streamId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+            body: JSON.stringify(body)
+        });
+        log('Style applied', 'success');
+    } catch (e) {
+        log(`Params: ${e.message}`, 'info');
+    }
+}
+
+function startPolling() {
+    let attempts = 0;
+    let hlsConnected = false;
+    
+    const poll = async () => {
+        attempts++;
+        try {
+            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
+            const data = await res.json();
+            
+            if (attempts % 5 === 0) log(`Waiting (${attempts})...`, 'info');
+            
+            if (data.meta?.live === 1 && !hlsConnected) {
+                log('STREAM LIVE!', 'success');
+                const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url;
+                if (hlsUrl) {
+                    hlsConnected = true;
+                    setTimeout(() => connectHLS(hlsUrl), 1500);
+                }
+            }
+            
+            if (attempts < 120) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+        } catch (e) {
+            if (attempts < 120) pollTimer = setTimeout(poll, 3000);
+        }
+    };
+    
+    pollTimer = setTimeout(poll, 3000);
+}
+
+function connectHLS(url) {
+    log('Connecting HLS...', 'info');
+    const video = document.getElementById('output');
+    
+    if (Hls.isSupported()) {
+        if (hls) hls.destroy();
+        
+        hls = new Hls({ 
+            lowLatencyMode: true,
+            liveSyncDuration: 1,
+            liveMaxLatencyDuration: 5,
+            liveDurationInfinity: true
+        });
+        
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play().then(() => log('⚜ TRANSFORMATION ACTIVE!', 'success')).catch(() => {
+                video.muted = true;
+                video.play();
+            });
+        });
+        
+        hls.on(Hls.Events.ERROR, (e, data) => {
+            if (data.fatal) {
+                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(() => hls.startLoad(), 2000);
+                else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+            }
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.addEventListener('loadedmetadata', () => video.play());
+    }
+}
+
+function stopSession() {
+    log('Ending...', 'info');
+    
+    if (pollTimer) clearTimeout(pollTimer);
+    if (hls) { hls.destroy(); hls = null; }
+    if (inputPC) { inputPC.close(); inputPC = null; }
+    if (localStream) {
+        localStream.getTracks().forEach(t => t.stop());
+        localStream = null;
+    }
+    
+    document.getElementById('local').srcObject = null;
+    document.getElementById('output').src = '';
+    document.getElementById('startBtn').style.display = 'block';
+    document.getElementById('stopBtn').style.display = 'none';
+    
+    streamId = null;
+    playbackId = null;
+    
+    log('Session ended', 'info');
+}
+
+function captureStill() {
+    const outputVideo = document.getElementById('output');
+    const canvas = document.getElementById('captureCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (!outputVideo.videoWidth) { 
+        log('No video yet', 'error'); 
+        return; 
+    }
+    
+    canvas.width = Math.min(800, outputVideo.videoWidth);
+    canvas.height = canvas.width * (outputVideo.videoHeight / outputVideo.videoWidth);
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    
+    captureCount++;
+    if (captureCount > MAX_CAPTURES) captureCount = MAX_CAPTURES;
+    
+    // Update counter
+    document.getElementById('captureCounter').textContent = `(${captureCount}/${MAX_CAPTURES})`;
+    
+    // Update thumbnail
+    const lastCapture = document.getElementById('lastCapture');
+    const lastImg = document.getElementById('lastCaptureImg');
+    lastImg.src = dataUrl;
+    lastCapture.classList.add('has-image');
+    
+    // Store in localStorage
+    try {
+        const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '[]');
+        captures.push({ image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle });
+        if (captures.length > MAX_CAPTURES) captures.shift();
+        localStorage.setItem('baroqueCaptures', JSON.stringify(captures));
+    } catch (e) {
+        localStorage.removeItem('baroqueCaptures');
+    }
+    
+    log(`Captured (${captureCount}/${MAX_CAPTURES})`, 'success');
+}
+
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', startSession);
+document.getElementById('stopBtn').addEventListener('click', stopSession);
+
+document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    const container = document.getElementById('videoContainer');
+    if (document.fullscreenElement) document.exitFullscreen();
+    else container.requestFullscreen();
+});
+
+// Custom prompt
+document.getElementById('promptSubmit').addEventListener('click', () => {
+    customPrompt = document.getElementById('customPrompt').value.trim();
+    if (streamId) setParams();
+    log(`Prompt: ${customPrompt || 'using preset'}`, 'info');
+});
+
+document.getElementById('customPrompt').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('promptSubmit').click();
+});
+
+// Style presets
+document.querySelectorAll('.style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStyle = btn.dataset.style;
+        customPrompt = ''; // Clear custom prompt when selecting preset
+        document.getElementById('customPrompt').value = '';
+        if (streamId) setParams();
+        log(`Style: ${currentStyle}`, 'info');
+    });
+});
+
+// Sliders
+document.getElementById('strengthSlider').addEventListener('input', e => {
+    document.getElementById('strengthVal').textContent = e.target.value;
+    if (streamId) setParams();
+});
+document.getElementById('depthSlider').addEventListener('input', e => {
+    document.getElementById('depthVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('edgeSlider').addEventListener('input', e => {
+    document.getElementById('edgeVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+
+// Load previous capture count
+try {
+    const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '[]');
+    captureCount = captures.length;
+    document.getElementById('captureCounter').textContent = `(${captureCount}/${MAX_CAPTURES})`;
+    if (captures.length > 0) {
+        const last = captures[captures.length - 1];
+        document.getElementById('lastCaptureImg').src = last.image;
+        document.getElementById('lastCapture').classList.add('has-image');
+    }
+} catch (e) {}
+
+log('⚜ Baroque Mirror ready', 'success');
+</script>
+
+</body>
+</html>
