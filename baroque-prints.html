@@ -678,8 +678,8 @@
             
             // TEST MODE: Add test captures when ?test=true is in URL
             if (params.get('test') === 'true' && Object.keys(captures).length === 0) {
-                // Use picsum.photos - a real image URL that Cloudinary can fetch
-                const testImage = 'https://picsum.photos/seed/baroque/800/800';
+                // Use existing Cloudinary image - already uploaded, no re-upload needed
+                const testImage = 'https://res.cloudinary.com/dktiofneg/image/upload/v1767521304/baroque-prints/th2dwrwhngejzh42vrfh.jpg';
                 captures = {
                     1: { image: testImage, timestamp: Date.now() },
                     2: { image: testImage, timestamp: Date.now() }
