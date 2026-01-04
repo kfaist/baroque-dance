@@ -17,527 +17,904 @@
             overflow-x: hidden;
         }
         
-        /* Background effects */
-        #interactiveBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.4; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 6, 8, 0.5); z-index: 1; pointer-events: none; }
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        /* Interactive background video */
+        #interactiveBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.6; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 6, 8, 0.3); z-index: 1; pointer-events: none; }
+        #pulseOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.4) 0%, transparent 70%); transition: opacity 0.1s; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
         
-        .content { position: relative; z-index: 10; display: flex; flex-direction: column; min-height: 100vh; }
+        .content { position: relative; z-index: 10; }
         
-        /* ========== HEADER ========== */
-        .header { 
-            text-align: center; 
-            padding: 12px 15px; 
-            border-bottom: 1px solid rgba(212,175,55,0.3); 
-            background: linear-gradient(180deg, rgba(114,47,55,0.6) 0%, rgba(10,6,8,0.9) 100%); 
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header h1 { 
-            color: #d4af37; 
-            font-size: 1.1rem; 
-            letter-spacing: 3px; 
-            font-family: 'Cinzel', serif; 
-            text-shadow: 0 0 20px rgba(212,175,55,0.5);
-        }
-        .header-sub { font-size: 0.75rem; color: rgba(244,228,186,0.7); margin-top: 2px; }
+        .header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.7) 100%); backdrop-filter: blur(10px); }
+        .header-top { display: flex; justify-content: center; gap: 40px; margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 4px; color: #f4e4ba; font-family: 'Cinzel', serif; text-transform: uppercase; }
+        .header h1 { color: #d4af37; font-size: 2.5rem; margin: 0; letter-spacing: 6px; font-family: 'Cinzel', serif; text-shadow: 0 0 30px rgba(212,175,55,0.5); }
+        .header h1 .subtitle { display: block; font-size: 1.2rem; color: #f4e4ba; letter-spacing: 8px; margin-top: 5px; font-weight: 400; font-style: italic; }
+        .header-sub { font-size: 1rem; color: rgba(244,228,186,0.8); margin-top: 8px; font-style: italic; }
+        .header-credit { font-size: 0.9rem; color: #d4af37; margin-top: 5px; font-weight: 600; }
         
-        /* ========== SESSION BUTTON ========== */
-        .session-section {
-            padding: 12px 15px;
-            background: rgba(15,10,12,0.9);
-            border-bottom: 1px solid rgba(212,175,55,0.3);
-        }
-        .session-btn { 
-            width: 100%; 
-            padding: 18px 20px; 
-            border: 2px solid #d4af37; 
-            background: linear-gradient(180deg, rgba(114,47,55,0.9), rgba(74,31,36,0.95)); 
-            color: #d4af37; 
-            font-size: 1.2rem; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            font-family: 'Cinzel', serif; 
-            letter-spacing: 3px; 
-            text-transform: uppercase; 
-            box-shadow: 0 0 25px rgba(212,175,55,0.2);
-            transition: all 0.3s ease;
-        }
-        .session-btn:hover, .session-btn:active { 
-            background: linear-gradient(180deg, #d4af37, #8b6914); 
-            color: #0a0608; 
-            box-shadow: 0 0 40px rgba(212,175,55,0.5); 
-        }
-        .session-btn.stop { 
-            background: linear-gradient(180deg, rgba(139,0,0,0.9), rgba(74,0,0,0.95)); 
-            border-color: #8b0000; 
-            color: #ff6b6b; 
-        }
-        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; }
+        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
         
-        /* ========== VIDEO OUTPUT ========== */
-        .video-section {
-            position: relative;
-            width: 100%;
-            background: #000;
-        }
-        .video-container { 
-            position: relative; 
-            width: 100%;
-            aspect-ratio: 16/9;
-            overflow: hidden; 
-            box-shadow: 0 0 40px rgba(212,175,55,0.15);
-        }
-        .container-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-        .output-video { 
-            position: relative; 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            display: block; 
-            mix-blend-mode: screen; 
-            z-index: 1; 
-            filter: contrast(2.0) saturate(1.5) brightness(1.2); 
-        }
-        .gold-pulse-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, transparent 70%); transition: opacity 0.1s; }
-        .frame-overlay { 
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
-            pointer-events: none; 
-            border: 4px solid transparent; 
-            border-image: linear-gradient(135deg, #d4af37, #8b6914, #d4af37) 1; 
-            z-index: 5; 
-        }
-        .fullscreen-btn { 
-            position: absolute; top: 10px; right: 10px; 
-            width: 36px; height: 36px; 
-            border: 1px solid rgba(212,175,55,0.6); 
-            background: rgba(10,6,8,0.8); 
-            color: #d4af37; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-size: 1rem; 
-            z-index: 20;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
+        .capture-panel { padding: 15px; }
         
-        /* ========== ACTION ROW (Capture + Shop) ========== */
-        .action-row {
-            display: flex;
-            gap: 10px;
-            padding: 12px 15px;
-            background: rgba(15,10,12,0.95);
-            border-bottom: 1px solid rgba(212,175,55,0.3);
-        }
+        .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .section:last-child { border-bottom: none; margin-bottom: 0; }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
-        /* Shop button - LEFT */
-        .shop-btn {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 12px;
-            border: 2px solid #d4af37;
-            background: rgba(20,15,18,0.9);
-            color: #d4af37;
-            border-radius: 10px;
-            font-family: 'Cinzel', serif;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            gap: 2px;
-        }
-        .shop-btn:hover, .shop-btn:active {
-            background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
-        }
-        .shop-btn .line1 { font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; }
-        .shop-btn .line2 { font-size: 0.7rem; opacity: 0.8; }
+        .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .session-btn { width: 100%; padding: 16px 20px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95)); color: #d4af37; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        .session-btn:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .session-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .session-btn.stop { background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95)); border-color: #8b0000; color: #ff6b6b; }
+        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; box-shadow: 0 0 35px rgba(139,0,0,0.5); }
         
-        /* Capture button with thumbnail - RIGHT */
-        .capture-area {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .capture-btn-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 12px;
-            border: 2px solid #d4af37;
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            border-radius: 10px;
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        .capture-btn-main:active {
-            transform: scale(0.97);
-        }
-        .capture-btn-main .counter {
-            font-size: 0.7rem;
-            font-weight: 400;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
+        .gold-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .gold-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; }
+        .gold-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .gold-btn.active { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .gold-btn .icon { display: block; font-size: 1.2rem; margin-bottom: 2px; }
         
-        /* Last capture thumbnail */
-        .last-capture {
-            width: 70px;
-            height: 50px;
-            border: 2px solid rgba(212,175,55,0.5);
-            border-radius: 6px;
-            background: rgba(0,0,0,0.8);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .last-capture img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-        .last-capture.has-image img { display: block; }
-        .last-capture .placeholder {
-            font-size: 0.6rem;
-            color: rgba(212,175,55,0.4);
-            text-align: center;
-        }
-        .last-capture.has-image .placeholder { display: none; }
+        .bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bg-thumb { position: relative; border: 2px solid rgba(212,175,55,0.3); border-radius: 6px; overflow: hidden; cursor: pointer; aspect-ratio: 16/10; background: #000; transition: all 0.3s ease; }
+        .bg-thumb:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .bg-thumb.active { border-color: #f4e4ba; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .bg-thumb video { width: 100%; height: 100%; object-fit: cover; }
+        .bg-thumb .label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: #f4e4ba; font-size: 0.65rem; padding: 4px; text-align: center; font-family: 'Cinzel', serif; }
         
-        /* ========== CONTROLS SECTION ========== */
-        .controls-section {
-            padding: 15px;
-            background: rgba(15,10,12,0.95);
-            flex: 1;
-        }
+        .blend-select { width: 100%; padding: 8px 10px; background: rgba(20,15,18,0.9); color: #f4e4ba; border: 1px solid rgba(212,175,55,0.5); border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; cursor: pointer; }
+        .blend-select:focus { outline: none; border-color: #d4af37; }
         
-        .control-group {
-            margin-bottom: 18px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(212,175,55,0.2);
-        }
-        .control-group:last-child { border-bottom: none; margin-bottom: 0; }
-        .control-group h3 {
-            color: #d4af37;
-            font-size: 0.85rem;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-        }
-        
-        /* Custom Prompt Input */
-        .prompt-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .prompt-input {
-            flex: 1;
-            padding: 12px 14px;
-            background: rgba(20,15,18,0.9);
-            border: 1px solid rgba(212,175,55,0.5);
-            border-radius: 8px;
-            color: #f4e4ba;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1rem;
-        }
-        .prompt-input::placeholder { color: rgba(244,228,186,0.4); }
-        .prompt-input:focus { outline: none; border-color: #d4af37; }
-        .prompt-submit {
-            padding: 12px 18px;
-            border: 2px solid #d4af37;
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            border-radius: 8px;
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .prompt-submit:active { transform: scale(0.97); }
-        
-        /* Style Presets */
-        .style-presets {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .style-btn {
-            padding: 12px 8px;
-            border: 1px solid rgba(212,175,55,0.5);
-            background: rgba(20,15,18,0.8);
-            color: #f4e4ba;
-            cursor: pointer;
-            border-radius: 8px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-        .style-btn .icon { display: block; font-size: 1.3rem; margin-bottom: 4px; }
-        .style-btn:hover, .style-btn:active { background: rgba(212,175,55,0.15); border-color: #d4af37; }
-        .style-btn.active { 
-            background: linear-gradient(135deg, #d4af37, #8b6914); 
-            color: #0a0608; 
-            font-weight: 700; 
-            border-color: #d4af37; 
-        }
-        
-        /* Sliders */
         .slider-row { margin-bottom: 14px; }
-        .slider-row label { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.9rem; 
-            margin-bottom: 8px; 
-            color: rgba(244,228,186,0.9); 
-        }
-        .slider-row .val { color: #d4af37; font-weight: 700; }
-        input[type="range"] { 
-            width: 100%; 
-            height: 8px; 
-            border-radius: 4px; 
-            background: linear-gradient(90deg, #722f37, #d4af37); 
-            -webkit-appearance: none; 
-            cursor: pointer; 
-        }
-        input[type="range"]::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            width: 28px; 
-            height: 28px; 
-            border-radius: 50%; 
-            background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); 
-            cursor: pointer; 
-            box-shadow: 0 0 10px rgba(212,175,55,0.6); 
-        }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
+        .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); transition: transform 0.2s; }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         
-        /* Webcam preview (small) */
-        .webcam-preview {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .webcam-preview video {
-            width: 80px;
-            height: 60px;
-            border: 1px solid rgba(212,175,55,0.4);
-            border-radius: 6px;
-            object-fit: cover;
-        }
-        .webcam-preview span {
-            font-size: 0.75rem;
-            color: rgba(244,228,186,0.6);
-        }
+        .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
+        .audio-section h4 { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
+        .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
         
-        /* Log - collapsed on mobile */
-        #log { 
-            display: none;
-            background: rgba(0,0,0,0.6); 
-            padding: 10px; 
-            height: 80px; 
-            overflow-y: auto; 
-            font-family: 'Courier New', monospace; 
-            font-size: 0.65rem; 
-            border: 1px solid rgba(212,175,55,0.2); 
-            border-radius: 6px; 
-            margin-top: 10px; 
-        }
+        .output-area { position: relative; }
+        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+        .container-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+        .output-video { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; mix-blend-mode: screen; z-index: 1; filter: contrast(2.0) saturate(1.5) brightness(1.2); }
+        .gold-pulse-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, transparent 70%); transition: opacity 0.1s; }
+        .black-crush-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 3; background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.3) 100%); mix-blend-mode: multiply; }
+        .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
+        .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
+        .video-container:fullscreen { border-radius: 0; border: none; }
+        .video-container:fullscreen .video-wrapper { aspect-ratio: auto; width: 100vw; height: 100vh; }
+        .video-container:fullscreen .output-video { object-fit: contain; background: #000; }
+        .video-container:fullscreen .fullscreen-btn { top: 25px; right: 25px; }
+        /* Webcam now in sidebar, not affected by fullscreen */
+        .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); z-index: 5; }
+        /* Input Preview - In capture panel sidebar */
+        .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
+        .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        #log { background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
         .success { color: #4ade80; }
         .error { color: #f87171; }
         .info { color: #60a5fa; }
         
-        /* ========== DESKTOP STYLES ========== */
-        @media (min-width: 900px) {
-            .content {
-                display: grid;
-                grid-template-columns: 320px 1fr 200px;
-                grid-template-rows: auto 1fr;
-                min-height: 100vh;
-            }
-            
-            .header {
-                grid-column: 1 / -1;
-                padding: 15px 20px;
-            }
-            .header h1 { font-size: 1.8rem; letter-spacing: 5px; }
-            .header-sub { font-size: 0.9rem; }
-            
-            /* Left column: Session + Controls */
-            .left-column {
-                display: contents;
-            }
-            .session-section {
-                grid-column: 1;
-                grid-row: 2;
-                border-bottom: none;
-                border-right: 1px solid rgba(212,175,55,0.3);
-            }
-            .controls-section {
-                grid-column: 1;
-                grid-row: 3;
-                border-right: 1px solid rgba(212,175,55,0.3);
-                overflow-y: auto;
-                max-height: calc(100vh - 200px);
-            }
-            
-            /* Center: Video */
-            .video-section {
-                grid-column: 2;
-                grid-row: 2 / 4;
-                display: flex;
-                flex-direction: column;
-                padding: 20px;
-            }
-            .video-container {
-                border-radius: 12px;
-                border: 2px solid rgba(212,175,55,0.6);
-            }
-            
-            /* Right column: Actions */
-            .action-row {
-                grid-column: 3;
-                grid-row: 2 / 4;
-                flex-direction: column;
-                padding: 20px 15px;
-                border-bottom: none;
-                border-left: 1px solid rgba(212,175,55,0.3);
-            }
-            .capture-area {
-                flex-direction: column;
-            }
-            .last-capture {
-                width: 100%;
-                height: 100px;
-            }
-            
-            #log { display: block; }
+        .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
+        
+        /* Film Strip Styling */
+        .capture-panel {
+            background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
+            border: 1px solid rgba(212,175,55,0.3) !important;
+            position: relative;
+            padding-left: 28px !important;
+            padding-right: 28px !important;
+            border-radius: 4px !important;
+            z-index: 100;
         }
         
-        /* Fullscreen */
-        .video-container:fullscreen { 
-            border-radius: 0; 
-            border: none; 
-            width: 100vw; 
-            height: 100vh; 
+        /* Sprocket track containers with checkered background */
+        .capture-panel::before,
+        .capture-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 18px;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(30,25,20,0.9) 0px,
+                    rgba(30,25,20,0.9) 4px,
+                    rgba(15,12,10,0.9) 4px,
+                    rgba(15,12,10,0.9) 8px
+                );
+            z-index: 0;
+            pointer-events: none;
         }
-        .video-container:fullscreen .output-video { object-fit: contain; }
+        .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
+        .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
+        
+        /* Sprocket holes - cut out effect */
+        .sprocket-track {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            width: 18px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            pointer-events: none;
+        }
+        .sprocket-track.left { left: 0; }
+        .sprocket-track.right { right: 0; }
+        
+        .sprocket-hole {
+            width: 10px;
+            height: 14px;
+            background: rgba(0,0,0,0.95);
+            border-radius: 2px;
+            box-shadow: 
+                inset 0 1px 2px rgba(255,255,255,0.1),
+                0 0 3px rgba(0,0,0,0.8);
+            flex-shrink: 0;
+        }
+        
+        .capture-slot {
+            aspect-ratio: 16/10;
+            border: 1px solid rgba(139,105,20,0.5);
+            background: rgba(10,8,6,0.95);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .capture-slot:hover {
+            border-color: #d4af37;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3);
+        }
+        .capture-slot-number {
+            position: absolute;
+            bottom: 4px;
+            left: 6px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+            color: rgba(212,175,55,0.6) !important;
+            font-size: 0.55rem !important;
+            letter-spacing: 1px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .capture-slot img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            pointer-events: none;
+        }
+        .capture-slot.has-image img {
+            display: block;
+            pointer-events: auto;
+        }
+        .capture-slot.has-image .capture-btn {
+            opacity: 0;
+        }
+        .capture-slot.has-image:hover .capture-btn {
+            opacity: 1;
+        }
+        .capture-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 8px 12px;
+            border: 1px solid rgba(212,175,55,0.6);
+            background: rgba(15,10,12,0.9);
+            color: #d4af37;
+            font-size: 0.6rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: auto !important;
+        }
+        .capture-btn:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
+        }
+        
+        .capture-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .purchase-btn-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35));
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            gap: 2px;
+            position: relative;
+            z-index: 3;
+        }
+        .purchase-btn-large:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 25px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        .purchase-btn-large .purchase-line {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .purchase-btn-large .purchase-divider {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        
+        .capture-panel-header {
+            position: relative;
+            z-index: 3;
+        }
+        
+        /* Statement Section - shimmery transparent glass effect */
+        .statement-section { margin-top: 12px; width: 100%; position: relative; }
+        
+        /* Layer 1: LIGHTER/more transparent outer shimmer background */
+        .shimmer-bg {
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(255,200,255,0.10), rgba(180,200,255,0.08), rgba(255,255,255,0.06));
+            overflow: hidden;
+        }
+        .shimmer-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), rgba(255,200,255,0.08), transparent);
+            animation: shimmer 8s infinite;
+            pointer-events: none;
+        }
+        
+        /* Layer 2: DARKER inner text block */
+        .shimmer-block {
+            position: relative;
+            background: rgba(0,0,0,0.85);
+            padding: 36px 44px;
+            overflow: hidden;
+        }
+        .shimmer-block::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), rgba(255,200,255,0.04), transparent);
+            animation: shimmer 6s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .shimmer-block h2 { position: relative; color: #d4af37; font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 4px; margin: 0 0 15px 0; text-transform: uppercase; }
+        .shimmer-block h2:not(:first-of-type) { margin-top: 25px; }
+        .shimmer-block p { position: relative; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; line-height: 1.7; margin-bottom: 12px; color: #f4e4ba; }
+        .shimmer-block p:last-of-type { margin-bottom: 0; }
+        .shimmer-block a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.4); transition: all 0.3s ease; }
+        .shimmer-block a:hover { border-bottom-color: #fff; }
+        .shimmer-block .section-divider { position: relative; text-align: center; color: #fff; font-size: 1rem; margin: 28px 0; opacity: 0.5; letter-spacing: 0.3em; }
+        .shimmer-block .contact-info { 
+            position: relative; 
+            margin-top: 30px; 
+            padding-top: 20px; 
+            border-top: 1px solid rgba(212,175,55,0.3);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.7);
+        }
+        .shimmer-block .contact-info p { margin-bottom: 6px; font-size: 0.75rem; }
+        .shimmer-block .contact-info strong { color: rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: normal; }
+        .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
+
+        
+        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
+        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
+        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-grid { display: flex; flex-direction: column; gap: 10px; }
+        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; background: rgba(0,0,0,0.5); overflow: hidden; position: relative; transition: all 0.3s ease; }
+        .capture-slot:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image .capture-btn { opacity: 0; }
+        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
+        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
+        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-size: 0.55rem; color: rgba(212,175,55,0.6); font-family: 'Cinzel', serif; }
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
         ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .main {
+                grid-template-columns: 1fr 200px;
+                grid-template-rows: auto 1fr;
+            }
+            .controls {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 0;
+                gap: 0;
+            }
+            
+            /* FULL SCREEN VIDEO AT TOP */
+            .output-area {
+                order: -10;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* Hide capture panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 10px;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* MINIMAL HEADER */
+            .header {
+                padding: 10px;
+            }
+            .header-top {
+                display: none;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+            .header h1 .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 3px;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.9rem;
+            }
+            
+            /* HIDE LESS IMPORTANT SECTIONS */
+            .section:nth-child(n+5) {
+                display: none;
+            }
+            
+            .controls {
+                padding: 16px;
+            }
+            
+            .section {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+            
+            /* DOUBLE SIZE HEADINGS */
+            .section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 14px;
+            }
+            
+            /* GIANT SESSION BUTTON */
+            .session-btn {
+                padding: 24px 28px;
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+                min-height: 70px;
+            }
+            
+            /* BIGGER GOLD PRESETS - 2 columns */
+            .gold-presets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .gold-btn {
+                padding: 18px 14px;
+                font-size: 1.1rem;
+                min-height: 65px;
+            }
+            .gold-btn .icon {
+                font-size: 1.4rem;
+                margin-bottom: 4px;
+            }
+            
+            /* Background grid - bigger */
+            .bg-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .bg-thumb .label {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+            
+            /* BIGGER SLIDERS */
+            .slider-row {
+                margin-bottom: 20px;
+            }
+            .slider-row label {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+            input[type="range"] {
+                height: 12px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            
+            /* Purchase button - BIG */
+            .purchase-btn-large {
+                padding: 20px 24px !important;
+                font-size: 1rem !important;
+                min-height: 65px;
+            }
+            .purchase-btn-large .purchase-line {
+                font-size: 1rem !important;
+            }
+            
+            /* Hide statement on mobile */
+            .shimmer-block {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header h1 .subtitle {
+                font-size: 0.75rem;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 8px;
+                padding: 14px;
+            }
+            
+            .section h3 {
+                font-size: 1.1rem;
+            }
+            
+            .session-btn {
+                padding: 20px 24px;
+                font-size: 1.2rem;
+                min-height: 60px;
+            }
+            
+            .gold-btn {
+                padding: 14px 10px;
+                font-size: 0.95rem;
+                min-height: 55px;
+            }
+            .gold-btn .icon {
+                font-size: 1.2rem;
+            }
+            
+            .slider-row label {
+                font-size: 0.9rem;
+            }
+            
+            .purchase-btn-large {
+                padding: 16px 20px !important;
+                min-height: 55px;
+            }
+        }
+
+        /* LANDSCAPE MODE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header { display: none; }
+            .video-container { max-height: 90vh; }
+            .controls { max-height: 80vh; overflow-y: auto; }
+        }
+        
+        /* Mobile Action Bar - hidden on desktop */
+        .mobile-action-bar {
+            display: none;
+        }
+        
+        @media (max-width: 900px) {
+            /* Sticky header on mobile */
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: linear-gradient(180deg, rgba(114,47,55,0.95) 0%, rgba(10,6,8,0.98) 100%);
+            }
+            
+            /* Flatten controls so children can be reordered */
+            .controls {
+                display: contents;
+            }
+            
+            /* ORDER: 1=Session, 2=Video, 3=Action Bar, 4+=Controls */
+            .session-section {
+                order: 1;
+                background: rgba(15,10,12,0.95);
+                padding: 15px;
+                margin: 10px;
+                border-radius: 12px;
+                border: 1px solid rgba(212,175,55,0.4);
+            }
+            
+            .output-area {
+                order: 2;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            
+            .mobile-action-bar {
+                display: flex;
+                order: 3;
+                gap: 12px;
+                padding: 15px 10px;
+                margin: 0 10px;
+                background: rgba(15,10,12,0.95);
+                border-left: 1px solid rgba(212,175,55,0.4);
+                border-right: 1px solid rgba(212,175,55,0.4);
+            }
+            
+            .mobile-action-btn {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 18px 16px;
+                border: 2px solid #d4af37;
+                border-radius: 10px;
+                font-family: 'Cinzel', serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                min-height: 65px;
+            }
+            
+            .mobile-action-btn.capture {
+                background: linear-gradient(180deg, #d4af37, #8b6914);
+                color: #0a0608;
+                box-shadow: 0 4px 15px rgba(212,175,55,0.4);
+            }
+            
+            .mobile-action-btn.capture:active {
+                transform: scale(0.97);
+                box-shadow: 0 2px 8px rgba(212,175,55,0.3);
+            }
+            
+            .mobile-action-btn.shop {
+                background: rgba(20,15,18,0.9);
+                color: #d4af37;
+            }
+            
+            .mobile-action-btn.shop:active {
+                background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+            }
+            
+            .section {
+                order: 4;
+                background: rgba(15,10,12,0.95);
+                padding: 15px;
+                margin: 0 10px;
+                border-left: 1px solid rgba(212,175,55,0.4);
+                border-right: 1px solid rgba(212,175,55,0.4);
+            }
+            
+            .section:first-of-type {
+                border-top: 1px solid rgba(212,175,55,0.4);
+                border-radius: 12px 12px 0 0;
+                margin-top: 10px;
+            }
+            
+            .section:last-of-type {
+                border-bottom: 1px solid rgba(212,175,55,0.4);
+                border-radius: 0 0 12px 12px;
+                margin-bottom: 10px;
+            }
+            
+            /* Hide statement on mobile */
+            .statement-section {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Ensure touch-friendly targets */
+            .gold-btn {
+                min-height: 60px !important;
+                touch-action: manipulation;
+            }
+            
+            .session-btn {
+                min-height: 65px !important;
+                touch-action: manipulation;
+            }
+            
+            /* Better slider thumb for touch */
+            input[type="range"]::-webkit-slider-thumb {
+                width: 36px !important;
+                height: 36px !important;
+            }
+            
+            /* Hide audio section on small screens */
+            .audio-section {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mobile-action-bar {
+                gap: 8px;
+                padding: 12px 8px;
+                margin: 0 8px;
+            }
+            
+            .mobile-action-btn {
+                padding: 14px 12px;
+                font-size: 0.95rem;
+                letter-spacing: 1px;
+                min-height: 55px;
+            }
+            
+            .gold-presets {
+                gap: 8px !important;
+            }
+            
+            .gold-btn {
+                padding: 12px 8px !important;
+                font-size: 0.85rem !important;
+            }
+            
+            .gold-btn .icon {
+                font-size: 1.1rem !important;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
     <video id="interactiveBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
     <div class="bg-overlay"></div>
+    <div id="pulseOverlay"></div>
     <canvas id="particleCanvas"></canvas>
     
     <div class="content">
-        <!-- 1. HEADER -->
         <div class="header">
-            <h1>⚜ BAROQUE MIRROR ⚜</h1>
-            <div class="header-sub">Dance & Enrobe • CMA Wonderball 2026 • by Krista Faist</div>
+            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
+            <h1>⚜ BAROQUE MIRROR: DANCE & ENROBE ⚜</h1>
+            <div class="header-sub">Live AI Art Transformation</div>
+            <div class="header-credit">by Krista Faist</div>
         </div>
         
-        <!-- 2. START/STOP SESSION -->
-        <div class="session-section">
-            <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
-            <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
-        </div>
-        
-        <!-- 3. VIDEO OUTPUT -->
-        <div class="video-section">
-            <div class="video-container" id="videoContainer">
-                <video class="container-bg" id="containerBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
-                <video class="output-video" id="output" autoplay playsinline muted></video>
-                <div class="gold-pulse-overlay" id="goldPulse"></div>
-                <div class="frame-overlay"></div>
-                <button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
-            </div>
-        </div>
-        
-        <!-- 4. ACTION ROW: Shop (left) + Capture with thumbnail (right) -->
-        <div class="action-row">
-            <a href="/prints" class="shop-btn">
-                <span class="line1">🛒 Shop Prints</span>
-                <span class="line2">& Mint NFTs</span>
-            </a>
-            <div class="capture-area">
-                <button class="capture-btn-main" id="captureBtn" onclick="captureStill()">
-                    📸 Capture
-                    <span class="counter" id="captureCounter">(0/10)</span>
-                </button>
-                <div class="last-capture" id="lastCapture">
-                    <img src="" alt="Last capture" id="lastCaptureImg">
-                    <span class="placeholder">No<br>captures</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 5. CONTROLS -->
-        <div class="controls-section">
-            <!-- Custom Prompt -->
-            <div class="control-group">
-                <h3>⚜ Custom Prompt</h3>
-                <div class="prompt-row">
-                    <input type="text" class="prompt-input" id="customPrompt" placeholder="golden baroque sculpture...">
-                    <button class="prompt-submit" id="promptSubmit">Apply</button>
-                </div>
-            </div>
-            
-            <!-- Style Presets -->
-            <div class="control-group">
-                <h3>⚜ Style Presets</h3>
-                <div class="style-presets">
-                    <button class="style-btn active" data-style="polished"><span class="icon">✨</span>Polished</button>
-                    <button class="style-btn" data-style="antique"><span class="icon">🏺</span>Antique</button>
-                    <button class="style-btn" data-style="liquid"><span class="icon">💧</span>Liquid</button>
-                    <button class="style-btn" data-style="baroque"><span class="icon">👑</span>Baroque</button>
-                    <button class="style-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
-                    <button class="style-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
-                </div>
-            </div>
-            
-            <!-- Sliders -->
-            <div class="control-group">
-                <h3>⚜ Controls</h3>
-                <div class="slider-row">
-                    <label>Gold Intensity <span class="val" id="strengthVal">30</span></label>
-                    <input type="range" id="strengthSlider" min="10" max="50" value="30">
-                </div>
-                <div class="slider-row">
-                    <label>3D Depth <span class="val" id="depthVal">0.45</span></label>
-                    <input type="range" id="depthSlider" min="20" max="80" value="45">
-                </div>
-                <div class="slider-row">
-                    <label>Edge Detail <span class="val" id="edgeVal">0.35</span></label>
-                    <input type="range" id="edgeSlider" min="10" max="60" value="35">
+        <div class="main">
+            <div class="controls">
+                <div class="session-section">
+                    <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
+                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
                 </div>
                 
-                <!-- Webcam preview -->
-                <div class="webcam-preview">
-                    <video id="local" autoplay muted playsinline></video>
-                    <span>Live input</span>
+                <div class="section">
+                    <h3>⚜ Golden Material</h3>
+                    <div class="gold-presets">
+                        <button class="gold-btn active" data-style="polished"><span class="icon">✨</span>Polished</button>
+                        <button class="gold-btn" data-style="antique"><span class="icon">🏺</span>Antique</button>
+                        <button class="gold-btn" data-style="liquid"><span class="icon">💧</span>Liquid</button>
+                        <button class="gold-btn" data-style="baroque"><span class="icon">👑</span>Baroque</button>
+                        <button class="gold-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
+                        <button class="gold-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Sculpture Controls</h3>
+                    <div class="slider-row"><label>3D Depth <span class="val" id="depthVal">0.45</span></label><input type="range" id="depthSlider" min="20" max="80" value="45"></div>
+                    <div class="slider-row"><label>Gold Intensity <span class="val" id="strengthVal">30</span></label><input type="range" id="strengthSlider" min="10" max="50" value="30"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.35</span></label><input type="range" id="edgeSlider" min="10" max="60" value="35"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.50</span></label><input type="range" id="poseSlider" min="20" max="80" value="50"></div>
+                    <div class="slider-row"><label>Blend Mode <span class="val" id="blendVal">Screen</span></label>
+                        <select id="blendSelect" class="blend-select">
+                            <option value="screen">Screen (black→transparent)</option>
+                            <option value="lighten">Lighten</option>
+                            <option value="color-dodge">Color Dodge (intense)</option>
+                            <option value="normal">Normal (no blend)</option>
+                        </select>
+                    </div>
+                    <div class="slider-row"><label>Contrast <span class="val" id="contrastVal">2.0</span></label><input type="range" id="contrastSlider" min="100" max="300" value="200"></div>
+                    <div class="slider-row"><label>Brightness <span class="val" id="brightnessVal">1.2</span></label><input type="range" id="brightnessSlider" min="80" max="200" value="120"></div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Interactive Background</h3>
+                    <div class="bg-grid">
+                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" muted loop autoplay playsinline></video><span class="label">Golden Shimmer</span></div>
+                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" muted loop autoplay playsinline></video><span class="label">Dark Void</span></div>
+                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" muted loop autoplay playsinline></video><span class="label">Ethereal Glow</span></div>
+                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" muted loop autoplay playsinline></video><span class="label">Baroque Swirl</span></div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Reactivity</h3>
+                    <div class="slider-row"><label>Motion Sensitivity <span class="val" id="motionVal">60%</span></label><input type="range" id="motionSlider" min="0" max="100" value="60"></div>
+                    <div class="slider-row"><label>Particle Density <span class="val" id="particleVal">50%</span></label><input type="range" id="particleSlider" min="10" max="100" value="50"></div>
+                    <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
+                
+                <!-- Statement Section -->
+                <div class="statement-section">
+                    <div class="shimmer-bg">
+                        <div class="shimmer-block">
+                            <h2>Statement</h2>
+                            <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
+                            <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
+                            <div class="section-divider">. . .</div>
+                            <h2>About</h2>
+                            <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
+                            <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
+                            <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
+                            <div class="contact-info">
+                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="log">⚜ Golden Mirror ready...</div>
+            </div>
+            
+            <div class="output-area">
+                <div class="video-container" id="videoContainer">
+                    <div class="video-wrapper">
+                        <video class="container-bg" id="containerBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
+                        <video class="output-video" id="output" autoplay playsinline muted></video>
+                        <div class="gold-pulse-overlay" id="goldPulse"></div>
+                        <div class="black-crush-overlay" id="blackCrush"></div>
+                    </div>
+                    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
+                    <div class="frame-overlay"></div>
                 </div>
             </div>
             
-            <div id="log">⚜ Ready...</div>
+            <!-- Mobile Action Bar - appears between video and controls on mobile -->
+            <div class="mobile-action-bar">
+                <button class="mobile-action-btn capture" onclick="captureNextSlot()">📸 Capture</button>
+                <a href="/prints" class="mobile-action-btn shop">🛒 Shop Prints</a>
+            </div>
+            
+            <div class="capture-panel">
+                <!-- Input Preview -->
+                <div class="input-preview-section">
+                    <h4>⚜ Live Input</h4>
+                    <div class="webcam-pip">
+                        <video id="local" autoplay muted playsinline></video>
+                    </div>
+                </div>
+                
+                <div class="sprocket-track left">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
+                <div class="sprocket-track right">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
+                
+                <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
+                    <span class="purchase-line">Shop Prints</span>
+                    <span class="purchase-divider">⚜</span>
+                    <span class="purchase-line">Mint NFTs</span>
+                </a>
+                
+                <div class="capture-panel-header">
+                    <h3>⚜ Captures</h3>
+                </div>
+                
+                <div class="capture-grid">
+                    <div class="capture-slot" data-slot="1">
+                        <span class="capture-slot-number">EXP_01</span>
+                        <img src="" alt="Captured still 1">
+                        <button class="capture-btn" onclick="captureStill(1)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="2">
+                        <span class="capture-slot-number">EXP_02</span>
+                        <img src="" alt="Captured still 2">
+                        <button class="capture-btn" onclick="captureStill(2)">Capture Still</button>
+                    </div>
+                    <div class="capture-slot" data-slot="3">
+                        <span class="capture-slot-number">EXP_03</span>
+                        <img src="" alt="Captured still 3">
+                        <button class="capture-btn" onclick="captureStill(3)">Capture Still</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -557,30 +934,31 @@ let localStream = null;
 let streamId = null;
 let playbackId = null;
 let pollTimer = null;
-let captureCount = 0;
-const MAX_CAPTURES = 10;
+let audioContext, analyser, audioData;
+let particles = [];
+let motionSensitivity = 0.6;
+let particleDensity = 0.5;
+let capturedStills = {};
 let currentStyle = 'polished';
-let customPrompt = '';
 
 const goldStyles = {
-    polished: 'golden polished metal sculpture, mirror finish, reflective gold surface',
-    antique: 'antique gold patina, aged golden bronze, weathered gilded surface',
-    liquid: 'liquid gold, molten metal flowing, mercury gold reflections',
-    baroque: 'baroque gold ornament, rococo gilded details, ornate golden frame',
-    celestial: 'celestial gold, divine golden light rays, heavenly gilded aureole',
-    obsidian: 'black gold obsidian, dark gilded volcanic glass, shadowy golden veins'
+    polished: { prompt: 'golden polished metal sculpture, mirror finish, reflective gold surface' },
+    antique: { prompt: 'antique gold patina, aged golden bronze, weathered gilded surface' },
+    liquid: { prompt: 'liquid gold, molten metal flowing, mercury gold reflections' },
+    baroque: { prompt: 'baroque gold ornament, rococo gilded details, ornate golden frame' },
+    celestial: { prompt: 'celestial gold, divine golden light rays, heavenly gilded aureole' },
+    obsidian: { prompt: 'black gold obsidian, dark gilded volcanic glass, shadowy golden veins' }
 };
 
 function log(msg, type = '') {
     const logEl = document.getElementById('log');
-    if (!logEl) return;
     const time = new Date().toLocaleTimeString();
     logEl.innerHTML += `<div class="${type}">[${time}] ${msg}</div>`;
     logEl.scrollTop = logEl.scrollHeight;
 }
 
 async function startSession() {
-    log('Starting...', 'info');
+    log('Initializing golden transformation...', 'info');
     document.getElementById('startBtn').style.display = 'none';
     document.getElementById('stopBtn').style.display = 'block';
     
@@ -590,9 +968,12 @@ async function startSession() {
             audio: true 
         });
         document.getElementById('local').srcObject = localStream;
-        log('Camera active', 'success');
+        log('Camera and mic activated', 'success');
         
-        log('Creating stream...', 'info');
+        initAudioAnalysis(localStream);
+        
+        // Create Daydream stream
+        log('Creating Daydream stream...', 'info');
         const createRes = await fetch(`${API_BASE}/streams`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
@@ -604,14 +985,23 @@ async function startSession() {
         const data = await createRes.json();
         streamId = data.id;
         playbackId = data.output_playback_id;
-        log(`Stream: ${streamId.slice(-8)}`, 'success');
+        log(`Stream created: ${streamId.slice(-8)}`, 'success');
         
+        // Connect WebRTC via WHIP
+        log('Connecting WebRTC...', 'info');
         await connectWHIP(data.whip_url);
-        log('WebRTC connected', 'success');
+        log('Video streaming to AI', 'success');
         
-        await new Promise(r => setTimeout(r, 2000));
+        // Wait for AI to initialize
+        log('AI initializing...', 'info');
+        await new Promise(r => setTimeout(r, 3000));
+        
+        // Set initial parameters
         await setParams();
+        log('Style applied', 'success');
         
+        // Start polling for output
+        log('Waiting for output...', 'info');
         startPolling();
         
     } catch (err) {
@@ -622,17 +1012,28 @@ async function startSession() {
 
 async function connectWHIP(whipUrl) {
     inputPC = new RTCPeerConnection({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ]
     });
     
-    localStream.getTracks().forEach(track => inputPC.addTrack(track, localStream));
+    inputPC.oniceconnectionstatechange = () => {
+        log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info');
+    };
+    
+    localStream.getTracks().forEach(track => {
+        inputPC.addTrack(track, localStream);
+    });
     
     const offer = await inputPC.createOffer();
     await inputPC.setLocalDescription(offer);
     
+    // Wait for ICE gathering
     await new Promise(resolve => {
-        if (inputPC.iceGatheringState === 'complete') resolve();
-        else {
+        if (inputPC.iceGatheringState === 'complete') {
+            resolve();
+        } else {
             inputPC.onicegatheringstatechange = () => {
                 if (inputPC.iceGatheringState === 'complete') resolve();
             };
@@ -653,7 +1054,8 @@ async function connectWHIP(whipUrl) {
 }
 
 async function setParams() {
-    const prompt = customPrompt || goldStyles[currentStyle];
+    const style = goldStyles[currentStyle];
+    const prompt = style.prompt;
     const negPrompt = "photograph, photorealistic, modern, digital, flat, cartoon, anime, low quality, blurry";
     
     const body = {
@@ -666,8 +1068,9 @@ async function setParams() {
             num_inference_steps: parseInt(document.getElementById('strengthSlider').value),
             seed: 42,
             controlnets: [
-                { conditioning_scale: document.getElementById('depthSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" },
-                { conditioning_scale: document.getElementById('edgeSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" }
+                { conditioning_scale: document.getElementById('poseSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" },
+                { conditioning_scale: document.getElementById('edgeSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" },
+                { conditioning_scale: document.getElementById('depthSlider').value / 100, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }
             ]
         }
     };
@@ -678,7 +1081,6 @@ async function setParams() {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
             body: JSON.stringify(body)
         });
-        log('Style applied', 'success');
     } catch (e) {
         log(`Params: ${e.message}`, 'info');
     }
@@ -686,6 +1088,7 @@ async function setParams() {
 
 function startPolling() {
     let attempts = 0;
+    const maxAttempts = 120;
     let hlsConnected = false;
     
     const poll = async () => {
@@ -694,7 +1097,9 @@ function startPolling() {
             const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
             const data = await res.json();
             
-            if (attempts % 5 === 0) log(`Waiting (${attempts})...`, 'info');
+            if (attempts % 5 === 0) {
+                log(`Waiting for AI output (${attempts})...`, 'info');
+            }
             
             if (data.meta?.live === 1 && !hlsConnected) {
                 log('STREAM LIVE!', 'success');
@@ -702,12 +1107,19 @@ function startPolling() {
                 if (hlsUrl) {
                     hlsConnected = true;
                     setTimeout(() => connectHLS(hlsUrl), 1500);
+                } else {
+                    log('Waiting for HLS URL...', 'info');
                 }
             }
             
-            if (attempts < 120) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+            }
         } catch (e) {
-            if (attempts < 120) pollTimer = setTimeout(poll, 3000);
+            log(`Poll: ${e.message}`, 'info');
+            if (attempts < maxAttempts) {
+                pollTimer = setTimeout(poll, 3000);
+            }
         }
     };
     
@@ -715,7 +1127,7 @@ function startPolling() {
 }
 
 function connectHLS(url) {
-    log('Connecting HLS...', 'info');
+    log(`Connecting HLS...`, 'info');
     const video = document.getElementById('output');
     
     if (Hls.isSupported()) {
@@ -725,33 +1137,68 @@ function connectHLS(url) {
             lowLatencyMode: true,
             liveSyncDuration: 1,
             liveMaxLatencyDuration: 5,
-            liveDurationInfinity: true
+            liveDurationInfinity: true,
+            highBufferWatchdogPeriod: 2,
+            manifestLoadingTimeOut: 20000,
+            manifestLoadingMaxRetry: 6,
+            manifestLoadingRetryDelay: 1000,
+            levelLoadingTimeOut: 20000,
+            levelLoadingMaxRetry: 6,
+            levelLoadingRetryDelay: 1000,
+            fragLoadingTimeOut: 30000,
+            fragLoadingMaxRetry: 6,
+            fragLoadingRetryDelay: 1000,
+            enableWorker: true,
+            startLevel: -1
         });
         
         hls.loadSource(url);
         hls.attachMedia(video);
         
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            video.play().then(() => log('⚜ TRANSFORMATION ACTIVE!', 'success')).catch(() => {
+            log('Stream manifest loaded', 'success');
+            video.play().then(() => {
+                log('⚜ GOLDEN TRANSFORMATION ACTIVE!', 'success');
+            }).catch(e => {
+                log(`Autoplay blocked - click video to play`, 'info');
                 video.muted = true;
-                video.play();
+                video.play().catch(() => {});
             });
         });
         
         hls.on(Hls.Events.ERROR, (e, data) => {
+            log(`HLS: ${data.type} - ${data.details}`, 'info');
             if (data.fatal) {
-                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(() => hls.startLoad(), 2000);
-                else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+                switch (data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        log('Network error - retrying...', 'info');
+                        setTimeout(() => hls.startLoad(), 2000);
+                        break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        log('Media error - recovering...', 'info');
+                        hls.recoverMediaError();
+                        break;
+                    default:
+                        log('Fatal error - please restart', 'error');
+                        break;
+                }
             }
         });
+        
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
-        video.addEventListener('loadedmetadata', () => video.play());
+        video.addEventListener('loadedmetadata', () => {
+            video.play().catch(() => {
+                video.muted = true;
+                video.play();
+            });
+        });
+        log('Native HLS playing', 'success');
     }
 }
 
 function stopSession() {
-    log('Ending...', 'info');
+    log('Ending session...', 'info');
     
     if (pollTimer) clearTimeout(pollTimer);
     if (hls) { hls.destroy(); hls = null; }
@@ -760,6 +1207,7 @@ function stopSession() {
         localStream.getTracks().forEach(t => t.stop());
         localStream = null;
     }
+    if (audioContext) { audioContext.close(); audioContext = null; }
     
     document.getElementById('local').srcObject = null;
     document.getElementById('output').src = '';
@@ -772,45 +1220,157 @@ function stopSession() {
     log('Session ended', 'info');
 }
 
-function captureStill() {
+function captureStill(slotNumber) {
+    console.log('captureStill called with slot:', slotNumber);
     const outputVideo = document.getElementById('output');
     const canvas = document.getElementById('captureCanvas');
     const ctx = canvas.getContext('2d');
+    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
     
-    if (!outputVideo.videoWidth) { 
-        log('No video yet', 'error'); 
-        return; 
-    }
-    
-    canvas.width = Math.min(800, outputVideo.videoWidth);
-    canvas.height = canvas.width * (outputVideo.videoHeight / outputVideo.videoWidth);
+    // Scale down for storage (max 800px wide)
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
     ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
     
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    // Use JPEG with 70% quality instead of PNG (much smaller)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
     
-    captureCount++;
-    if (captureCount > MAX_CAPTURES) captureCount = MAX_CAPTURES;
-    
-    // Update counter
-    document.getElementById('captureCounter').textContent = `(${captureCount}/${MAX_CAPTURES})`;
-    
-    // Update thumbnail
-    const lastCapture = document.getElementById('lastCapture');
-    const lastImg = document.getElementById('lastCaptureImg');
-    lastImg.src = dataUrl;
-    lastCapture.classList.add('has-image');
-    
-    // Store in localStorage
     try {
-        const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '[]');
-        captures.push({ image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle });
-        if (captures.length > MAX_CAPTURES) captures.shift();
-        localStorage.setItem('baroqueCaptures', JSON.stringify(captures));
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
     } catch (e) {
-        localStorage.removeItem('baroqueCaptures');
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('goldenCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
     }
     
-    log(`Captured (${captureCount}/${MAX_CAPTURES})`, 'success');
+    const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
+    slot.querySelector('img').src = dataUrl;
+    slot.classList.add('has-image');
+    log(`Still captured to slot ${slotNumber}`, 'success');
+}
+
+// Auto-capture to next empty slot (for mobile button)
+function captureNextSlot() {
+    for (let i = 1; i <= 3; i++) {
+        if (!capturedStills[i]) {
+            captureStill(i);
+            return;
+        }
+    }
+    // All slots full, replace slot 1
+    captureStill(1);
+}
+
+function loadCapturedStills() {
+    // Clear old captures on each new session
+    localStorage.removeItem('goldenCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
+}
+
+// Audio analysis from mic input only (no sound output)
+function initAudioAnalysis(stream) {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser(); 
+        analyser.fftSize = 256; 
+        analyser.smoothingTimeConstant = 0.8;
+        
+        // Connect mic to analyser only - NOT to destination (no sound output)
+        const micSource = audioContext.createMediaStreamSource(stream);
+        micSource.connect(analyser);
+        // DO NOT connect to audioContext.destination - this keeps it silent
+        
+        audioData = new Uint8Array(analyser.frequencyBinCount);
+        
+        const meterEl = document.getElementById('audioMeter');
+        meterEl.innerHTML = '';
+        for (let i = 0; i < 32; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'audio-bar';
+            bar.style.height = '2px';
+            meterEl.appendChild(bar);
+        }
+        
+        updateAudioMeter();
+        log('Audio analysis active (mic only, no output)', 'success');
+    } catch (err) {
+        log('Audio analysis unavailable', 'error');
+    }
+}
+
+function updateAudioMeter() {
+    if (!analyser) return;
+    analyser.getByteFrequencyData(audioData);
+    
+    const bars = document.querySelectorAll('.audio-bar');
+    const step = Math.floor(audioData.length / bars.length);
+    let totalEnergy = 0;
+    
+    bars.forEach((bar, i) => {
+        const value = audioData[i * step];
+        const height = Math.max(2, (value / 255) * 100);
+        bar.style.height = `${height}%`;
+        totalEnergy += value;
+    });
+    
+    // Pulse overlay based on audio energy
+    const avgEnergy = totalEnergy / bars.length / 255;
+    document.getElementById('goldPulse').style.opacity = avgEnergy * 0.5;
+    
+    requestAnimationFrame(updateAudioMeter);
+}
+
+// Particle system
+function initParticles() {
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    
+    for (let i = 0; i < 50; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 3 + 1,
+            alpha: Math.random() * 0.5 + 0.2
+        });
+    }
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.x += p.vx * motionSensitivity;
+            p.y += p.vy * motionSensitivity;
+            
+            if (p.x < 0) p.x = canvas.width;
+            if (p.x > canvas.width) p.x = 0;
+            if (p.y < 0) p.y = canvas.height;
+            if (p.y > canvas.height) p.y = 0;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * particleDensity, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha})`;
+            ctx.fill();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    animate();
 }
 
 // Event listeners
@@ -819,61 +1379,88 @@ document.getElementById('stopBtn').addEventListener('click', stopSession);
 
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
     const container = document.getElementById('videoContainer');
-    if (document.fullscreenElement) document.exitFullscreen();
-    else container.requestFullscreen();
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        container.requestFullscreen();
+    }
 });
 
-// Custom prompt
-document.getElementById('promptSubmit').addEventListener('click', () => {
-    customPrompt = document.getElementById('customPrompt').value.trim();
-    if (streamId) setParams();
-    log(`Prompt: ${customPrompt || 'using preset'}`, 'info');
-});
-
-document.getElementById('customPrompt').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') document.getElementById('promptSubmit').click();
-});
-
-// Style presets
-document.querySelectorAll('.style-btn').forEach(btn => {
+document.querySelectorAll('.gold-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.gold-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentStyle = btn.dataset.style;
-        customPrompt = ''; // Clear custom prompt when selecting preset
-        document.getElementById('customPrompt').value = '';
-        if (streamId) setParams();
         log(`Style: ${currentStyle}`, 'info');
+        if (streamId) setParams();
+    });
+});
+
+document.querySelectorAll('.bg-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+        document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+        const bgSrc = thumb.dataset.bg;
+        document.getElementById('containerBg').src = bgSrc;
+        document.getElementById('interactiveBg').src = bgSrc;
+        log(`Background: ${bgSrc}`, 'info');
     });
 });
 
 // Sliders
-document.getElementById('strengthSlider').addEventListener('input', e => {
-    document.getElementById('strengthVal').textContent = e.target.value;
-    if (streamId) setParams();
-});
 document.getElementById('depthSlider').addEventListener('input', e => {
     document.getElementById('depthVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('strengthSlider').addEventListener('input', e => {
+    document.getElementById('strengthVal').textContent = e.target.value;
     if (streamId) setParams();
 });
 document.getElementById('edgeSlider').addEventListener('input', e => {
     document.getElementById('edgeVal').textContent = (e.target.value / 100).toFixed(2);
     if (streamId) setParams();
 });
+document.getElementById('poseSlider').addEventListener('input', e => {
+    document.getElementById('poseVal').textContent = (e.target.value / 100).toFixed(2);
+    if (streamId) setParams();
+});
+document.getElementById('motionSlider').addEventListener('input', e => {
+    motionSensitivity = e.target.value / 100;
+    document.getElementById('motionVal').textContent = e.target.value + '%';
+});
+document.getElementById('particleSlider').addEventListener('input', e => {
+    particleDensity = e.target.value / 100;
+    document.getElementById('particleVal').textContent = e.target.value + '%';
+});
 
-// Load previous capture count
-try {
-    const captures = JSON.parse(localStorage.getItem('baroqueCaptures') || '[]');
-    captureCount = captures.length;
-    document.getElementById('captureCounter').textContent = `(${captureCount}/${MAX_CAPTURES})`;
-    if (captures.length > 0) {
-        const last = captures[captures.length - 1];
-        document.getElementById('lastCaptureImg').src = last.image;
-        document.getElementById('lastCapture').classList.add('has-image');
-    }
-} catch (e) {}
+document.getElementById('blendSelect').addEventListener('change', e => {
+    const video = document.getElementById('output');
+    video.style.mixBlendMode = e.target.value;
+    document.getElementById('blendVal').textContent = e.target.options[e.target.selectedIndex].text.split(' ')[0];
+});
 
-log('⚜ Baroque Mirror ready', 'success');
+document.getElementById('contrastSlider').addEventListener('input', e => {
+    const val = e.target.value / 100;
+    document.getElementById('contrastVal').textContent = val.toFixed(1);
+    updateVideoFilter();
+});
+
+document.getElementById('brightnessSlider').addEventListener('input', e => {
+    const val = e.target.value / 100;
+    document.getElementById('brightnessVal').textContent = val.toFixed(1);
+    updateVideoFilter();
+});
+
+function updateVideoFilter() {
+    const contrast = document.getElementById('contrastSlider').value / 100;
+    const brightness = document.getElementById('brightnessSlider').value / 100;
+    document.getElementById('output').style.filter = `contrast(${contrast}) saturate(1.5) brightness(${brightness})`;
+}
+
+// Initialize
+loadCapturedStills();
+initParticles();
+log('⚜ Baroque Mirror: Dance & Enrobe ready', 'success');
 </script>
 
 </body>
