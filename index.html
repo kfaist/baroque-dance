@@ -431,25 +431,22 @@
             .content {
                 display: grid;
                 grid-template-columns: 320px 1fr 200px;
-                grid-template-rows: auto 1fr;
+                grid-template-rows: auto auto 1fr;
                 min-height: 100vh;
             }
             
             .header {
                 grid-column: 1 / -1;
+                grid-row: 1;
                 padding: 15px 20px;
             }
             .header h1 { font-size: 1.8rem; letter-spacing: 5px; }
             .header-sub { font-size: 0.9rem; }
             
-            /* Left column: Session + Controls */
-            .left-column {
-                display: contents;
-            }
             .session-section {
                 grid-column: 1;
                 grid-row: 2;
-                border-bottom: none;
+                border-bottom: 1px solid rgba(212,175,55,0.3);
                 border-right: 1px solid rgba(212,175,55,0.3);
             }
             .controls-section {
@@ -457,15 +454,15 @@
                 grid-row: 3;
                 border-right: 1px solid rgba(212,175,55,0.3);
                 overflow-y: auto;
-                max-height: calc(100vh - 200px);
+                max-height: calc(100vh - 180px);
             }
             
-            /* Center: Video */
             .video-section {
                 grid-column: 2;
                 grid-row: 2 / 4;
                 display: flex;
                 flex-direction: column;
+                justify-content: center;
                 padding: 20px;
             }
             .video-container {
@@ -473,7 +470,6 @@
                 border: 2px solid rgba(212,175,55,0.6);
             }
             
-            /* Right column: Actions */
             .action-row {
                 grid-column: 3;
                 grid-row: 2 / 4;
@@ -482,12 +478,16 @@
                 border-bottom: none;
                 border-left: 1px solid rgba(212,175,55,0.3);
             }
-            .capture-area {
-                flex-direction: column;
-            }
             .last-capture {
                 width: 100%;
                 height: 100px;
+            }
+            .capture-btn-main {
+                width: 100%;
+                height: 70px;
+            }
+            .shop-btn {
+                height: 80px;
             }
             
             #log { display: block; }
