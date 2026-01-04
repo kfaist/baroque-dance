@@ -676,6 +676,16 @@
             if (!stored) stored = localStorage.getItem('baroqueCaptures');
             captures = stored ? JSON.parse(stored) : {};
             
+            // TEST MODE: Add test captures when ?test=true is in URL
+            if (params.get('test') === 'true' && Object.keys(captures).length === 0) {
+                const testImage = 'https://res.cloudinary.com/dktiofneg/image/upload/v1735988400/baroque-prints/test-baroque-portrait.jpg';
+                captures = {
+                    1: { image: testImage, timestamp: Date.now() },
+                    2: { image: testImage, timestamp: Date.now() }
+                };
+                console.log('TEST MODE: Loaded test captures');
+            }
+            
             const heroContainer = document.getElementById('heroCaptures');
             const gridContainer = document.getElementById('gridCaptures');
             heroContainer.innerHTML = '';
