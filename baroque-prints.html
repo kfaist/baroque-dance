@@ -633,8 +633,35 @@
     </div>
     
     <script>
-        const API_URL = 'https://api-production-d80a.up.railway.app';
-        const stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
+        // Check for test mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const isTestMode = urlParams.get('test') === 'true';
+        
+        // API URL changes based on mode
+        const API_BASE = 'https://api-production-d80a.up.railway.app';
+        const API_URL = isTestMode ? API_BASE + '/test' : API_BASE;
+        
+        // Initialize Stripe (will be set after fetching key)
+        let stripe = null;
+        
+        // Fetch the correct Stripe key from server
+        async function initStripe() {
+            try {
+                const response = await fetch(`${API_BASE}/stripe-key?test=${isTestMode}`);
+                const data = await response.json();
+                stripe = Stripe(data.key);
+                console.log(`Stripe initialized in ${data.mode} mode`);
+                if (data.mode === 'test') {
+                    document.body.style.border = '3px solid orange';
+                    document.querySelector('.header h1').innerHTML = '🧪 TEST MODE 🧪';
+                }
+            } catch (err) {
+                // Fallback to live key
+                console.log('Using fallback Stripe key');
+                stripe = Stripe('pk_live_51SL6QhADdiQo1kIcChk759IFrqbhz8QZIkAdpeB97CQKydGSXv0MUB6oDlLb4Yjl2nE5LY0Eb4PCAUpQSxw4DPBg003xTZiXPn');
+            }
+        }
+        initStripe();
         
         const PRODUCTS = {
             'mini-print': { name: 'Mini Print 5×7"', price: 18, frame: 'frame-keepsake' },
@@ -665,7 +692,72 @@
         
         // URL params
         const params = new URLSearchParams(window.location.search);
-        if (params.get('success')) {
+        
+        // TEST MODE: Show fulfillment form for mock checkout
+        if (params.get('test') === 'true' && params.get('success') === 'true' && params.get('mock_session')) {
+            const productId = params.get('product');
+            const imageUrl = decodeURIComponent(params.get('image') || '');
+            
+            document.getElementById('statusBanner').innerHTML = `
+                <div style="background: rgba(255,165,0,0.15); border: 2px solid orange; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: orange; font-family: 'Cinzel', serif; margin-bottom: 15px;">🧪 TEST MODE - Enter Shipping to Test Prodigi</h3>
+                    <p style="margin-bottom: 15px; color: #f4e4ba;">Product: ${productId} | Image ready</p>
+                    <form id="testFulfillForm" style="display: grid; gap: 10px; max-width: 400px;">
+                        <input type="text" id="testName" placeholder="Full Name" required style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <input type="text" id="testLine1" placeholder="Address Line 1" required style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <input type="text" id="testLine2" placeholder="Apt/Suite (optional)" style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <input type="text" id="testCity" placeholder="City" required style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <input type="text" id="testState" placeholder="State (optional)" style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <input type="text" id="testPostal" placeholder="ZIP/Postal Code" required style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                        <select id="testCountry" required style="padding: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1a1018; color: #f4e4ba;">
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="GB">United Kingdom</option>
+                        </select>
+                        <button type="submit" style="padding: 12px; background: orange; color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                            🧪 Send Test Order to Prodigi Sandbox
+                        </button>
+                    </form>
+                    <div id="testResult" style="margin-top: 15px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('testFulfillForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const resultDiv = document.getElementById('testResult');
+                resultDiv.innerHTML = '<p style="color: orange;">Sending to Prodigi Sandbox...</p>';
+                
+                try {
+                    const res = await fetch(API_BASE + '/test/fulfill', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            productId: productId,
+                            imageUrl: imageUrl,
+                            shipping: {
+                                name: document.getElementById('testName').value,
+                                address: {
+                                    line1: document.getElementById('testLine1').value,
+                                    line2: document.getElementById('testLine2').value,
+                                    city: document.getElementById('testCity').value,
+                                    state: document.getElementById('testState').value,
+                                    postal_code: document.getElementById('testPostal').value,
+                                    country: document.getElementById('testCountry').value
+                                }
+                            }
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        resultDiv.innerHTML = '<p style="color: #4ade80;">✅ SUCCESS! Prodigi Order ID: ' + data.orderId + '</p><pre style="background: #1a1018; padding: 10px; border-radius: 5px; overflow: auto; font-size: 12px; color: #87ceeb;">' + JSON.stringify(data.result, null, 2) + '</pre>';
+                    } else {
+                        resultDiv.innerHTML = '<p style="color: #f87171;">❌ FAILED:</p><pre style="background: #1a1018; padding: 10px; border-radius: 5px; overflow: auto; font-size: 12px; color: #f87171;">' + JSON.stringify(data.error, null, 2) + '</pre>';
+                    }
+                } catch (err) {
+                    resultDiv.innerHTML = '<p style="color: #f87171;">❌ Error: ' + err.message + '</p>';
+                }
+            });
+        } else if (params.get('success')) {
             document.getElementById('statusBanner').innerHTML = '<div class="success-banner">✓ Order placed! Your print will ship within 3-5 business days.</div>';
         } else if (params.get('canceled')) {
             document.getElementById('statusBanner').innerHTML = '<div class="error-banner">Order canceled. Your captures are still saved.</div>';
@@ -768,19 +860,31 @@
             btn.innerHTML = '<span class="loading"></span>Processing...';
             
             try {
-                await fetch(`${API_URL}/save-image`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderId: `order-${Date.now()}-${selectedCapture}`, imageData: captures[selectedCapture].image })
-                });
+                // Skip image save in test mode
+                if (!isTestMode) {
+                    await fetch(`${API_BASE}/save-image`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderId: `order-${Date.now()}-${selectedCapture}`, imageData: captures[selectedCapture].image })
+                    });
+                }
                 
-                const res = await fetch(`${API_URL}/create-checkout`, {
+                const checkoutEndpoint = isTestMode 
+                    ? `${API_BASE}/test/create-checkout`
+                    : `${API_BASE}/create-checkout`;
+                
+                const res = await fetch(checkoutEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ productId, imageData: captures[selectedCapture].image, returnUrl: window.location.href.split('?')[0] })
                 });
                 
                 const data = await res.json();
+                
+                if (data.testMode) {
+                    console.log('🧪 TEST MODE: Redirecting to mock success page');
+                }
+                
                 if (data.url) {
                     window.location.href = data.url;
                 } else {
