@@ -629,6 +629,18 @@
             box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
         
+        /* Status Overlay */
+        .status-overlay { position: absolute; top: 15px; left: 15px; z-index: 50; display: none; font-family: 'Courier New', monospace; font-size: 0.7rem; max-width: 350px; }
+        .status-overlay.active { display: block; }
+        .status-message { color: #ff1493; font-weight: bold; font-size: 0.85rem; animation: pinkFlash 1s ease-in-out infinite; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,20,147,0.5); }
+        @keyframes pinkFlash { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .status-debug { color: #88ffaa; font-size: 0.65rem; line-height: 1.4; }
+        .status-debug-line { margin-bottom: 2px; }
+        .status-debug-line.info { color: #88ccff; }
+        .status-debug-line.success { color: #88ffaa; }
+        .status-debug-line.error { color: #ff6b6b; }
+        .status-hint { color: #ff8c00; font-weight: bold; margin-top: 8px; font-size: 0.75rem; }
+        
         /* Input Preview */
         .input-preview-section {
             margin-bottom: 15px;
@@ -662,6 +674,7 @@
         }
         
         #log { 
+            display: none; 
             background: rgba(0,0,0,0.6); 
             padding: 12px; 
             height: 100px; 
@@ -1339,6 +1352,11 @@
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
+                    <div class="status-overlay" id="statusOverlay">
+                        <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
+                        <div class="status-debug" id="statusDebug"></div>
+                        <div class="status-hint" id="statusHint"></div>
+                    </div>
                 </div>
             </div>
             
@@ -1496,6 +1514,9 @@ const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
 // STATE
 // ============================================
 let localStream, inputPC, streamId, playbackId, hls, pollTimer;
+let countdownTimer = null;
+let countdownValue = 45;
+let statusDebugLines = [];
 let audioContext, analyser, audioDataArray, micSource;
 let currentStyle = 'baroque';
 let modeValue = 50;
@@ -1566,15 +1587,79 @@ const styles = {
     }
 };
 
+function getErrorHint(msg) {
+    const hints = {
+        'videoinput failed': 'Make sure your camera isn\'t in use by another app',
+        'NotAllowedError': 'Camera permission was denied - check browser settings',
+        'NotFoundError': 'No camera detected on this device',
+        'NotReadableError': 'Camera may be in use by another application',
+        'OverconstrainedError': 'Camera doesn\'t support the requested resolution',
+        'Permission denied': 'Please allow camera access when prompted',
+        'Could not start video source': 'Close other apps using your camera and try again',
+        'network': 'Check your internet connection',
+        'Create failed': 'AI service may be busy - try again in a moment',
+        'WebRTC': 'Connection issue - try refreshing the page',
+        'WHIP': 'Stream connection failed - check your network'
+    };
+    for (const [key, hint] of Object.entries(hints)) {
+        if (msg.toLowerCase().includes(key.toLowerCase())) return hint;
+    }
+    return '';
+}
+
 function log(msg, type = '') {
     const div = document.getElementById('log');
     const line = document.createElement('div');
     line.className = type;
-    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    const timeStr = new Date().toLocaleTimeString();
+    line.textContent = `[${timeStr}] ${msg}`;
     div.appendChild(line);
     div.scrollTop = div.scrollHeight;
     console.log(msg);
+    // Update status debug overlay
+    const statusDebug = document.getElementById('statusDebug');
+    const statusHint = document.getElementById('statusHint');
+    if (statusDebug && document.getElementById('statusOverlay').classList.contains('active')) {
+        statusDebugLines.push({text: `[${timeStr}] ${msg}`, type: type});
+        if (statusDebugLines.length > 5) statusDebugLines.shift();
+        statusDebug.innerHTML = statusDebugLines.map(l => `<div class="status-debug-line ${l.type}">${l.text}</div>`).join('');
+        // Show hint for errors
+        if (type === 'error' && statusHint) {
+            const hint = getErrorHint(msg);
+            statusHint.textContent = hint;
+        }
+    }
 }
+
+function showStatusOverlay() {
+    const overlay = document.getElementById('statusOverlay');
+    overlay.classList.add('active');
+    countdownValue = 45;
+    statusDebugLines = [];
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+    const msg = document.getElementById('statusMessage');
+    if (countdownValue > 0) {
+        msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
+        countdownValue--;
+    } else {
+        msg.textContent = 'Almost there...';
+    }
+}
+
+function hideStatusOverlay() {
+    const overlay = document.getElementById('statusOverlay');
+    overlay.classList.remove('active');
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+    statusDebugLines = [];
+}
+
 
 function captureNextSlot() {
     let targetSlot = null;
@@ -1966,6 +2051,7 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     document.getElementById('startBtn2').disabled = true;
+    showStatusOverlay();
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
@@ -2054,7 +2140,7 @@ function connectHLS(url) {
         hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true, highBufferWatchdogPeriod: 2, manifestLoadingTimeOut: 20000, manifestLoadingMaxRetry: 6, manifestLoadingRetryDelay: 1000, levelLoadingTimeOut: 20000, levelLoadingMaxRetry: 6, levelLoadingRetryDelay: 1000, fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 6, fragLoadingRetryDelay: 1000, enableWorker: true, startLevel: -1 });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); video.muted = true; video.play().catch(() => {}); }); });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { log('Stream manifest loaded', 'success'); video.play().then(() => { log('AI OUTPUT ACTIVE!', 'success'); hideStatusOverlay(); }).catch(e => { log(`Autoplay blocked - click video to play`, 'info'); hideStatusOverlay(); video.muted = true; video.play().catch(() => {}); }); });
         hls.on(Hls.Events.ERROR, (e, data) => { log(`HLS: ${data.type} - ${data.details}`, 'info'); if (data.fatal) { switch (data.type) { case Hls.ErrorTypes.NETWORK_ERROR: log('Network error - retrying...', 'info'); setTimeout(() => { hls.startLoad(); }, 2000); break; case Hls.ErrorTypes.MEDIA_ERROR: log('Media error - recovering...', 'info'); hls.recoverMediaError(); break; default: log('Fatal error - please restart', 'error'); break; } } });
         hls.on(Hls.Events.FRAG_LOADED, () => { if (!video.playing) video.play().catch(() => {}); });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.addEventListener('loadedmetadata', () => { video.play().catch(() => { video.muted = true; video.play(); }); }); log('Native HLS playing', 'success'); }
@@ -2062,6 +2148,7 @@ function connectHLS(url) {
 
 function stop() {
     if (pollTimer) clearTimeout(pollTimer);
+    hideStatusOverlay();
     if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
     if (inputPC) { inputPC.close(); inputPC = null; }
     if (hls) { hls.destroy(); hls = null; }
