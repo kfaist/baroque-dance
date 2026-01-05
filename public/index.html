@@ -806,10 +806,12 @@
                 </div>
                 
                 <div class="section">
-                    <h3>⚜ Reactivity</h3>
+                    <h3>⚜ Audio Reactivity</h3>
+                    <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
+                    <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
                     <div class="slider-row"><label>Motion Sensitivity <span class="val" id="motionVal">60%</span></label><input type="range" id="motionSlider" min="0" max="100" value="60"></div>
                     <div class="slider-row"><label>Particle Density <span class="val" id="particleVal">50%</span></label><input type="range" id="particleSlider" min="10" max="100" value="50"></div>
-                    <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
+                    <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
                 </div>
                 <div id="log">⚜ Golden Mirror ready...</div>
             </div>
@@ -932,6 +934,7 @@ let inputPC = null;
 let localStream = null;
 let streamId = null;
 let playbackId = null;
+let audioParams = { intensity: 0.75, pulseSpeed: 0.5, particleDensity: 0.6 };
 let pollTimer = null;
 let audioContext, analyser, audioData;
 let particles = [];
@@ -1430,6 +1433,15 @@ document.getElementById('motionSlider').addEventListener('input', e => {
 document.getElementById('particleSlider').addEventListener('input', e => {
     particleDensity = e.target.value / 100;
     document.getElementById('particleVal').textContent = e.target.value + '%';
+});
+
+document.getElementById('audioIntensitySlider').addEventListener('input', e => {
+    audioParams.intensity = e.target.value / 100;
+    document.getElementById('audioIntensityVal').textContent = e.target.value + '%';
+});
+document.getElementById('pulseSpeedSlider').addEventListener('input', e => {
+    audioParams.pulseSpeed = e.target.value / 100;
+    document.getElementById('pulseSpeedVal').textContent = e.target.value + '%';
 });
 
 document.getElementById('blendSelect').addEventListener('change', e => {
