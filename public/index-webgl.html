@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baroque Mirror: Dance & Enrobe - LIVE WebGL</title>
+    <title>Baroque Mirror: Dance & Enrobe - WebGL LIVE</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
         
@@ -17,165 +17,163 @@
             overflow-x: hidden;
         }
         
+        /* Background */
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, rgba(114,47,55,0.15) 0%, rgba(10,6,8,0.98) 70%); pointer-events: none; z-index: 0; }
+        
+        /* Header */
         .header {
             background: linear-gradient(180deg, rgba(114,47,55,0.9) 0%, rgba(10,6,8,0.95) 100%);
-            padding: 15px 25px;
+            padding: 20px 30px;
             text-align: center;
             border-bottom: 2px solid rgba(212,175,55,0.6);
             position: relative;
             z-index: 10;
         }
-        .header h1 { 
-            font-family: 'Cinzel', serif; 
-            font-size: 1.4rem; 
-            color: #d4af37; 
-            letter-spacing: 4px; 
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(212,175,55,0.5);
-        }
-        .header-sub { font-size: 0.85rem; color: #f4e4ba; margin-top: 4px; letter-spacing: 2px; }
+        .header-top { display: flex; justify-content: center; gap: 30px; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 3px; color: rgba(212,175,55,0.7); margin-bottom: 8px; }
+        .header h1 { font-family: 'Cinzel', serif; font-size: 1.8rem; color: #d4af37; letter-spacing: 6px; text-transform: uppercase; text-shadow: 0 0 30px rgba(212,175,55,0.5); }
+        .header-sub { font-size: 0.9rem; color: #f4e4ba; margin-top: 5px; letter-spacing: 3px; font-style: italic; }
+        .header-credit { font-size: 0.8rem; color: rgba(212,175,55,0.8); margin-top: 3px; }
+        .latency-badge { display: inline-block; background: linear-gradient(90deg, #2a5a2a, #3a7a3a); color: #90EE90; padding: 4px 14px; border-radius: 20px; font-size: 0.65rem; font-family: 'Cinzel', serif; letter-spacing: 1px; margin-top: 8px; }
         
-        .main {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
+        /* Main Layout */
+        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; position: relative; z-index: 1; }
         
-        .controls {
-            background: rgba(15,10,12,0.9);
-            border: 1px solid rgba(212,175,55,0.4);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-        }
+        /* Controls Panel */
+        .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
+        .capture-panel { padding: 15px; }
         
         .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
-        .section:last-child { border-bottom: none; }
-        .section h3 { color: #d4af37; font-size: 0.9rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .section:last-child { border-bottom: none; margin-bottom: 0; }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
         
-        .slider-row { margin-bottom: 12px; }
+        .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .session-btn { width: 100%; padding: 18px 20px; font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 3px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.2), rgba(139,105,20,0.1)); color: #d4af37; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; text-transform: uppercase; }
+        .session-btn:hover { background: linear-gradient(180deg, rgba(212,175,55,0.4), rgba(139,105,20,0.2)); box-shadow: 0 0 30px rgba(212,175,55,0.4); }
+        .session-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* Gold Presets */
+        .gold-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .gold-btn { padding: 12px 8px; border: 1px solid rgba(212,175,55,0.4); background: rgba(0,0,0,0.3); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .gold-btn:hover { border-color: #d4af37; background: rgba(212,175,55,0.15); }
+        .gold-btn.active { border-color: #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.15)); box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .gold-btn .icon { font-size: 1.2rem; }
+        
+        /* Sliders */
+        .slider-row { margin-bottom: 14px; }
         .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
-        .slider-row .val { color: #d4af37; font-weight: 700; }
+        .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
         input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); }
         
+        /* Audio Section */
         .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
-        .audio-section h4 { color: #d4af37; font-size: 0.8rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        .audio-section h4 { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
         .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
-        .audio-bar { flex: 1; background: linear-gradient(180deg, #ff00ff, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; min-height: 2px; }
+        .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; min-height: 2px; }
         
+        /* Output Area */
         .output-area { position: relative; }
-        .video-container { 
-            position: relative; 
-            border: 2px solid rgba(212,175,55,0.6); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 0 60px rgba(212,175,55,0.2);
-            background: #000;
-        }
-        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; }
-        
+        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), 0 0 100px rgba(114,47,55,0.3); }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
         #webcam { display: none; }
         #glCanvas { width: 100%; height: 100%; display: block; }
-        
-        .fullscreen-btn { 
-            position: absolute; top: 15px; right: 15px; 
-            width: 40px; height: 40px; 
-            border: 1px solid rgba(212,175,55,0.6); 
-            background: rgba(10,6,8,0.8); 
-            color: #d4af37; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-size: 1.1rem;
-            z-index: 20;
-        }
+        .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.2rem; z-index: 20; transition: all 0.3s ease; }
         .fullscreen-btn:hover { background: rgba(212,175,55,0.3); }
+        .frame-overlay { position: absolute; inset: 0; border: 8px solid transparent; border-image: linear-gradient(135deg, rgba(212,175,55,0.4), rgba(139,105,20,0.2), rgba(212,175,55,0.4)) 1; pointer-events: none; }
         
-        .start-btn {
-            width: 100%;
-            padding: 18px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            letter-spacing: 3px;
-            background: linear-gradient(180deg, #d4af37, #8b6914);
-            color: #0a0608;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-bottom: 15px;
+        /* Statement Section */
+        .statement-section { margin-top: 20px; padding: 25px; background: rgba(15,10,12,0.9); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; }
+        .statement-section h2 { font-family: 'Cinzel', serif; font-size: 1rem; color: #d4af37; letter-spacing: 3px; margin-bottom: 12px; text-transform: uppercase; }
+        .statement-section p { font-size: 0.95rem; line-height: 1.7; color: rgba(244,228,186,0.85); margin-bottom: 12px; }
+        .section-divider { text-align: center; color: rgba(212,175,55,0.5); margin: 20px 0; letter-spacing: 8px; }
+        
+        /* Capture Panel */
+        .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
+        
+        .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .webcam-pip { width: 100%; aspect-ratio: 4/3; background: #000; border: 1px solid rgba(212,175,55,0.4); border-radius: 6px; overflow: hidden; }
+        .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .shop-btn { display: block; width: 100%; padding: 12px; margin-bottom: 15px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 2px; text-align: center; text-decoration: none; border: 1px solid rgba(212,175,55,0.5); background: linear-gradient(180deg, rgba(212,175,55,0.15), rgba(139,105,20,0.1)); color: #d4af37; border-radius: 6px; transition: all 0.3s ease; text-transform: uppercase; }
+        .shop-btn:hover { background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.2)); box-shadow: 0 0 20px rgba(212,175,55,0.3); }
+        
+        .capture-grid { display: flex; flex-direction: column; gap: 8px; }
+        .capture-slot { background: rgba(0,0,0,0.4); border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; padding: 8px; text-align: center; }
+        .capture-slot-number { display: block; font-family: 'Cinzel', serif; font-size: 0.6rem; color: rgba(212,175,55,0.6); letter-spacing: 2px; margin-bottom: 6px; }
+        .capture-btn { width: 100%; padding: 8px; font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 1px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.1); color: #f4e4ba; cursor: pointer; border-radius: 4px; transition: all 0.3s ease; }
+        .capture-btn:hover { background: rgba(212,175,55,0.25); }
+        .capture-slot img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-bottom: 6px; display: none; }
+        .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image .capture-btn { display: none; }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main { grid-template-columns: 1fr 200px; grid-template-rows: auto 1fr; }
+            .controls { grid-column: 1 / -1; grid-row: 1; }
         }
-        .start-btn:hover { box-shadow: 0 0 25px rgba(212,175,55,0.5); }
-        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .latency-badge {
-            display: inline-block;
-            background: linear-gradient(90deg, #2a5a2a, #4a8a4a);
-            color: #90EE90;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-family: 'Cinzel', serif;
-            letter-spacing: 1px;
-            margin-top: 8px;
-        }
-        
         @media (max-width: 900px) {
-            .main { grid-template-columns: 1fr; }
+            .main { grid-template-columns: 1fr; padding: 10px; gap: 15px; }
             .output-area { order: -1; }
-            .controls { max-height: none; }
+            .capture-panel { display: none; }
+            .header h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
+    <div class="bg-overlay"></div>
+    
     <div class="header">
-        <h1>⚜ Dance & Enrobe ⚜</h1>
-        <div class="header-sub">Real-Time Liquid Flow Transformation</div>
+        <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
+        <h1>⚜ Baroque Mirror: Dance & Enrobe ⚜</h1>
+        <div class="header-sub">Live AI Art Transformation</div>
+        <div class="header-credit">by Krista Faist</div>
         <div class="latency-badge">⚡ ZERO LATENCY - WebGL</div>
     </div>
     
     <div class="main">
         <div class="controls">
-            <button class="start-btn" id="startBtn">Begin Transformation ⚜</button>
-            
-            <div class="section">
-                <h3>⚜ Flow Field</h3>
-                <div class="slider-row"><label>Flow Intensity <span class="val" id="flowVal">60%</span></label><input type="range" id="flowSlider" min="0" max="100" value="60"></div>
-                <div class="slider-row"><label>Flow Speed <span class="val" id="flowSpeedVal">40%</span></label><input type="range" id="flowSpeedSlider" min="10" max="100" value="40"></div>
-                <div class="slider-row"><label>Turbulence <span class="val" id="turbVal">50%</span></label><input type="range" id="turbSlider" min="0" max="100" value="50"></div>
-                <div class="slider-row"><label>Scale <span class="val" id="scaleVal">30%</span></label><input type="range" id="scaleSlider" min="10" max="80" value="30"></div>
+            <div class="session-section">
+                <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
             </div>
             
             <div class="section">
-                <h3>⚜ Color Palette</h3>
-                <div class="slider-row"><label>Magenta Depth <span class="val" id="magentaVal">70%</span></label><input type="range" id="magentaSlider" min="0" max="100" value="70"></div>
-                <div class="slider-row"><label>Dark Void <span class="val" id="voidVal">60%</span></label><input type="range" id="voidSlider" min="0" max="100" value="60"></div>
-                <div class="slider-row"><label>Rainbow Edge <span class="val" id="rainbowVal">80%</span></label><input type="range" id="rainbowSlider" min="0" max="100" value="80"></div>
-                <div class="slider-row"><label>Color Shift Speed <span class="val" id="colorSpeedVal">50%</span></label><input type="range" id="colorSpeedSlider" min="10" max="100" value="50"></div>
+                <h3>⚜ Golden Material</h3>
+                <div class="gold-presets">
+                    <button class="gold-btn active" data-style="polished"><span class="icon">✨</span>Polished</button>
+                    <button class="gold-btn" data-style="antique"><span class="icon">🏺</span>Antique</button>
+                    <button class="gold-btn" data-style="liquid"><span class="icon">💧</span>Liquid</button>
+                    <button class="gold-btn" data-style="baroque"><span class="icon">👑</span>Baroque</button>
+                    <button class="gold-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
+                    <button class="gold-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
+                </div>
             </div>
             
             <div class="section">
-                <h3>⚜ Effects</h3>
-                <div class="slider-row"><label>Blob Softness <span class="val" id="blobVal">50%</span></label><input type="range" id="blobSlider" min="10" max="100" value="50"></div>
-                <div class="slider-row"><label>Edge Glow <span class="val" id="glowVal">70%</span></label><input type="range" id="glowSlider" min="0" max="100" value="70"></div>
-                <div class="slider-row"><label>Webcam Blend <span class="val" id="blendVal">30%</span></label><input type="range" id="blendSlider" min="0" max="100" value="30"></div>
+                <h3>⚜ Sculpture Controls</h3>
+                <div class="slider-row"><label>3D Depth <span class="val" id="depthVal">0.45</span></label><input type="range" id="depthSlider" min="20" max="80" value="45"></div>
+                <div class="slider-row"><label>Gold Intensity <span class="val" id="strengthVal">30</span></label><input type="range" id="strengthSlider" min="10" max="50" value="30"></div>
+                <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.35</span></label><input type="range" id="edgeSlider" min="10" max="60" value="35"></div>
+                <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.50</span></label><input type="range" id="poseSlider" min="20" max="80" value="50"></div>
+                <div class="slider-row"><label>Blend Mode <span class="val" id="blendVal">Screen</span></label>
+                    <select id="blendSelect" style="width:100%; padding:8px; background:rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.4); color:#f4e4ba; border-radius:4px;">
+                        <option value="screen">Screen (black→transparent)</option>
+                        <option value="lighten">Lighten</option>
+                        <option value="color-dodge">Color Dodge (intense)</option>
+                        <option value="normal">Normal (no blend)</option>
+                    </select>
+                </div>
+                <div class="slider-row"><label>Contrast <span class="val" id="contrastVal">2.0</span></label><input type="range" id="contrastSlider" min="100" max="300" value="200"></div>
+                <div class="slider-row"><label>Brightness <span class="val" id="brightnessVal">1.2</span></label><input type="range" id="brightnessSlider" min="80" max="200" value="120"></div>
             </div>
             
             <div class="section">
                 <h3>⚜ Audio Reactivity</h3>
                 <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
-                <div class="slider-row"><label>Bass → Pulse <span class="val" id="bassPulseVal">80%</span></label><input type="range" id="bassPulseSlider" min="0" max="100" value="80"></div>
-                <div class="slider-row"><label>Mid → Flow <span class="val" id="midFlowVal">60%</span></label><input type="range" id="midFlowSlider" min="0" max="100" value="60"></div>
-                <div class="slider-row"><label>High → Color <span class="val" id="highColorVal">70%</span></label><input type="range" id="highColorSlider" min="0" max="100" value="70"></div>
-                <div class="audio-section">
-                    <h4>🎵 Live Audio Spectrum</h4>
-                    <div class="audio-meter" id="audioMeter"></div>
-                </div>
+                <div class="slider-row"><label>Pulse Speed <span class="val" id="pulseSpeedVal">50%</span></label><input type="range" id="pulseSpeedSlider" min="10" max="100" value="50"></div>
+                <div class="slider-row"><label>Particle Density <span class="val" id="particleDensityVal">60%</span></label><input type="range" id="particleDensitySlider" min="10" max="100" value="60"></div>
+                <div class="audio-section"><h4>🎵 Live Audio Spectrum</h4><div class="audio-meter" id="audioMeter"></div></div>
             </div>
         </div>
         
@@ -186,41 +184,73 @@
                     <canvas id="glCanvas"></canvas>
                 </div>
                 <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+                <div class="frame-overlay"></div>
+            </div>
+            
+            <div class="statement-section">
+                <h2>The Baroque Dance</h2>
+                <p>The Baroque dance was never just a dance. It was a social machine disguised as choreography. Every step displayed rank, every turn measured vanity, every flourish reminded the room who glittered brightest. Satire hid in the wings.</p>
+                <div class="section-divider">. . .</div>
+                <h2>About</h2>
+                <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time WebGL processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
+            </div>
+        </div>
+        
+        <div class="capture-panel">
+            <div class="input-preview-section">
+                <h4>⚜ Live Input</h4>
+                <div class="webcam-pip"><video id="localPreview" autoplay muted playsinline></video></div>
+            </div>
+            
+            <a href="/prints" class="shop-btn">Shop Prints<br>⚜<br>Mint NFTs</a>
+            
+            <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+            <div class="capture-grid">
+                <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt=""><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
+                <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt=""><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
+                <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt=""><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
+                <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt=""><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
+                <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt=""><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
             </div>
         </div>
     </div>
 
 <script>
 // ============================================
-// WEBGL SETUP
+// STATE
 // ============================================
 let gl, program, webcamTexture;
-let webcam, canvas;
+let webcam, canvas, localPreview;
 let audioContext, analyser, audioData;
 let isRunning = false;
 let startTime = Date.now();
+let currentStyle = 'polished';
 
 // Audio levels
 let bassLevel = 0, midLevel = 0, highLevel = 0;
 let smoothedBass = 0, smoothedMid = 0, smoothedHigh = 0;
 
+// Style presets
+const stylePresets = {
+    polished: { goldHue: 0.12, saturation: 0.8, brightness: 1.2, contrast: 1.5 },
+    antique: { goldHue: 0.10, saturation: 0.6, brightness: 0.9, contrast: 1.8 },
+    liquid: { goldHue: 0.13, saturation: 0.9, brightness: 1.4, contrast: 1.3 },
+    baroque: { goldHue: 0.11, saturation: 0.85, brightness: 1.1, contrast: 2.0 },
+    celestial: { goldHue: 0.14, saturation: 0.7, brightness: 1.5, contrast: 1.4 },
+    obsidian: { goldHue: 0.08, saturation: 0.4, brightness: 0.7, contrast: 2.2 }
+};
+
 // Parameters
 let params = {
-    flowIntensity: 0.60,
-    flowSpeed: 0.40,
-    turbulence: 0.50,
-    scale: 0.30,
-    magenta: 0.70,
-    darkVoid: 0.60,
-    rainbowEdge: 0.80,
-    colorSpeed: 0.50,
-    blobSoftness: 0.50,
-    edgeGlow: 0.70,
-    webcamBlend: 0.30,
+    depth: 0.45,
+    strength: 0.30,
+    edge: 0.35,
+    pose: 0.50,
+    contrast: 2.0,
+    brightness: 1.2,
     audioIntensity: 0.75,
-    bassPulse: 0.80,
-    midFlow: 0.60,
-    highColor: 0.70
+    pulseSpeed: 0.50,
+    particleDensity: 0.60
 };
 
 // Vertex shader
@@ -234,7 +264,7 @@ const vertexShaderSource = `
     }
 `;
 
-// Fragment shader - psychedelic liquid flow
+// Fragment shader - Golden sculpture effect
 const fragmentShaderSource = `
     precision highp float;
     
@@ -243,28 +273,21 @@ const fragmentShaderSource = `
     uniform float u_time;
     uniform vec2 u_resolution;
     
-    // Audio reactivity
     uniform float u_bass;
     uniform float u_mid;
     uniform float u_high;
     
-    // Parameters
-    uniform float u_flowIntensity;
-    uniform float u_flowSpeed;
-    uniform float u_turbulence;
-    uniform float u_scale;
-    uniform float u_magenta;
-    uniform float u_darkVoid;
-    uniform float u_rainbowEdge;
-    uniform float u_colorSpeed;
-    uniform float u_blobSoftness;
-    uniform float u_edgeGlow;
-    uniform float u_webcamBlend;
-    uniform float u_bassPulse;
-    uniform float u_midFlow;
-    uniform float u_highColor;
+    uniform float u_depth;
+    uniform float u_strength;
+    uniform float u_edge;
+    uniform float u_contrast;
+    uniform float u_brightness;
+    uniform float u_goldHue;
+    uniform float u_saturation;
+    uniform float u_pulseSpeed;
+    uniform float u_particleDensity;
     
-    // Simplex noise functions
+    // Simplex noise
     vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
@@ -273,77 +296,43 @@ const fragmentShaderSource = `
     float snoise(vec3 v) {
         const vec2 C = vec2(1.0/6.0, 1.0/3.0);
         const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-        
         vec3 i = floor(v + dot(v, C.yyy));
         vec3 x0 = v - i + dot(i, C.xxx);
-        
         vec3 g = step(x0.yzx, x0.xyz);
         vec3 l = 1.0 - g;
         vec3 i1 = min(g.xyz, l.zxy);
         vec3 i2 = max(g.xyz, l.zxy);
-        
         vec3 x1 = x0 - i1 + C.xxx;
         vec3 x2 = x0 - i2 + C.yyy;
         vec3 x3 = x0 - D.yyy;
-        
         i = mod289(i);
-        vec4 p = permute(permute(permute(
-            i.z + vec4(0.0, i1.z, i2.z, 1.0))
-            + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-            + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-            
+        vec4 p = permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0)) + i.y + vec4(0.0, i1.y, i2.y, 1.0)) + i.x + vec4(0.0, i1.x, i2.x, 1.0));
         float n_ = 0.142857142857;
         vec3 ns = n_ * D.wyz - D.xzx;
-        
         vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-        
         vec4 x_ = floor(j * ns.z);
         vec4 y_ = floor(j - 7.0 * x_);
-        
         vec4 x = x_ *ns.x + ns.yyyy;
         vec4 y = y_ *ns.x + ns.yyyy;
         vec4 h = 1.0 - abs(x) - abs(y);
-        
         vec4 b0 = vec4(x.xy, y.xy);
         vec4 b1 = vec4(x.zw, y.zw);
-        
         vec4 s0 = floor(b0)*2.0 + 1.0;
         vec4 s1 = floor(b1)*2.0 + 1.0;
         vec4 sh = -step(h, vec4(0.0));
-        
         vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
         vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-        
         vec3 p0 = vec3(a0.xy, h.x);
         vec3 p1 = vec3(a0.zw, h.y);
         vec3 p2 = vec3(a1.xy, h.z);
         vec3 p3 = vec3(a1.zw, h.w);
-        
         vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-        p0 *= norm.x;
-        p1 *= norm.y;
-        p2 *= norm.z;
-        p3 *= norm.w;
-        
+        p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
         vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
         m = m * m;
         return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
     }
     
-    // FBM (Fractal Brownian Motion)
-    float fbm(vec3 p) {
-        float value = 0.0;
-        float amplitude = 0.5;
-        float frequency = 1.0;
-        for (int i = 0; i < 5; i++) {
-            value += amplitude * snoise(p * frequency);
-            amplitude *= 0.5;
-            frequency *= 2.0;
-        }
-        return value;
-    }
-    
-    // HSV to RGB
     vec3 hsv2rgb(vec3 c) {
         vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
         vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
@@ -352,73 +341,73 @@ const fragmentShaderSource = `
     
     void main() {
         vec2 uv = v_texCoord;
-        vec2 p = (uv - 0.5) * 2.0;
-        p.x *= u_resolution.x / u_resolution.y;
-        
-        float time = u_time * u_flowSpeed * (1.0 + u_mid * u_midFlow);
-        float scale = u_scale * 3.0 + 1.0;
-        
-        // Audio-reactive pulse
-        float pulse = 1.0 + u_bass * u_bassPulse * 0.5;
-        
-        // Create flow field distortion
-        vec3 noiseCoord = vec3(p * scale, time * 0.3);
-        float n1 = fbm(noiseCoord + vec3(0.0, 0.0, time * 0.1));
-        float n2 = fbm(noiseCoord + vec3(5.2, 1.3, time * 0.15));
-        float n3 = fbm(noiseCoord + vec3(n1, n2, time * 0.2) * u_turbulence);
-        
-        // Distort UV for webcam
-        vec2 distortedUV = uv + vec2(n1, n2) * u_flowIntensity * 0.3 * pulse;
-        distortedUV = clamp(distortedUV, 0.0, 1.0);
+        float time = u_time * u_pulseSpeed;
         
         // Sample webcam
-        vec4 webcamColor = texture2D(u_webcam, distortedUV);
-        float webcamLum = dot(webcamColor.rgb, vec3(0.299, 0.587, 0.114));
+        vec4 webcamColor = texture2D(u_webcam, uv);
         
-        // Create organic blob shapes
-        float blobNoise = fbm(vec3(p * (2.0 + u_blobSoftness), time * 0.2)) * pulse;
-        float blob = smoothstep(-0.2, 0.5 * u_blobSoftness, blobNoise);
+        // Calculate luminance
+        float lum = dot(webcamColor.rgb, vec3(0.299, 0.587, 0.114));
         
-        // Dark void color (deep blacks and dark magentas)
-        vec3 voidColor = vec3(0.04, 0.02, 0.06) * (1.0 - u_darkVoid * 0.5);
+        // Edge detection (Sobel-like)
+        float px = 1.0 / u_resolution.x;
+        float py = 1.0 / u_resolution.y;
+        float lumL = dot(texture2D(u_webcam, uv + vec2(-px, 0.0)).rgb, vec3(0.299, 0.587, 0.114));
+        float lumR = dot(texture2D(u_webcam, uv + vec2(px, 0.0)).rgb, vec3(0.299, 0.587, 0.114));
+        float lumT = dot(texture2D(u_webcam, uv + vec2(0.0, -py)).rgb, vec3(0.299, 0.587, 0.114));
+        float lumB = dot(texture2D(u_webcam, uv + vec2(0.0, py)).rgb, vec3(0.299, 0.587, 0.114));
+        float edge = abs(lumL - lumR) + abs(lumT - lumB);
+        edge = smoothstep(0.0, 0.3, edge * u_edge * 3.0);
         
-        // Magenta/purple tones
-        float hueShift = u_time * u_colorSpeed * 0.1 + u_high * u_highColor;
-        vec3 magentaColor = hsv2rgb(vec3(0.83 + sin(hueShift) * 0.05, 0.7, 0.4 * u_magenta));
-        vec3 deepMagenta = hsv2rgb(vec3(0.9, 0.8, 0.3 * u_magenta));
+        // Create depth/3D effect using luminance
+        float depth = lum * u_depth;
         
-        // Rainbow edge effect
-        float edge = abs(fwidth(n3)) * 50.0 * u_rainbowEdge;
-        float rainbowHue = fract(n3 * 2.0 + u_time * u_colorSpeed * 0.2 + u_high * 0.3);
-        vec3 rainbowColor = hsv2rgb(vec3(rainbowHue, 0.9, 1.0)) * edge;
+        // Golden color mapping
+        float goldHue = u_goldHue + sin(time * 0.5 + lum * 2.0) * 0.02;
+        goldHue += u_high * 0.02; // High frequencies shift hue
         
-        // Combine layers
-        vec3 baseColor = mix(voidColor, magentaColor, blob * 0.7);
-        baseColor = mix(baseColor, deepMagenta, n3 * 0.5 + 0.3);
+        float goldSat = u_saturation * (0.7 + lum * 0.3);
+        float goldVal = lum * u_brightness * (1.0 + u_bass * 0.3);
+        
+        vec3 goldColor = hsv2rgb(vec3(goldHue, goldSat, goldVal));
+        
+        // Add metallic highlights
+        float highlight = pow(lum, 3.0) * u_strength;
+        goldColor += vec3(1.0, 0.95, 0.8) * highlight * (1.0 + u_bass * 0.5);
         
         // Add edge glow
-        float glowAmount = smoothstep(0.3, 0.7, abs(n3)) * u_edgeGlow;
-        vec3 glowColor = hsv2rgb(vec3(0.85 + n1 * 0.1, 0.6, 0.8));
-        baseColor += glowColor * glowAmount * (1.0 + u_bass * 0.5);
+        vec3 edgeColor = hsv2rgb(vec3(goldHue + 0.02, 0.6, 1.0));
+        goldColor = mix(goldColor, edgeColor, edge * (1.0 + u_mid * 0.5));
         
-        // Add rainbow edges
-        baseColor += rainbowColor * (1.0 + u_high * u_highColor);
+        // Shimmer effect
+        float shimmer = snoise(vec3(uv * 20.0, time * 2.0)) * 0.5 + 0.5;
+        shimmer = pow(shimmer, 2.0) * u_particleDensity * 0.3;
+        goldColor += vec3(1.0, 0.9, 0.7) * shimmer * lum * (1.0 + u_high * 0.5);
         
-        // Blend with webcam
-        vec3 webcamTinted = webcamColor.rgb * vec3(1.0, 0.7, 0.9); // Slight magenta tint
-        baseColor = mix(baseColor, webcamTinted * (0.5 + webcamLum), u_webcamBlend * blob);
+        // Apply contrast
+        goldColor = ((goldColor - 0.5) * u_contrast + 0.5);
         
-        // Add subtle highlights based on webcam luminance
-        baseColor += vec3(1.0, 0.8, 0.9) * webcamLum * u_webcamBlend * 0.3;
-        
-        // Vignette
-        float vignette = 1.0 - length(p) * 0.4;
-        baseColor *= vignette;
+        // Floating particles
+        float particles = 0.0;
+        for (int i = 0; i < 3; i++) {
+            float fi = float(i);
+            vec2 particleUV = uv * (3.0 + fi) + vec2(time * 0.1 * (fi + 1.0), time * 0.15);
+            float p = snoise(vec3(particleUV, time * 0.5 + fi));
+            p = smoothstep(0.7, 0.9, p);
+            particles += p * u_particleDensity * 0.2;
+        }
+        goldColor += vec3(1.0, 0.95, 0.8) * particles * (1.0 + u_bass * 0.5);
         
         // Audio pulse overlay
-        baseColor += vec3(0.3, 0.0, 0.2) * u_bass * u_bassPulse * 0.3;
+        float pulse = u_bass * 0.15;
+        goldColor += vec3(0.3, 0.2, 0.1) * pulse;
         
-        gl_FragColor = vec4(baseColor, 1.0);
+        // Vignette
+        vec2 vignetteUV = uv * 2.0 - 1.0;
+        float vignette = 1.0 - dot(vignetteUV, vignetteUV) * 0.3;
+        goldColor *= vignette;
+        
+        gl_FragColor = vec4(clamp(goldColor, 0.0, 1.0), 1.0);
     }
 `;
 
@@ -427,20 +416,19 @@ function createShader(gl, type, source) {
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
+        console.error('Shader error:', gl.getShaderInfoLog(shader));
         return null;
     }
     return shader;
 }
 
-function createProgram(gl, vertexShader, fragmentShader) {
+function createProgram(gl, vs, fs) {
     const program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error('Program link error:', gl.getProgramInfoLog(program));
+        console.error('Program error:', gl.getProgramInfoLog(program));
         return null;
     }
     return program;
@@ -449,24 +437,18 @@ function createProgram(gl, vertexShader, fragmentShader) {
 function initWebGL() {
     canvas = document.getElementById('glCanvas');
     gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) { alert('WebGL not supported'); return false; }
     
-    if (!gl) {
-        alert('WebGL not supported');
-        return false;
-    }
+    const vs = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    program = createProgram(gl, vs, fs);
     
-    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-    program = createProgram(gl, vertexShader, fragmentShader);
-    
-    // Set up geometry (full screen quad)
     const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
     const texCoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
     
     const posBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-    
     const posLoc = gl.getAttribLocation(program, 'a_position');
     gl.enableVertexAttribArray(posLoc);
     gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
@@ -474,12 +456,10 @@ function initWebGL() {
     const texBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
-    
     const texLoc = gl.getAttribLocation(program, 'a_texCoord');
     gl.enableVertexAttribArray(texLoc);
     gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
     
-    // Create webcam texture
     webcamTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -490,19 +470,14 @@ function initWebGL() {
     return true;
 }
 
-// ============================================
-// AUDIO ANALYSIS
-// ============================================
 function initAudio(stream) {
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.8;
-        
         const source = audioContext.createMediaStreamSource(stream);
         source.connect(analyser);
-        
         audioData = new Uint8Array(analyser.frequencyBinCount);
         
         const meter = document.getElementById('audioMeter');
@@ -512,21 +487,15 @@ function initAudio(stream) {
             bar.className = 'audio-bar';
             meter.appendChild(bar);
         }
-        
-        console.log('Audio ready');
-    } catch (e) {
-        console.error('Audio init failed:', e);
-    }
+    } catch (e) { console.error('Audio init failed:', e); }
 }
 
 function updateAudio() {
     if (!analyser) return;
-    
     analyser.getByteFrequencyData(audioData);
     const binCount = audioData.length;
     const bassEnd = Math.floor(binCount * 0.15);
     const midEnd = Math.floor(binCount * 0.5);
-    
     let bassSum = 0, midSum = 0, highSum = 0;
     for (let i = 0; i < binCount; i++) {
         const val = audioData[i] / 255;
@@ -534,11 +503,9 @@ function updateAudio() {
         else if (i < midEnd) midSum += val;
         else highSum += val;
     }
-    
     bassLevel = (bassSum / bassEnd) * params.audioIntensity;
     midLevel = (midSum / (midEnd - bassEnd)) * params.audioIntensity;
     highLevel = (highSum / (binCount - midEnd)) * params.audioIntensity;
-    
     smoothedBass = smoothedBass * 0.7 + bassLevel * 0.3;
     smoothedMid = smoothedMid * 0.8 + midLevel * 0.2;
     smoothedHigh = smoothedHigh * 0.85 + highLevel * 0.15;
@@ -546,64 +513,46 @@ function updateAudio() {
     const bars = document.querySelectorAll('.audio-bar');
     const step = Math.floor(binCount / bars.length);
     bars.forEach((bar, i) => {
-        const val = audioData[i * step] / 255;
-        bar.style.height = Math.max(2, val * 36) + 'px';
+        bar.style.height = Math.max(2, (audioData[i * step] / 255) * 36) + 'px';
     });
 }
 
-// ============================================
-// RENDER LOOP
-// ============================================
 function render() {
     if (!isRunning) return;
-    
     updateAudio();
     
     const time = (Date.now() - startTime) / 1000;
+    const style = stylePresets[currentStyle];
     
     canvas.width = webcam.videoWidth || 1280;
     canvas.height = webcam.videoHeight || 720;
     gl.viewport(0, 0, canvas.width, canvas.height);
     
-    // Update webcam texture
     gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, webcam);
     
     gl.useProgram(program);
     
-    // Set uniforms
     gl.uniform1f(gl.getUniformLocation(program, 'u_time'), time);
     gl.uniform2f(gl.getUniformLocation(program, 'u_resolution'), canvas.width, canvas.height);
-    
     gl.uniform1f(gl.getUniformLocation(program, 'u_bass'), smoothedBass);
     gl.uniform1f(gl.getUniformLocation(program, 'u_mid'), smoothedMid);
     gl.uniform1f(gl.getUniformLocation(program, 'u_high'), smoothedHigh);
-    
-    gl.uniform1f(gl.getUniformLocation(program, 'u_flowIntensity'), params.flowIntensity);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_flowSpeed'), params.flowSpeed);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_turbulence'), params.turbulence);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_scale'), params.scale);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_magenta'), params.magenta);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_darkVoid'), params.darkVoid);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_rainbowEdge'), params.rainbowEdge);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_colorSpeed'), params.colorSpeed);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_blobSoftness'), params.blobSoftness);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_edgeGlow'), params.edgeGlow);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_webcamBlend'), params.webcamBlend);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_bassPulse'), params.bassPulse);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_midFlow'), params.midFlow);
-    gl.uniform1f(gl.getUniformLocation(program, 'u_highColor'), params.highColor);
-    
+    gl.uniform1f(gl.getUniformLocation(program, 'u_depth'), params.depth);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_strength'), params.strength);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_edge'), params.edge);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_contrast'), params.contrast);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_brightness'), params.brightness);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_goldHue'), style.goldHue);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_saturation'), style.saturation);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_pulseSpeed'), params.pulseSpeed);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_particleDensity'), params.particleDensity);
     gl.uniform1i(gl.getUniformLocation(program, 'u_webcam'), 0);
     
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    
     requestAnimationFrame(render);
 }
 
-// ============================================
-// START
-// ============================================
 async function start() {
     try {
         document.getElementById('startBtn').disabled = true;
@@ -620,59 +569,61 @@ async function start() {
         webcam.srcObject = stream;
         await webcam.play();
         
+        localPreview = document.getElementById('localPreview');
+        localPreview.srcObject = stream;
+        await localPreview.play();
+        
         initAudio(stream);
         
         isRunning = true;
         startTime = Date.now();
-        document.getElementById('startBtn').textContent = 'Flowing ⚜';
+        document.getElementById('startBtn').textContent = 'Transforming ⚜';
         
         render();
-        
     } catch (e) {
         console.error('Start failed:', e);
         document.getElementById('startBtn').disabled = false;
         document.getElementById('startBtn').textContent = 'Begin Transformation ⚜';
-        alert('Could not access camera/microphone: ' + e.message);
+        alert('Camera/microphone access required: ' + e.message);
     }
 }
 
-// ============================================
-// EVENT LISTENERS
-// ============================================
-document.getElementById('startBtn').addEventListener('click', start);
+function captureStill(slot) {
+    if (!isRunning) return;
+    const dataUrl = canvas.toDataURL('image/png');
+    const slotEl = document.querySelector(`.capture-slot[data-slot="${slot}"]`);
+    const img = slotEl.querySelector('img');
+    img.src = dataUrl;
+    slotEl.classList.add('has-image');
+}
 
+// Event listeners
+document.getElementById('startBtn').addEventListener('click', start);
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
     const container = document.getElementById('videoContainer');
     if (container.requestFullscreen) container.requestFullscreen();
     else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
 });
 
-// All sliders
-const sliderConfig = {
-    'flowSlider': { param: 'flowIntensity', valId: 'flowVal', suffix: '%', divisor: 100 },
-    'flowSpeedSlider': { param: 'flowSpeed', valId: 'flowSpeedVal', suffix: '%', divisor: 100 },
-    'turbSlider': { param: 'turbulence', valId: 'turbVal', suffix: '%', divisor: 100 },
-    'scaleSlider': { param: 'scale', valId: 'scaleVal', suffix: '%', divisor: 100 },
-    'magentaSlider': { param: 'magenta', valId: 'magentaVal', suffix: '%', divisor: 100 },
-    'voidSlider': { param: 'darkVoid', valId: 'voidVal', suffix: '%', divisor: 100 },
-    'rainbowSlider': { param: 'rainbowEdge', valId: 'rainbowVal', suffix: '%', divisor: 100 },
-    'colorSpeedSlider': { param: 'colorSpeed', valId: 'colorSpeedVal', suffix: '%', divisor: 100 },
-    'blobSlider': { param: 'blobSoftness', valId: 'blobVal', suffix: '%', divisor: 100 },
-    'glowSlider': { param: 'edgeGlow', valId: 'glowVal', suffix: '%', divisor: 100 },
-    'blendSlider': { param: 'webcamBlend', valId: 'blendVal', suffix: '%', divisor: 100 },
-    'audioIntensitySlider': { param: 'audioIntensity', valId: 'audioIntensityVal', suffix: '%', divisor: 100 },
-    'bassPulseSlider': { param: 'bassPulse', valId: 'bassPulseVal', suffix: '%', divisor: 100 },
-    'midFlowSlider': { param: 'midFlow', valId: 'midFlowVal', suffix: '%', divisor: 100 },
-    'highColorSlider': { param: 'highColor', valId: 'highColorVal', suffix: '%', divisor: 100 }
-};
-
-Object.keys(sliderConfig).forEach(sliderId => {
-    const config = sliderConfig[sliderId];
-    document.getElementById(sliderId).addEventListener('input', e => {
-        params[config.param] = e.target.value / config.divisor;
-        document.getElementById(config.valId).textContent = e.target.value + config.suffix;
+// Style buttons
+document.querySelectorAll('.gold-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.gold-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStyle = btn.dataset.style;
     });
 });
+
+// Sliders
+document.getElementById('depthSlider').addEventListener('input', e => { params.depth = e.target.value / 100; document.getElementById('depthVal').textContent = (e.target.value / 100).toFixed(2); });
+document.getElementById('strengthSlider').addEventListener('input', e => { params.strength = e.target.value / 100; document.getElementById('strengthVal').textContent = e.target.value; });
+document.getElementById('edgeSlider').addEventListener('input', e => { params.edge = e.target.value / 100; document.getElementById('edgeVal').textContent = (e.target.value / 100).toFixed(2); });
+document.getElementById('poseSlider').addEventListener('input', e => { params.pose = e.target.value / 100; document.getElementById('poseVal').textContent = (e.target.value / 100).toFixed(2); });
+document.getElementById('contrastSlider').addEventListener('input', e => { params.contrast = e.target.value / 100; document.getElementById('contrastVal').textContent = (e.target.value / 100).toFixed(1); });
+document.getElementById('brightnessSlider').addEventListener('input', e => { params.brightness = e.target.value / 100; document.getElementById('brightnessVal').textContent = (e.target.value / 100).toFixed(1); });
+document.getElementById('audioIntensitySlider').addEventListener('input', e => { params.audioIntensity = e.target.value / 100; document.getElementById('audioIntensityVal').textContent = e.target.value + '%'; });
+document.getElementById('pulseSpeedSlider').addEventListener('input', e => { params.pulseSpeed = e.target.value / 100; document.getElementById('pulseSpeedVal').textContent = e.target.value + '%'; });
+document.getElementById('particleDensitySlider').addEventListener('input', e => { params.particleDensity = e.target.value / 100; document.getElementById('particleDensityVal').textContent = e.target.value + '%'; });
 </script>
 </body>
 </html>
