@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baroque Mirror: Dance & Enrobe - LIVE WebGL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(180deg, rgba(114,47,55,0.9) 0%, rgba(10,6,8,0.95) 100%);
+            padding: 15px 25px;
+            text-align: center;
+            border-bottom: 2px solid rgba(212,175,55,0.6);
+            position: relative;
+            z-index: 10;
+        }
+        .header h1 { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.4rem; 
+            color: #d4af37; 
+            letter-spacing: 4px; 
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212,175,55,0.5);
+        }
+        .header-sub { font-size: 0.85rem; color: #f4e4ba; margin-top: 4px; letter-spacing: 2px; }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            background: rgba(15,10,12,0.9);
+            border: 1px solid rgba(212,175,55,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .section:last-child { border-bottom: none; }
+        .section h3 { color: #d4af37; font-size: 0.9rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        
+        .slider-row { margin-bottom: 12px; }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
+        .slider-row .val { color: #d4af37; font-weight: 700; }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); }
+        
+        .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
+        .audio-section h4 { color: #d4af37; font-size: 0.8rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
+        .audio-bar { flex: 1; background: linear-gradient(180deg, #ff00ff, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; min-height: 2px; }
+        
+        .output-area { position: relative; }
+        .video-container { 
+            position: relative; 
+            border: 2px solid rgba(212,175,55,0.6); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 0 60px rgba(212,175,55,0.2);
+            background: #000;
+        }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; }
+        
+        #webcam { display: none; }
+        #glCanvas { width: 100%; height: 100%; display: block; }
+        
+        .fullscreen-btn { 
+            position: absolute; top: 15px; right: 15px; 
+            width: 40px; height: 40px; 
+            border: 1px solid rgba(212,175,55,0.6); 
+            background: rgba(10,6,8,0.8); 
+            color: #d4af37; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-size: 1.1rem;
+            z-index: 20;
+        }
+        .fullscreen-btn:hover { background: rgba(212,175,55,0.3); }
+        
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .start-btn:hover { box-shadow: 0 0 25px rgba(212,175,55,0.5); }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .latency-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #2a5a2a, #4a8a4a);
+            color: #90EE90;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+        
+        @media (max-width: 900px) {
+            .main { grid-template-columns: 1fr; }
+            .output-area { order: -1; }
+            .controls { max-height: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚜ Dance & Enrobe ⚜</h1>
+        <div class="header-sub">Real-Time Liquid Flow Transformation</div>
+        <div class="latency-badge">⚡ ZERO LATENCY - WebGL</div>
+    </div>
+    
+    <div class="main">
+        <div class="controls">
+            <button class="start-btn" id="startBtn">Begin Transformation ⚜</button>
+            
+            <div class="section">
+                <h3>⚜ Flow Field</h3>
+                <div class="slider-row"><label>Flow Intensity <span class="val" id="flowVal">60%</span></label><input type="range" id="flowSlider" min="0" max="100" value="60"></div>
+                <div class="slider-row"><label>Flow Speed <span class="val" id="flowSpeedVal">40%</span></label><input type="range" id="flowSpeedSlider" min="10" max="100" value="40"></div>
+                <div class="slider-row"><label>Turbulence <span class="val" id="turbVal">50%</span></label><input type="range" id="turbSlider" min="0" max="100" value="50"></div>
+                <div class="slider-row"><label>Scale <span class="val" id="scaleVal">30%</span></label><input type="range" id="scaleSlider" min="10" max="80" value="30"></div>
+            </div>
+            
+            <div class="section">
+                <h3>⚜ Color Palette</h3>
+                <div class="slider-row"><label>Magenta Depth <span class="val" id="magentaVal">70%</span></label><input type="range" id="magentaSlider" min="0" max="100" value="70"></div>
+                <div class="slider-row"><label>Dark Void <span class="val" id="voidVal">60%</span></label><input type="range" id="voidSlider" min="0" max="100" value="60"></div>
+                <div class="slider-row"><label>Rainbow Edge <span class="val" id="rainbowVal">80%</span></label><input type="range" id="rainbowSlider" min="0" max="100" value="80"></div>
+                <div class="slider-row"><label>Color Shift Speed <span class="val" id="colorSpeedVal">50%</span></label><input type="range" id="colorSpeedSlider" min="10" max="100" value="50"></div>
+            </div>
+            
+            <div class="section">
+                <h3>⚜ Effects</h3>
+                <div class="slider-row"><label>Blob Softness <span class="val" id="blobVal">50%</span></label><input type="range" id="blobSlider" min="10" max="100" value="50"></div>
+                <div class="slider-row"><label>Edge Glow <span class="val" id="glowVal">70%</span></label><input type="range" id="glowSlider" min="0" max="100" value="70"></div>
+                <div class="slider-row"><label>Webcam Blend <span class="val" id="blendVal">30%</span></label><input type="range" id="blendSlider" min="0" max="100" value="30"></div>
+            </div>
+            
+            <div class="section">
+                <h3>⚜ Audio Reactivity</h3>
+                <div class="slider-row"><label>Audio Intensity <span class="val" id="audioIntensityVal">75%</span></label><input type="range" id="audioIntensitySlider" min="0" max="100" value="75"></div>
+                <div class="slider-row"><label>Bass → Pulse <span class="val" id="bassPulseVal">80%</span></label><input type="range" id="bassPulseSlider" min="0" max="100" value="80"></div>
+                <div class="slider-row"><label>Mid → Flow <span class="val" id="midFlowVal">60%</span></label><input type="range" id="midFlowSlider" min="0" max="100" value="60"></div>
+                <div class="slider-row"><label>High → Color <span class="val" id="highColorVal">70%</span></label><input type="range" id="highColorSlider" min="0" max="100" value="70"></div>
+                <div class="audio-section">
+                    <h4>🎵 Live Audio Spectrum</h4>
+                    <div class="audio-meter" id="audioMeter"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="output-area">
+            <div class="video-container" id="videoContainer">
+                <div class="video-wrapper">
+                    <video id="webcam" autoplay muted playsinline></video>
+                    <canvas id="glCanvas"></canvas>
+                </div>
+                <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// WEBGL SETUP
+// ============================================
+let gl, program, webcamTexture;
+let webcam, canvas;
+let audioContext, analyser, audioData;
+let isRunning = false;
+let startTime = Date.now();
+
+// Audio levels
+let bassLevel = 0, midLevel = 0, highLevel = 0;
+let smoothedBass = 0, smoothedMid = 0, smoothedHigh = 0;
+
+// Parameters
+let params = {
+    flowIntensity: 0.60,
+    flowSpeed: 0.40,
+    turbulence: 0.50,
+    scale: 0.30,
+    magenta: 0.70,
+    darkVoid: 0.60,
+    rainbowEdge: 0.80,
+    colorSpeed: 0.50,
+    blobSoftness: 0.50,
+    edgeGlow: 0.70,
+    webcamBlend: 0.30,
+    audioIntensity: 0.75,
+    bassPulse: 0.80,
+    midFlow: 0.60,
+    highColor: 0.70
+};
+
+// Vertex shader
+const vertexShaderSource = `
+    attribute vec2 a_position;
+    attribute vec2 a_texCoord;
+    varying vec2 v_texCoord;
+    void main() {
+        gl_Position = vec4(a_position, 0.0, 1.0);
+        v_texCoord = a_texCoord;
+    }
+`;
+
+// Fragment shader - psychedelic liquid flow
+const fragmentShaderSource = `
+    precision highp float;
+    
+    varying vec2 v_texCoord;
+    uniform sampler2D u_webcam;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    
+    // Audio reactivity
+    uniform float u_bass;
+    uniform float u_mid;
+    uniform float u_high;
+    
+    // Parameters
+    uniform float u_flowIntensity;
+    uniform float u_flowSpeed;
+    uniform float u_turbulence;
+    uniform float u_scale;
+    uniform float u_magenta;
+    uniform float u_darkVoid;
+    uniform float u_rainbowEdge;
+    uniform float u_colorSpeed;
+    uniform float u_blobSoftness;
+    uniform float u_edgeGlow;
+    uniform float u_webcamBlend;
+    uniform float u_bassPulse;
+    uniform float u_midFlow;
+    uniform float u_highColor;
+    
+    // Simplex noise functions
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+    
+    float snoise(vec3 v) {
+        const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+        const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+        
+        vec3 i = floor(v + dot(v, C.yyy));
+        vec3 x0 = v - i + dot(i, C.xxx);
+        
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min(g.xyz, l.zxy);
+        vec3 i2 = max(g.xyz, l.zxy);
+        
+        vec3 x1 = x0 - i1 + C.xxx;
+        vec3 x2 = x0 - i2 + C.yyy;
+        vec3 x3 = x0 - D.yyy;
+        
+        i = mod289(i);
+        vec4 p = permute(permute(permute(
+            i.z + vec4(0.0, i1.z, i2.z, 1.0))
+            + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+            + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+            
+        float n_ = 0.142857142857;
+        vec3 ns = n_ * D.wyz - D.xzx;
+        
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+        
+        vec4 x_ = floor(j * ns.z);
+        vec4 y_ = floor(j - 7.0 * x_);
+        
+        vec4 x = x_ *ns.x + ns.yyyy;
+        vec4 y = y_ *ns.x + ns.yyyy;
+        vec4 h = 1.0 - abs(x) - abs(y);
+        
+        vec4 b0 = vec4(x.xy, y.xy);
+        vec4 b1 = vec4(x.zw, y.zw);
+        
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+        
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+        
+        vec3 p0 = vec3(a0.xy, h.x);
+        vec3 p1 = vec3(a0.zw, h.y);
+        vec3 p2 = vec3(a1.xy, h.z);
+        vec3 p3 = vec3(a1.zw, h.w);
+        
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+        p0 *= norm.x;
+        p1 *= norm.y;
+        p2 *= norm.z;
+        p3 *= norm.w;
+        
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+    }
+    
+    // FBM (Fractal Brownian Motion)
+    float fbm(vec3 p) {
+        float value = 0.0;
+        float amplitude = 0.5;
+        float frequency = 1.0;
+        for (int i = 0; i < 5; i++) {
+            value += amplitude * snoise(p * frequency);
+            amplitude *= 0.5;
+            frequency *= 2.0;
+        }
+        return value;
+    }
+    
+    // HSV to RGB
+    vec3 hsv2rgb(vec3 c) {
+        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+    
+    void main() {
+        vec2 uv = v_texCoord;
+        vec2 p = (uv - 0.5) * 2.0;
+        p.x *= u_resolution.x / u_resolution.y;
+        
+        float time = u_time * u_flowSpeed * (1.0 + u_mid * u_midFlow);
+        float scale = u_scale * 3.0 + 1.0;
+        
+        // Audio-reactive pulse
+        float pulse = 1.0 + u_bass * u_bassPulse * 0.5;
+        
+        // Create flow field distortion
+        vec3 noiseCoord = vec3(p * scale, time * 0.3);
+        float n1 = fbm(noiseCoord + vec3(0.0, 0.0, time * 0.1));
+        float n2 = fbm(noiseCoord + vec3(5.2, 1.3, time * 0.15));
+        float n3 = fbm(noiseCoord + vec3(n1, n2, time * 0.2) * u_turbulence);
+        
+        // Distort UV for webcam
+        vec2 distortedUV = uv + vec2(n1, n2) * u_flowIntensity * 0.3 * pulse;
+        distortedUV = clamp(distortedUV, 0.0, 1.0);
+        
+        // Sample webcam
+        vec4 webcamColor = texture2D(u_webcam, distortedUV);
+        float webcamLum = dot(webcamColor.rgb, vec3(0.299, 0.587, 0.114));
+        
+        // Create organic blob shapes
+        float blobNoise = fbm(vec3(p * (2.0 + u_blobSoftness), time * 0.2)) * pulse;
+        float blob = smoothstep(-0.2, 0.5 * u_blobSoftness, blobNoise);
+        
+        // Dark void color (deep blacks and dark magentas)
+        vec3 voidColor = vec3(0.04, 0.02, 0.06) * (1.0 - u_darkVoid * 0.5);
+        
+        // Magenta/purple tones
+        float hueShift = u_time * u_colorSpeed * 0.1 + u_high * u_highColor;
+        vec3 magentaColor = hsv2rgb(vec3(0.83 + sin(hueShift) * 0.05, 0.7, 0.4 * u_magenta));
+        vec3 deepMagenta = hsv2rgb(vec3(0.9, 0.8, 0.3 * u_magenta));
+        
+        // Rainbow edge effect
+        float edge = abs(fwidth(n3)) * 50.0 * u_rainbowEdge;
+        float rainbowHue = fract(n3 * 2.0 + u_time * u_colorSpeed * 0.2 + u_high * 0.3);
+        vec3 rainbowColor = hsv2rgb(vec3(rainbowHue, 0.9, 1.0)) * edge;
+        
+        // Combine layers
+        vec3 baseColor = mix(voidColor, magentaColor, blob * 0.7);
+        baseColor = mix(baseColor, deepMagenta, n3 * 0.5 + 0.3);
+        
+        // Add edge glow
+        float glowAmount = smoothstep(0.3, 0.7, abs(n3)) * u_edgeGlow;
+        vec3 glowColor = hsv2rgb(vec3(0.85 + n1 * 0.1, 0.6, 0.8));
+        baseColor += glowColor * glowAmount * (1.0 + u_bass * 0.5);
+        
+        // Add rainbow edges
+        baseColor += rainbowColor * (1.0 + u_high * u_highColor);
+        
+        // Blend with webcam
+        vec3 webcamTinted = webcamColor.rgb * vec3(1.0, 0.7, 0.9); // Slight magenta tint
+        baseColor = mix(baseColor, webcamTinted * (0.5 + webcamLum), u_webcamBlend * blob);
+        
+        // Add subtle highlights based on webcam luminance
+        baseColor += vec3(1.0, 0.8, 0.9) * webcamLum * u_webcamBlend * 0.3;
+        
+        // Vignette
+        float vignette = 1.0 - length(p) * 0.4;
+        baseColor *= vignette;
+        
+        // Audio pulse overlay
+        baseColor += vec3(0.3, 0.0, 0.2) * u_bass * u_bassPulse * 0.3;
+        
+        gl_FragColor = vec4(baseColor, 1.0);
+    }
+`;
+
+function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        return null;
+    }
+    return program;
+}
+
+function initWebGL() {
+    canvas = document.getElementById('glCanvas');
+    gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    
+    if (!gl) {
+        alert('WebGL not supported');
+        return false;
+    }
+    
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    program = createProgram(gl, vertexShader, fragmentShader);
+    
+    // Set up geometry (full screen quad)
+    const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+    const texCoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
+    
+    const posBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+    
+    const posLoc = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+    
+    const texBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+    
+    const texLoc = gl.getAttribLocation(program, 'a_texCoord');
+    gl.enableVertexAttribArray(texLoc);
+    gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
+    
+    // Create webcam texture
+    webcamTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    
+    return true;
+}
+
+// ============================================
+// AUDIO ANALYSIS
+// ============================================
+function initAudio(stream) {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        
+        audioData = new Uint8Array(analyser.frequencyBinCount);
+        
+        const meter = document.getElementById('audioMeter');
+        meter.innerHTML = '';
+        for (let i = 0; i < 32; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'audio-bar';
+            meter.appendChild(bar);
+        }
+        
+        console.log('Audio ready');
+    } catch (e) {
+        console.error('Audio init failed:', e);
+    }
+}
+
+function updateAudio() {
+    if (!analyser) return;
+    
+    analyser.getByteFrequencyData(audioData);
+    const binCount = audioData.length;
+    const bassEnd = Math.floor(binCount * 0.15);
+    const midEnd = Math.floor(binCount * 0.5);
+    
+    let bassSum = 0, midSum = 0, highSum = 0;
+    for (let i = 0; i < binCount; i++) {
+        const val = audioData[i] / 255;
+        if (i < bassEnd) bassSum += val;
+        else if (i < midEnd) midSum += val;
+        else highSum += val;
+    }
+    
+    bassLevel = (bassSum / bassEnd) * params.audioIntensity;
+    midLevel = (midSum / (midEnd - bassEnd)) * params.audioIntensity;
+    highLevel = (highSum / (binCount - midEnd)) * params.audioIntensity;
+    
+    smoothedBass = smoothedBass * 0.7 + bassLevel * 0.3;
+    smoothedMid = smoothedMid * 0.8 + midLevel * 0.2;
+    smoothedHigh = smoothedHigh * 0.85 + highLevel * 0.15;
+    
+    const bars = document.querySelectorAll('.audio-bar');
+    const step = Math.floor(binCount / bars.length);
+    bars.forEach((bar, i) => {
+        const val = audioData[i * step] / 255;
+        bar.style.height = Math.max(2, val * 36) + 'px';
+    });
+}
+
+// ============================================
+// RENDER LOOP
+// ============================================
+function render() {
+    if (!isRunning) return;
+    
+    updateAudio();
+    
+    const time = (Date.now() - startTime) / 1000;
+    
+    canvas.width = webcam.videoWidth || 1280;
+    canvas.height = webcam.videoHeight || 720;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    
+    // Update webcam texture
+    gl.bindTexture(gl.TEXTURE_2D, webcamTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, webcam);
+    
+    gl.useProgram(program);
+    
+    // Set uniforms
+    gl.uniform1f(gl.getUniformLocation(program, 'u_time'), time);
+    gl.uniform2f(gl.getUniformLocation(program, 'u_resolution'), canvas.width, canvas.height);
+    
+    gl.uniform1f(gl.getUniformLocation(program, 'u_bass'), smoothedBass);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_mid'), smoothedMid);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_high'), smoothedHigh);
+    
+    gl.uniform1f(gl.getUniformLocation(program, 'u_flowIntensity'), params.flowIntensity);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_flowSpeed'), params.flowSpeed);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_turbulence'), params.turbulence);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_scale'), params.scale);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_magenta'), params.magenta);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_darkVoid'), params.darkVoid);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_rainbowEdge'), params.rainbowEdge);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_colorSpeed'), params.colorSpeed);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_blobSoftness'), params.blobSoftness);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_edgeGlow'), params.edgeGlow);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_webcamBlend'), params.webcamBlend);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_bassPulse'), params.bassPulse);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_midFlow'), params.midFlow);
+    gl.uniform1f(gl.getUniformLocation(program, 'u_highColor'), params.highColor);
+    
+    gl.uniform1i(gl.getUniformLocation(program, 'u_webcam'), 0);
+    
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    
+    requestAnimationFrame(render);
+}
+
+// ============================================
+// START
+// ============================================
+async function start() {
+    try {
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('startBtn').textContent = 'Starting...';
+        
+        if (!initWebGL()) return;
+        
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+            audio: true
+        });
+        
+        webcam = document.getElementById('webcam');
+        webcam.srcObject = stream;
+        await webcam.play();
+        
+        initAudio(stream);
+        
+        isRunning = true;
+        startTime = Date.now();
+        document.getElementById('startBtn').textContent = 'Flowing ⚜';
+        
+        render();
+        
+    } catch (e) {
+        console.error('Start failed:', e);
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('startBtn').textContent = 'Begin Transformation ⚜';
+        alert('Could not access camera/microphone: ' + e.message);
+    }
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.getElementById('startBtn').addEventListener('click', start);
+
+document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    const container = document.getElementById('videoContainer');
+    if (container.requestFullscreen) container.requestFullscreen();
+    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+});
+
+// All sliders
+const sliderConfig = {
+    'flowSlider': { param: 'flowIntensity', valId: 'flowVal', suffix: '%', divisor: 100 },
+    'flowSpeedSlider': { param: 'flowSpeed', valId: 'flowSpeedVal', suffix: '%', divisor: 100 },
+    'turbSlider': { param: 'turbulence', valId: 'turbVal', suffix: '%', divisor: 100 },
+    'scaleSlider': { param: 'scale', valId: 'scaleVal', suffix: '%', divisor: 100 },
+    'magentaSlider': { param: 'magenta', valId: 'magentaVal', suffix: '%', divisor: 100 },
+    'voidSlider': { param: 'darkVoid', valId: 'voidVal', suffix: '%', divisor: 100 },
+    'rainbowSlider': { param: 'rainbowEdge', valId: 'rainbowVal', suffix: '%', divisor: 100 },
+    'colorSpeedSlider': { param: 'colorSpeed', valId: 'colorSpeedVal', suffix: '%', divisor: 100 },
+    'blobSlider': { param: 'blobSoftness', valId: 'blobVal', suffix: '%', divisor: 100 },
+    'glowSlider': { param: 'edgeGlow', valId: 'glowVal', suffix: '%', divisor: 100 },
+    'blendSlider': { param: 'webcamBlend', valId: 'blendVal', suffix: '%', divisor: 100 },
+    'audioIntensitySlider': { param: 'audioIntensity', valId: 'audioIntensityVal', suffix: '%', divisor: 100 },
+    'bassPulseSlider': { param: 'bassPulse', valId: 'bassPulseVal', suffix: '%', divisor: 100 },
+    'midFlowSlider': { param: 'midFlow', valId: 'midFlowVal', suffix: '%', divisor: 100 },
+    'highColorSlider': { param: 'highColor', valId: 'highColorVal', suffix: '%', divisor: 100 }
+};
+
+Object.keys(sliderConfig).forEach(sliderId => {
+    const config = sliderConfig[sliderId];
+    document.getElementById(sliderId).addEventListener('input', e => {
+        params[config.param] = e.target.value / config.divisor;
+        document.getElementById(config.valId).textContent = e.target.value + config.suffix;
+    });
+});
+</script>
+</body>
+</html>
