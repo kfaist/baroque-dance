@@ -290,7 +290,7 @@
         }
         
         /* Statement Section - shimmery transparent glass effect */
-        .statement-section { margin-top: 12px; width: 100%; position: relative; }
+        .statement-section { margin-top: 12px; width: 100%; position: relative; box-sizing: border-box; }
         
         /* Layer 1: LIGHTER/more transparent outer shimmer background */
         .shimmer-bg {
@@ -518,10 +518,7 @@
                 font-size: 1rem !important;
             }
             
-            /* Hide statement on mobile */
-            .shimmer-block {
-                display: none;
-            }
+
         }
         
         @media (max-width: 480px) {
@@ -683,9 +680,12 @@
                 margin-bottom: 10px;
             }
             
-            /* Hide statement on mobile */
+            /* Statement visible on mobile */
             .statement-section {
-                display: none !important;
+                display: block !important;
+                order: 100;
+                width: calc(100vw - 20px);
+                margin: 10px auto;
             }
         }
         
