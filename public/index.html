@@ -35,10 +35,7 @@
         .main { display: grid; grid-template-columns: 400px 1fr; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; align-items: start; }
         
         /* Right content: video + captures side by side, statement below */
-        .right-content { display: grid; grid-template-columns: 1fr 200px; gap: 25px; align-items: start; }
-        
-        /* Wrapper keeps video and statement stacked together */
-        .video-statement-wrapper { display: flex; flex-direction: column; gap: 25px; }
+        .right-content { display: grid; grid-template-columns: 1fr 200px; gap: 25px; }
         
         .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
         .capture-panel { padding: 15px; }
@@ -83,6 +80,52 @@
         .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
         
         .output-area { position: relative; }
+        
+        /* Session button area - spans above video and capture panel */
+        .session-area {
+            grid-column: 1 / -1;
+            margin-bottom: 15px;
+        }
+        .session-area .session-btn {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 1.3rem;
+        }
+        
+        /* Main capture button in capture panel */
+        .capture-btn-main {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 8px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(212,175,55,0.3), rgba(139,105,20,0.4));
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .capture-btn-main:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 20px rgba(212,175,55,0.5);
+        }
+        .still-counter-display {
+            text-align: center;
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding: 8px;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+        }
+        
         .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
         .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
         .container-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
@@ -402,6 +445,22 @@
                 gap: 0;
             }
             
+            .right-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            /* Session area above video on mobile */
+            .session-area {
+                order: -11;
+                padding: 10px;
+                margin: 0;
+            }
+            .session-area .session-btn {
+                padding: 14px 20px;
+                font-size: 1.1rem;
+            }
+            
             /* FULL SCREEN VIDEO AT TOP */
             .output-area {
                 order: -10;
@@ -414,14 +473,23 @@
                 border-right: none !important;
             }
             
-            /* Hide capture panel on mobile */
+            /* Show condensed capture panel on mobile */
             .capture-panel {
-                display: none !important;
+                order: -9;
+                margin: 10px;
+                padding: 15px;
+            }
+            .capture-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 5px;
             }
             
             .controls {
                 margin: 10px;
                 border-radius: 12px;
+                max-height: 60vh;
+                overflow-y: auto;
             }
         }
         
@@ -765,10 +833,7 @@
         
         <div class="main">
             <div class="controls">
-                <div class="session-section">
-                    <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
-                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
-                </div>
+                <!-- Session buttons moved to session-area above video -->
                 
                 <div class="section">
                     <h3>⚜ Golden Material</h3>
@@ -817,13 +882,38 @@
                     <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
                 </div>
                 
+                <!-- Statement Section -->
+                <div class="statement-section">
+                    <div class="shimmer-bg">
+                        <div class="shimmer-block">
+                            <h2>Statement</h2>
+                            <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
+                            <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
+                            <div class="section-divider">. . .</div>
+                            <h2>About</h2>
+                            <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
+                            <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
+                            <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
+                            <div class="contact-info">
+                                <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
+                                <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div id="log">⚜ Golden Mirror ready...</div>
             </div>
             
-            <!-- Right content area: video + captures + statement -->
+            <!-- Right content area: session button + video + captures -->
             <div class="right-content">
-            <!-- Video and Statement wrapper -->
-            <div class="video-statement-wrapper">
+            
+            <!-- Session buttons moved here, above video -->
+            <div class="session-area">
+                <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
+                <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ▢</button>
+            </div>
+            
             <div class="output-area">
                 <div class="video-container" id="videoContainer">
                     <div class="video-wrapper">
@@ -836,27 +926,6 @@
                     <div class="frame-overlay"></div>
                 </div>
             </div>
-            
-            <!-- Statement Section -->
-            <div class="statement-section">
-                <div class="shimmer-bg">
-                    <div class="shimmer-block">
-                        <h2>Statement</h2>
-                        <p>Dance & Enrobe transforms live movement into flowing golden sculpture through real-time AI processing. The system responds to gesture and rhythm, wrapping participants in luminous digital fabric that echoes Baroque opulence while remaining distinctly contemporary.</p>
-                        <p>Drawing from centuries of theatrical costume and sculptural tradition, the work explores how technology can extend the body's expressive range. Each movement generates unique golden drapery, creating an ephemeral performance that exists only in the moment of interaction.</p>
-                        <div class="section-divider">. . .</div>
-                        <h2>About</h2>
-                        <p>This installation builds on the rich history of transformation in performance art, from Baroque masquerades where elaborate costumes blurred identity, to contemporary motion capture that translates human gesture into digital form. The golden aesthetic references both religious iconography and the gilded excess of aristocratic display.</p>
-                        <p>The AI system learns from public-domain sources spanning Baroque portraiture, textile patterns, and sculptural drapery studies. By synthesizing these visual languages, it creates responses that feel simultaneously ancient and impossibly new.</p>
-                        <p class="license-note">Dance & Enrobe operates as an unlimited edition under open-source principles (AGPL-3.0), ensuring accessibility while sustaining ongoing development.</p>
-                        <div class="contact-info">
-                            <p><strong>Artist / Technical:</strong> <a href="mailto:kristabluedoor@gmail.com">kristabluedoor@gmail.com</a></p>
-                            <p><strong>Curatorial / Institutional:</strong> <a href="mailto:chaoscontemporarycraft@gmail.com">chaoscontemporarycraft@gmail.com</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div> <!-- close video-statement-wrapper -->
             
             <!-- Mobile Action Bar - appears between video and controls on mobile -->
             <div class="mobile-action-bar">
@@ -898,6 +967,14 @@
                     <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
                 </div>
                 
+                <!-- Main Capture Button with Counter -->
+                <button class="capture-btn-main" id="captureNextBtn" onclick="captureNextSlot()">
+                    📸 Capture Still
+                </button>
+                <div class="still-counter-display">
+                    <span id="stillCounter">0</span> / 10
+                </div>
+                
                 <a href="/prints" class="purchase-btn-large" id="purchaseBtn">
                     <span class="purchase-line">Shop Prints</span>
                     <span class="purchase-divider">⚜</span>
@@ -909,21 +986,16 @@
                 </div>
                 
                 <div class="capture-grid">
-                    <div class="capture-slot" data-slot="1">
-                        <span class="capture-slot-number">EXP_01</span>
-                        <img src="" alt="Captured still 1">
-                        <button class="capture-btn" onclick="captureStill(1)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="2">
-                        <span class="capture-slot-number">EXP_02</span>
-                        <img src="" alt="Captured still 2">
-                        <button class="capture-btn" onclick="captureStill(2)">Capture Still</button>
-                    </div>
-                    <div class="capture-slot" data-slot="3">
-                        <span class="capture-slot-number">EXP_03</span>
-                        <img src="" alt="Captured still 3">
-                        <button class="capture-btn" onclick="captureStill(3)">Capture Still</button>
-                    </div>
+                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">01</span><img src="" alt="Still 1"></div>
+                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">02</span><img src="" alt="Still 2"></div>
+                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">03</span><img src="" alt="Still 3"></div>
+                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">04</span><img src="" alt="Still 4"></div>
+                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">05</span><img src="" alt="Still 5"></div>
+                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">06</span><img src="" alt="Still 6"></div>
+                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">07</span><img src="" alt="Still 7"></div>
+                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">08</span><img src="" alt="Still 8"></div>
+                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">09</span><img src="" alt="Still 9"></div>
+                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">10</span><img src="" alt="Still 10"></div>
                 </div>
             </div>
             </div> <!-- close right-content -->
@@ -1265,11 +1337,19 @@ function captureStill(slotNumber) {
     slot.querySelector('img').src = dataUrl;
     slot.classList.add('has-image');
     log(`Still captured to slot ${slotNumber}`, 'success');
+    updateStillCounter();
+}
+
+// Update still counter display
+function updateStillCounter() {
+    const count = Object.keys(capturedStills).length;
+    const counterEl = document.getElementById('stillCounter');
+    if (counterEl) counterEl.textContent = count;
 }
 
 // Auto-capture to next empty slot (for mobile button)
 function captureNextSlot() {
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 10; i++) {
         if (!capturedStills[i]) {
             captureStill(i);
             return;
