@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Baroque Mirror: Dance & Enrobe - CMA Wonderball 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0608; 
+            color: #fff; 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Interactive background video */
+        #interactiveBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.6; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 6, 8, 0.3); z-index: 1; pointer-events: none; }
+        #pulseOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.4) 0%, transparent 70%); transition: opacity 0.1s; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
+        
+        .content { position: relative; z-index: 10; }
+        
+        .header { text-align: center; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); background: linear-gradient(180deg, rgba(114,47,55,0.4) 0%, rgba(10,6,8,0.7) 100%); backdrop-filter: blur(10px); }
+        .header-top { display: flex; justify-content: center; gap: 40px; margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 4px; color: #f4e4ba; font-family: 'Cinzel', serif; text-transform: uppercase; }
+        .header h1 { color: #d4af37; font-size: 2.5rem; margin: 0; letter-spacing: 6px; font-family: 'Cinzel', serif; text-shadow: 0 0 30px rgba(212,175,55,0.5); }
+        .header h1 .subtitle { display: block; font-size: 1.2rem; color: #f4e4ba; letter-spacing: 8px; margin-top: 5px; font-weight: 400; font-style: italic; }
+        .header-sub { font-size: 1rem; color: rgba(244,228,186,0.8); margin-top: 8px; font-style: italic; }
+        .header-credit { font-size: 0.9rem; color: #d4af37; margin-top: 5px; font-weight: 600; }
+        
+        .main { display: grid; grid-template-columns: 400px 1fr 200px; gap: 25px; padding: 25px; max-width: 1900px; margin: 0 auto; }
+        
+        .controls, .capture-panel { background: rgba(15,10,12,0.85); border: 1px solid rgba(212,175,55,0.4); border-radius: 12px; padding: 20px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(212,175,55,0.1), inset 0 0 60px rgba(0,0,0,0.5); }
+        .capture-panel { padding: 15px; }
+        
+        .section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .section:last-child { border-bottom: none; margin-bottom: 0; }
+        .section h3 { color: #d4af37; font-size: 0.95rem; margin: 0 0 14px 0; font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        
+        .session-section { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .session-btn { width: 100%; padding: 16px 20px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(114,47,55,0.85), rgba(74,31,36,0.95)); color: #d4af37; font-size: 1rem; cursor: pointer; border-radius: 8px; font-family: 'Cinzel', serif; letter-spacing: 3px; transition: all 0.3s ease; text-transform: uppercase; box-shadow: 0 0 20px rgba(212,175,55,0.15); }
+        .session-btn:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .session-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .session-btn.stop { background: linear-gradient(180deg, rgba(139,0,0,0.85), rgba(74,0,0,0.95)); border-color: #8b0000; color: #ff6b6b; }
+        .session-btn.stop:hover { background: linear-gradient(180deg, #8b0000, #4a0000); color: #fff; box-shadow: 0 0 35px rgba(139,0,0,0.5); }
+        
+        .gold-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .gold-btn { padding: 10px 12px; border: 1px solid rgba(212,175,55,0.5); background: rgba(20,15,18,0.8); color: #f4e4ba; cursor: pointer; border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; transition: all 0.3s ease; }
+        .gold-btn:hover { background: rgba(212,175,55,0.15); border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .gold-btn.active { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; font-weight: 700; border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .gold-btn .icon { display: block; font-size: 1.2rem; margin-bottom: 2px; }
+        
+        .bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bg-thumb { position: relative; border: 2px solid rgba(212,175,55,0.3); border-radius: 6px; overflow: hidden; cursor: pointer; aspect-ratio: 16/10; background: #000; transition: all 0.3s ease; }
+        .bg-thumb:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .bg-thumb.active { border-color: #f4e4ba; box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+        .bg-thumb video { width: 100%; height: 100%; object-fit: cover; }
+        .bg-thumb .label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: #f4e4ba; font-size: 0.65rem; padding: 4px; text-align: center; font-family: 'Cinzel', serif; }
+        
+        .blend-select { width: 100%; padding: 8px 10px; background: rgba(20,15,18,0.9); color: #f4e4ba; border: 1px solid rgba(212,175,55,0.5); border-radius: 6px; font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; cursor: pointer; }
+        .blend-select:focus { outline: none; border-color: #d4af37; }
+        
+        .slider-row { margin-bottom: 14px; }
+        .slider-row label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: rgba(244,228,186,0.9); }
+        .slider-row .val { color: #d4af37; font-weight: 700; min-width: 40px; text-align: right; }
+        input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #722f37, #d4af37); -webkit-appearance: none; cursor: pointer; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #f4e4ba, #d4af37); cursor: pointer; box-shadow: 0 0 10px rgba(212,175,55,0.6); transition: transform 0.2s; }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        .audio-section { background: rgba(114,47,55,0.2); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; margin-top: 12px; }
+        .audio-section h4 { color: #d4af37; font-size: 0.85rem; margin-bottom: 10px; font-family: 'Cinzel', serif; }
+        .audio-meter { height: 40px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-end; gap: 2px; padding: 4px; }
+        .audio-bar { flex: 1; background: linear-gradient(180deg, #d4af37, #722f37, #2a1015); border-radius: 2px; transition: height 0.05s ease-out; }
+        
+        .output-area { position: relative; }
+        .video-container { position: relative; border: 2px solid rgba(212,175,55,0.6); border-radius: 12px; overflow: hidden; box-shadow: 0 0 60px rgba(212,175,55,0.2), inset 0 0 100px rgba(0,0,0,0.8); background: #000; }
+        .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+        .container-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+        .output-video { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; mix-blend-mode: screen; z-index: 1; filter: contrast(2.0) saturate(1.5) brightness(1.2); }
+        .gold-pulse-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 2; opacity: 0; background: radial-gradient(circle at center, rgba(212,175,55,0.3) 0%, transparent 70%); transition: opacity 0.1s; }
+        .black-crush-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 3; background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.3) 100%); mix-blend-mode: multiply; }
+        .fullscreen-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.6); background: rgba(10,6,8,0.8); color: #d4af37; cursor: pointer; border-radius: 6px; font-size: 1.1rem; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; z-index: 20; backdrop-filter: blur(5px); }
+        .fullscreen-btn:hover { background: rgba(212,175,55,0.3); border-color: #d4af37; box-shadow: 0 0 20px rgba(212,175,55,0.4); transform: scale(1.1); }
+        .video-container:fullscreen { border-radius: 0; border: none; }
+        .video-container:fullscreen .video-wrapper { aspect-ratio: auto; width: 100vw; height: 100vh; }
+        .video-container:fullscreen .output-video { object-fit: contain; background: #000; }
+        .video-container:fullscreen .fullscreen-btn { top: 25px; right: 25px; }
+        /* Webcam now in sidebar, not affected by fullscreen */
+        .frame-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; border: 8px solid transparent; border-image: linear-gradient(135deg, #d4af37 0%, #8b6914 25%, #d4af37 50%, #8b6914 75%, #d4af37 100%) 1; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); z-index: 5; }
+        /* Input Preview - In capture panel sidebar */
+        .input-preview-section { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .input-preview-section h4 { color: #d4af37; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .webcam-pip { position: relative; width: 100%; border: 2px solid rgba(212,175,55,0.5); border-radius: 6px; overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.3); aspect-ratio: 4/3; }
+        .webcam-pip video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        #log { background: rgba(0,0,0,0.6); padding: 12px; height: 100px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 0.7rem; border: 1px solid rgba(212,175,55,0.2); border-radius: 6px; margin-top: 15px; }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        .info { color: #60a5fa; }
+        
+        .capture-panel-header { display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .capture-panel-header h3 { color: #d4af37; font-size: 0.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px; margin: 0; }
+        
+        /* Film Strip Styling */
+        .capture-panel {
+            background: linear-gradient(180deg, #1a1412 0%, #0d0a09 50%, #1a1412 100%) !important;
+            border: 1px solid rgba(212,175,55,0.3) !important;
+            position: relative;
+            padding-left: 28px !important;
+            padding-right: 28px !important;
+            border-radius: 4px !important;
+        }
+        
+        /* Sprocket track containers with checkered background */
+        .capture-panel::before,
+        .capture-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 18px;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(30,25,20,0.9) 0px,
+                    rgba(30,25,20,0.9) 4px,
+                    rgba(15,12,10,0.9) 4px,
+                    rgba(15,12,10,0.9) 8px
+                );
+            z-index: 0;
+        }
+        .capture-panel::before { left: 0; border-right: 1px solid rgba(139,105,20,0.4); }
+        .capture-panel::after { right: 0; border-left: 1px solid rgba(139,105,20,0.4); }
+        
+        /* Sprocket holes - cut out effect */
+        .sprocket-track {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            width: 18px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+        .sprocket-track.left { left: 0; }
+        .sprocket-track.right { right: 0; }
+        
+        .sprocket-hole {
+            width: 10px;
+            height: 14px;
+            background: rgba(0,0,0,0.95);
+            border-radius: 2px;
+            box-shadow: 
+                inset 0 1px 2px rgba(255,255,255,0.1),
+                0 0 3px rgba(0,0,0,0.8);
+            flex-shrink: 0;
+        }
+        
+        .capture-slot {
+            aspect-ratio: 16/10;
+            border: 1px solid rgba(139,105,20,0.5);
+            background: rgba(10,8,6,0.95);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .capture-slot:hover {
+            border-color: #d4af37;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 10px rgba(212,175,55,0.3);
+        }
+        .capture-slot-number {
+            position: absolute;
+            bottom: 4px;
+            left: 6px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+            color: rgba(212,175,55,0.6) !important;
+            font-size: 0.55rem !important;
+            letter-spacing: 1px;
+            z-index: 2;
+        }
+        .capture-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .capture-slot.has-image img {
+            display: block;
+        }
+        .capture-slot.has-image .capture-btn {
+            opacity: 0;
+        }
+        .capture-slot.has-image:hover .capture-btn {
+            opacity: 1;
+        }
+        .capture-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 8px 12px;
+            border: 1px solid rgba(212,175,55,0.6);
+            background: rgba(15,10,12,0.9);
+            color: #d4af37;
+            font-size: 0.6rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .capture-btn:hover {
+            background: linear-gradient(135deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 15px rgba(212,175,55,0.4);
+        }
+        
+        .capture-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .purchase-btn-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border: 2px solid #d4af37;
+            background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35));
+            color: #d4af37;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Cinzel', serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+            gap: 2px;
+            position: relative;
+            z-index: 3;
+        }
+        .purchase-btn-large:hover {
+            background: linear-gradient(180deg, #d4af37, #8b6914);
+            color: #0a0608;
+            box-shadow: 0 0 25px rgba(212,175,55,0.5);
+            transform: translateY(-2px);
+        }
+        .purchase-btn-large .purchase-line {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .purchase-btn-large .purchase-divider {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            line-height: 1;
+        }
+        
+        .capture-panel-header {
+            position: relative;
+            z-index: 3;
+        }
+        
+        /* Statement Section - shimmery transparent glass effect */
+        .statement-section {
+            margin-top: 25px;
+            padding: 35px 40px;
+            background: rgba(20, 15, 25, 0.4);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .statement-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(212, 175, 55, 0.03) 25%,
+                rgba(255, 200, 150, 0.05) 50%,
+                rgba(212, 175, 55, 0.03) 75%,
+                transparent 100%
+            );
+            animation: shimmerSweep 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes shimmerSweep {
+            0%, 100% { transform: translateX(-25%); }
+            50% { transform: translateX(25%); }
+        }
+        .statement-heading {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin: 0 0 15px 0;
+        }
+        .statement-section h2:not(:first-of-type) {
+            margin-top: 25px;
+        }
+        .statement-section p {
+            color: #f4e4ba;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0 0 12px 0;
+        }
+        .contact-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212,175,55,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: rgba(244,228,186,0.7);
+        }
+        .contact-label {
+            color: rgba(212,175,55,0.8);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        
+        .purchase-btn-large { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 12px 10px; margin-bottom: 15px; border: 2px solid #d4af37; background: linear-gradient(180deg, rgba(212,175,55,0.25), rgba(139,105,20,0.35)); color: #d4af37; cursor: pointer; border-radius: 6px; font-family: 'Cinzel', serif; transition: all 0.3s ease; text-transform: uppercase; text-decoration: none; text-align: center; gap: 2px; }
+        .purchase-btn-large:hover { background: linear-gradient(180deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 25px rgba(212,175,55,0.5); transform: translateY(-2px); }
+        .purchase-btn-large .purchase-line { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; }
+        .purchase-btn-large .purchase-divider { font-size: 0.6rem; opacity: 0.7; line-height: 1; }
+        .capture-grid { display: flex; flex-direction: column; gap: 10px; }
+        .capture-slot { aspect-ratio: 16/10; border: 1px solid rgba(212,175,55,0.3); border-radius: 6px; background: rgba(0,0,0,0.5); overflow: hidden; position: relative; transition: all 0.3s ease; }
+        .capture-slot:hover { border-color: #d4af37; box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .capture-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .capture-slot.has-image img { display: block; }
+        .capture-slot.has-image .capture-btn { opacity: 0; }
+        .capture-slot.has-image:hover .capture-btn { opacity: 1; }
+        .capture-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 8px 12px; border: 1px solid rgba(212,175,55,0.6); background: rgba(15,10,12,0.9); color: #d4af37; font-size: 0.6rem; cursor: pointer; border-radius: 4px; font-family: 'Cinzel', serif; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; white-space: nowrap; }
+        .capture-btn:hover { background: linear-gradient(135deg, #d4af37, #8b6914); color: #0a0608; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+        .capture-slot-number { position: absolute; top: 4px; left: 4px; font-size: 0.55rem; color: rgba(212,175,55,0.6); font-family: 'Cinzel', serif; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.5); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+        
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .main {
+                grid-template-columns: 1fr 200px;
+                grid-template-rows: auto 1fr;
+            }
+            .controls {
+                grid-column: 1 / -1;
+                grid-row: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main {
+                grid-template-columns: 1fr;
+                padding: 0;
+                gap: 0;
+            }
+            
+            /* FULL SCREEN VIDEO AT TOP */
+            .output-area {
+                order: -10;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+            }
+            .video-container {
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-right: none !important;
+            }
+            
+            /* Hide capture panel on mobile */
+            .capture-panel {
+                display: none !important;
+            }
+            
+            .controls {
+                margin: 10px;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* MINIMAL HEADER */
+            .header {
+                padding: 10px;
+            }
+            .header-top {
+                display: none;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+            .header h1 .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 3px;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.9rem;
+            }
+            
+            /* HIDE LESS IMPORTANT SECTIONS */
+            .section:nth-child(n+5) {
+                display: none;
+            }
+            
+            .controls {
+                padding: 16px;
+            }
+            
+            .section {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+            }
+            
+            /* DOUBLE SIZE HEADINGS */
+            .section h3 {
+                font-size: 1.2rem;
+                margin-bottom: 14px;
+            }
+            
+            /* GIANT SESSION BUTTON */
+            .session-btn {
+                padding: 24px 28px;
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+                min-height: 70px;
+            }
+            
+            /* BIGGER GOLD PRESETS - 2 columns */
+            .gold-presets {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .gold-btn {
+                padding: 18px 14px;
+                font-size: 1.1rem;
+                min-height: 65px;
+            }
+            .gold-btn .icon {
+                font-size: 1.4rem;
+                margin-bottom: 4px;
+            }
+            
+            /* Background grid - bigger */
+            .bg-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .bg-thumb .label {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+            
+            /* BIGGER SLIDERS */
+            .slider-row {
+                margin-bottom: 20px;
+            }
+            .slider-row label {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+            input[type="range"] {
+                height: 12px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            
+            /* Purchase button - BIG */
+            .purchase-btn-large {
+                padding: 20px 24px !important;
+                font-size: 1rem !important;
+                min-height: 65px;
+            }
+            .purchase-btn-large .purchase-line {
+                font-size: 1rem !important;
+            }
+            
+            /* Hide statement on mobile */
+            .shimmer-block {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header h1 .subtitle {
+                font-size: 0.75rem;
+            }
+            .header-sub, .header-credit {
+                font-size: 0.8rem;
+            }
+            
+            .controls {
+                margin: 8px;
+                padding: 14px;
+            }
+            
+            .section h3 {
+                font-size: 1.1rem;
+            }
+            
+            .session-btn {
+                padding: 20px 24px;
+                font-size: 1.2rem;
+                min-height: 60px;
+            }
+            
+            .gold-btn {
+                padding: 14px 10px;
+                font-size: 0.95rem;
+                min-height: 55px;
+            }
+            .gold-btn .icon {
+                font-size: 1.2rem;
+            }
+            
+            .slider-row label {
+                font-size: 0.9rem;
+            }
+            
+            .purchase-btn-large {
+                padding: 16px 20px !important;
+                min-height: 55px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <video id="interactiveBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
+    <div class="bg-overlay"></div>
+    <div id="pulseOverlay"></div>
+    <canvas id="particleCanvas"></canvas>
+    
+    <div class="content">
+        <div class="header">
+            <div class="header-top"><span>COLUMBUS MUSEUM OF ART</span><span>⚜</span><span>WONDERBALL 2026</span></div>
+            <h1>⚜ BAROQUE MIRROR: DANCE & ENROBE ⚜</h1>
+            <div class="header-sub">Live AI Art Transformation</div>
+            <div class="header-credit">by Krista Faist</div>
+        </div>
+        
+        <div class="main">
+            <div class="controls">
+                <div class="session-section">
+                    <button class="session-btn" id="startBtn">Begin Transformation ⚜</button>
+                    <button class="session-btn stop" id="stopBtn" style="display:none;">End Session ■</button>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Golden Material</h3>
+                    <div class="gold-presets">
+                        <button class="gold-btn active" data-style="polished"><span class="icon">✨</span>Polished</button>
+                        <button class="gold-btn" data-style="antique"><span class="icon">🏺</span>Antique</button>
+                        <button class="gold-btn" data-style="liquid"><span class="icon">💧</span>Liquid</button>
+                        <button class="gold-btn" data-style="baroque"><span class="icon">👑</span>Baroque</button>
+                        <button class="gold-btn" data-style="celestial"><span class="icon">☀️</span>Celestial</button>
+                        <button class="gold-btn" data-style="obsidian"><span class="icon">🖤</span>Obsidian</button>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Sculpture Controls</h3>
+                    <div class="slider-row"><label>3D Depth <span class="val" id="depthVal">0.45</span></label><input type="range" id="depthSlider" min="20" max="80" value="45"></div>
+                    <div class="slider-row"><label>Gold Intensity <span class="val" id="strengthVal">30</span></label><input type="range" id="strengthSlider" min="10" max="50" value="30"></div>
+                    <div class="slider-row"><label>Edge <span class="val" id="edgeVal">0.35</span></label><input type="range" id="edgeSlider" min="10" max="60" value="35"></div>
+                    <div class="slider-row"><label>Pose <span class="val" id="poseVal">0.50</span></label><input type="range" id="poseSlider" min="20" max="80" value="50"></div>
+                    <div class="slider-row"><label>Blend Mode <span class="val" id="blendVal">Screen</span></label>
+                        <select id="blendSelect" class="blend-select">
+                            <option value="screen">Screen (black→transparent)</option>
+                            <option value="lighten">Lighten</option>
+                            <option value="color-dodge">Color Dodge (intense)</option>
+                            <option value="normal">Normal (no blend)</option>
+                        </select>
+                    </div>
+                    <div class="slider-row"><label>Contrast <span class="val" id="contrastVal">2.0</span></label><input type="range" id="contrastSlider" min="100" max="300" value="200"></div>
+                    <div class="slider-row"><label>Brightness <span class="val" id="brightnessVal">1.2</span></label><input type="range" id="brightnessSlider" min="80" max="200" value="120"></div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Interactive Background</h3>
+                    <div class="bg-grid">
+                        <div class="bg-thumb" data-bg="bg_video1.mov"><video src="bg_video1.mov" autoplay muted loop playsinline></video><span class="label">Flow I</span></div>
+                        <div class="bg-thumb active" data-bg="bg_video2.mov"><video src="bg_video2.mov" autoplay muted loop playsinline></video><span class="label">Flow II</span></div>
+                        <div class="bg-thumb" data-bg="bg_video3.mov"><video src="bg_video3.mov" autoplay muted loop playsinline></video><span class="label">Flow III</span></div>
+                        <div class="bg-thumb" data-bg="bg_video4.mov"><video src="bg_video4.mov" autoplay muted loop playsinline></video><span class="label">Flow IV</span></div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <div class="slider-row"><label>BG Opacity <span class="val" id="bgOpacityVal">60%</span></label><input type="range" id="bgOpacitySlider" min="20" max="100" value="60"></div>
+                        <div class="slider-row"><label>BG Speed <span class="val" id="bgSpeedVal">1.0x</span></label><input type="range" id="bgSpeedSlider" min="25" max="200" value="100"></div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>⚜ Audio & Motion Reactivity</h3>
+                    <div class="slider-row"><label>Mic Sensitivity <span class="val" id="audioVal">70%</span></label><input type="range" id="audioSlider" min="0" max="100" value="70"></div>
+                    <div class="slider-row"><label>Motion Sensitivity <span class="val" id="motionVal">60%</span></label><input type="range" id="motionSlider" min="0" max="100" value="60"></div>
+                    <div class="slider-row"><label>Particle Density <span class="val" id="particleVal">50%</span></label><input type="range" id="particleSlider" min="10" max="100" value="50"></div>
+                    <div class="audio-section"><h4>🎵 Live Mic Input (no sound output)</h4><div class="audio-meter" id="audioMeter"></div></div>
+                </div>
+                
+                <div id="log">⚜ Golden Mirror ready...</div>
+            </div>
+            
+            <div class="output-area">
+                <div class="video-container" id="videoContainer">
+                    <div class="video-wrapper">
+                        <video class="container-bg" id="containerBg" autoplay loop muted playsinline><source src="bg_video2.mov" type="video/quicktime"></video>
+                        <video class="output-video" id="output" autoplay playsinline muted></video>
+                        <div class="gold-pulse-overlay" id="goldPulse"></div>
+                        <div class="black-crush-overlay" id="blackCrush"></div>
+                    </div>
+                    <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
+                    <div class="frame-overlay"></div>
+                </div>
+                
+                <!-- Statement Section -->
+                <div class="statement-section">
+                    <h2 class="statement-heading">The Baroque Dance</h2>
+                    <p>The Baroque dance was never just a dance. It was a social machine disguised as choreography. Every step displayed rank, every turn measured vanity, every flourish reminded the room who glittered brightest. Satire hid in the wings.</p>
+                    <p>Dancers exaggerated their poise to the point of parody, and the entire spectacle drifted toward caricature long before any artist put pen to paper. In that gilded world, movement became mockery and elegance brushed dangerously close to self-satire. This project borrows that rhythm.</p>
+                    
+                    <h2 class="statement-heading">Multisensory Opulence</h2>
+                    <p>Baroque culture delighted in overstimulation. Sound, movement, scent, silk, candlelight, painted ceilings, mirrored halls — extravagant environments built to overwhelm the senses and blur the line between art and experience.</p>
+                    <p>A multisensory installation becomes its own kind of palace architecture: a room that performs back at the viewer, shifting with proximity, gesture, and emotion. It is opulence reinterpreted as sensor logic.</p>
+                    
+                    <div class="contact-footer">
+                        <span class="contact-label">CONTACT</span>
+                        <span>Artist / Technical: kristabluedoor@gmail.com</span>
+                        <span>Curatorial / Institutional: chaoscontemporarycraft@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="capture-panel">
+                <!-- Input Preview -->
+                <div class="input-preview-section">
+                    <h4>⚜ Live Input</h4>
+                    <div class="webcam-pip">
+                        <video id="local" autoplay muted playsinline></video>
+                    </div>
+                </div>
+                
+                <div class="sprocket-track left">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
+                <div class="sprocket-track right">
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                    <div class="sprocket-hole"></div><div class="sprocket-hole"></div><div class="sprocket-hole"></div>
+                </div>
+                <a href="baroque-prints.html" class="purchase-btn-large"><span class="purchase-line">Shop Prints</span><span class="purchase-divider">⚜</span><span class="purchase-line">Mint NFTs</span></a>
+                <div class="capture-panel-header"><h3>⚜ Captures</h3></div>
+                <div class="capture-grid">
+                    <div class="capture-slot" data-slot="1"><span class="capture-slot-number">EXP_01</span><img src="" alt="Capture 1"><button class="capture-btn" onclick="captureStill(1)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="2"><span class="capture-slot-number">EXP_02</span><img src="" alt="Capture 2"><button class="capture-btn" onclick="captureStill(2)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="3"><span class="capture-slot-number">EXP_03</span><img src="" alt="Capture 3"><button class="capture-btn" onclick="captureStill(3)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="4"><span class="capture-slot-number">EXP_04</span><img src="" alt="Capture 4"><button class="capture-btn" onclick="captureStill(4)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="5"><span class="capture-slot-number">EXP_05</span><img src="" alt="Capture 5"><button class="capture-btn" onclick="captureStill(5)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="6"><span class="capture-slot-number">EXP_06</span><img src="" alt="Capture 6"><button class="capture-btn" onclick="captureStill(6)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="7"><span class="capture-slot-number">EXP_07</span><img src="" alt="Capture 7"><button class="capture-btn" onclick="captureStill(7)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="8"><span class="capture-slot-number">EXP_08</span><img src="" alt="Capture 8"><button class="capture-btn" onclick="captureStill(8)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="9"><span class="capture-slot-number">EXP_09</span><img src="" alt="Capture 9"><button class="capture-btn" onclick="captureStill(9)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="10"><span class="capture-slot-number">EXP_10</span><img src="" alt="Capture 10"><button class="capture-btn" onclick="captureStill(10)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="11"><span class="capture-slot-number">EXP_11</span><img src="" alt="Capture 11"><button class="capture-btn" onclick="captureStill(11)">Capture Still</button></div>
+                    <div class="capture-slot" data-slot="12"><span class="capture-slot-number">EXP_12</span><img src="" alt="Capture 12"><button class="capture-btn" onclick="captureStill(12)">Capture Still</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <canvas id="captureCanvas" style="display:none;"></canvas>
+
+<script>
+const API_KEY = 'sk_9bFt6nHdK1T6AXG6knDS3K57u1BTS6xe9FiwqwQW52KoK7UpqBBEYnmPGxFvLJmS';
+const API_BASE = 'https://api.daydream.live/v1';
+const PIPELINE_ID = 'pip_qpUgXycjWF6YMeSL';
+
+let localStream, inputPC, streamId, playbackId, hls, pollTimer;
+let audioContext, analyser, audioDataArray;
+let currentStyle = 'polished';
+let params = { strength: 30, pose: 0.50, edge: 0.35, depth: 0.45 };
+let audioParams = { intensity: 0.70, particleDensity: 0.50, motionSensitivity: 0.60 };
+let bgParams = { opacity: 0.60, speed: 1.0 };
+let capturedStills = {};
+let smoothedAudio = new Array(32).fill(0);
+let bassLevel = 0, midLevel = 0, highLevel = 0;
+let particles = [];
+const MAX_PARTICLES = 200;
+let animationId, time = 0;
+
+const styles = {
+    polished: { prompt: "ISOLATED golden statue on PURE BLACK VOID, solid 24k gold human figure sculpture, gleaming polished metallic gold surface, dramatic spotlight from above, deep black empty background, museum display lighting, hyper-realistic golden sheen, sharp shadows on black", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
+    antique: { prompt: "ISOLATED bronze statue on PURE BLACK VOID, ancient Greek golden patina sculpture, museum spotlight on black background, classical human figure, oxidized bronze with gold highlights, empty black surroundings, dramatic museum lighting", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
+    liquid: { prompt: "ISOLATED liquid gold figure on PURE BLACK VOID, flowing molten metal human form, mercury-like golden surface, dramatic rim lighting on black, metallic fluid sculpture, empty black background, spotlight illumination", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
+    baroque: { prompt: "ISOLATED baroque gold statue on PURE BLACK VOID, ornate gilded human sculpture, Bernini style golden figure, elaborate rococo details, cathedral spotlight on black background, dramatic shadows into blackness", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, texture behind subject" },
+    celestial: { prompt: "ISOLATED radiant gold deity on PURE BLACK VOID, divine golden human figure, heavenly aureate glow, ethereal rim lighting on black, angelic gold sculpture, luminous against pure darkness, spotlight from above", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, colors, blue, green, red, purple, white background, grey background, gradient, clouds, heaven scene" },
+    obsidian: { prompt: "ISOLATED obsidian figure on PURE BLACK VOID, black glass human sculpture with molten gold veins, glowing gold cracks on dark form, volcanic glass and gold, dramatic lighting on pure black background", negative: "background, scenery, environment, room, wall, floor, sky, landscape, nature, furniture, objects, blue, green, red, purple, white background, grey background, gradient, texture behind subject" }
+};
+
+function log(msg, type = '') { const div = document.getElementById('log'); const line = document.createElement('div'); line.className = type; line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`; div.appendChild(line); div.scrollTop = div.scrollHeight; }
+
+function captureStill(slotNumber) {
+    console.log('captureStill called with slot:', slotNumber);
+    const outputVideo = document.getElementById('output');
+    const canvas = document.getElementById('captureCanvas');
+    const ctx = canvas.getContext('2d');
+    if (!outputVideo.videoWidth) { log('No video to capture yet', 'error'); return; }
+    
+    // Scale down for storage (max 800px wide)
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / outputVideo.videoWidth);
+    canvas.width = outputVideo.videoWidth * scale;
+    canvas.height = outputVideo.videoHeight * scale;
+    ctx.drawImage(outputVideo, 0, 0, canvas.width, canvas.height);
+    
+    // Use JPEG with 70% quality instead of PNG (much smaller)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
+    
+    try {
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+    } catch (e) {
+        console.warn('Storage full, clearing old captures');
+        localStorage.removeItem('goldenCaptures');
+        capturedStills = {};
+        capturedStills[slotNumber] = { image: dataUrl, timestamp: new Date().toISOString(), style: currentStyle };
+        localStorage.setItem('goldenCaptures', JSON.stringify(capturedStills));
+        log('Storage was full - cleared old captures', 'info');
+    }
+    
+    const slot = document.querySelector(`.capture-slot[data-slot="${slotNumber}"]`);
+    slot.querySelector('img').src = dataUrl;
+    slot.classList.add('has-image');
+    log(`Still captured to slot ${slotNumber}`, 'success');
+}
+
+function loadCapturedStills() {
+    // Clear old captures on each new session
+    localStorage.removeItem('goldenCaptures');
+    capturedStills = {};
+    console.log('Captures cleared for fresh session');
+}
+
+// Audio analysis from mic input only (no sound output)
+function initAudioAnalysis(stream) {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser(); 
+        analyser.fftSize = 256; 
+        analyser.smoothingTimeConstant = 0.8;
+        
+        // Connect mic to analyser only - NOT to destination (no sound output)
+        const micSource = audioContext.createMediaStreamSource(stream);
+        micSource.connect(analyser);
+        // DO NOT connect to audioContext.destination - this keeps it silent
+        
+        audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+        
+        // Create audio meter bars
+        const meter = document.getElementById('audioMeter'); 
+        meter.innerHTML = '';
+        for (let i = 0; i < 32; i++) { 
+            const bar = document.createElement('div'); 
+            bar.className = 'audio-bar'; 
+            bar.style.height = '4px'; 
+            meter.appendChild(bar); 
+        }
+        log('Mic analysis active (no sound output)', 'success');
+    } catch (e) { 
+        log(`Audio error: ${e.message}`, 'error'); 
+    }
+}
+
+// Motion detection variables
+let motionCanvas, motionCtx, prevFrameData;
+let motionLevel = 0, motionSmoothed = 0;
+
+function initMotionDetection() {
+    motionCanvas = document.createElement('canvas');
+    motionCanvas.width = 64;
+    motionCanvas.height = 48;
+    motionCtx = motionCanvas.getContext('2d', { willReadFrequently: true });
+    log('Motion detection active', 'success');
+}
+
+function detectMotion() {
+    const video = document.getElementById('local');
+    if (!video.videoWidth || !motionCtx) return;
+    
+    motionCtx.drawImage(video, 0, 0, 64, 48);
+    const imageData = motionCtx.getImageData(0, 0, 64, 48);
+    const data = imageData.data;
+    
+    if (prevFrameData) {
+        let diff = 0;
+        for (let i = 0; i < data.length; i += 4) {
+            diff += Math.abs(data[i] - prevFrameData[i]);
+            diff += Math.abs(data[i + 1] - prevFrameData[i + 1]);
+            diff += Math.abs(data[i + 2] - prevFrameData[i + 2]);
+        }
+        motionLevel = (diff / (data.length * 255 / 4)) * audioParams.motionSensitivity;
+        motionSmoothed = motionSmoothed * 0.85 + motionLevel * 0.15;
+    }
+    
+    prevFrameData = new Uint8ClampedArray(data);
+}
+
+function updateAudio() {
+    if (!analyser) return;
+    analyser.getByteFrequencyData(audioDataArray);
+    const binCount = audioDataArray.length, bassEnd = Math.floor(binCount * 0.15), midEnd = Math.floor(binCount * 0.5);
+    let bassSum = 0, midSum = 0, highSum = 0;
+    for (let i = 0; i < binCount; i++) { const val = audioDataArray[i] / 255; if (i < bassEnd) bassSum += val; else if (i < midEnd) midSum += val; else highSum += val; }
+    bassLevel = (bassSum / bassEnd) * audioParams.intensity; 
+    midLevel = (midSum / (midEnd - bassEnd)) * audioParams.intensity; 
+    highLevel = (highSum / (binCount - midEnd)) * audioParams.intensity;
+    for (let i = 0; i < 32; i++) { const idx = Math.floor(i * binCount / 32); smoothedAudio[i] = smoothedAudio[i] * 0.7 + (audioDataArray[idx] / 255) * 0.3; }
+    document.querySelectorAll('.audio-bar').forEach((bar, i) => { bar.style.height = Math.max(4, smoothedAudio[i] * 36) + 'px'; });
+    
+    // Detect motion from webcam
+    detectMotion();
+    
+    // Combined audio + motion reactivity for gold pulse
+    const combinedIntensity = Math.max(bassLevel * 0.7, motionSmoothed * 3);
+    document.getElementById('goldPulse').style.opacity = combinedIntensity * 0.6;
+    document.getElementById('pulseOverlay').style.opacity = combinedIntensity * 0.4;
+    
+    // React background video playback speed to audio + motion
+    const bgSpeed = bgParams.speed * (1 + bassLevel * 0.5 + motionSmoothed * 2);
+    document.getElementById('interactiveBg').playbackRate = Math.min(3, bgSpeed);
+    document.getElementById('containerBg').playbackRate = Math.min(3, bgSpeed);
+    
+    // React background opacity/brightness to audio
+    const bgBrightness = 1 + midLevel * 0.3 + motionSmoothed;
+    document.getElementById('interactiveBg').style.filter = `brightness(${bgBrightness})`;
+    document.getElementById('containerBg').style.filter = `brightness(${bgBrightness})`;
+}
+
+function initParticles() {
+    const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } resize(); window.addEventListener('resize', resize);
+    class Particle {
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2; this.size = Math.random() * 3 + 1; this.life = 1; this.decay = Math.random() * 0.01 + 0.005; this.hue = Math.random() * 40 + 35; }
+        update() { 
+            // React to both audio bass and motion
+            const reactivity = bassLevel * 3 + motionSmoothed * 8;
+            this.vx += (Math.random() - 0.5) * reactivity; 
+            this.vy += (Math.random() - 0.5) * reactivity; 
+            this.vx *= 0.98; 
+            this.vy *= 0.98; 
+            this.x += this.vx; 
+            this.y += this.vy; 
+            this.life -= this.decay; 
+            if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); 
+        }
+        draw(ctx) { 
+            const alpha = this.life * 0.6;
+            // Size reacts to mid frequencies and motion
+            const size = this.size * (1 + midLevel * 2 + motionSmoothed * 3); 
+            ctx.save(); 
+            ctx.globalAlpha = alpha; 
+            const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, size * 3); 
+            g.addColorStop(0, `hsla(${this.hue}, 80%, 70%, 1)`); 
+            g.addColorStop(0.4, `hsla(${this.hue}, 70%, 50%, 0.5)`); 
+            g.addColorStop(1, `hsla(${this.hue}, 60%, 30%, 0)`); 
+            ctx.fillStyle = g; 
+            ctx.beginPath(); 
+            ctx.arc(this.x, this.y, size * 3, 0, Math.PI * 2); 
+            ctx.fill(); 
+            ctx.restore(); 
+        }
+    }
+    return { canvas, ctx, Particle };
+}
+
+let particleSystem;
+function drawParticles() {
+    if (!particleSystem) return;
+    const { canvas, ctx, Particle } = particleSystem; ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const targetCount = Math.floor(MAX_PARTICLES * audioParams.particleDensity);
+    while (particles.length < targetCount) particles.push(new Particle());
+    while (particles.length > targetCount) particles.pop();
+    particles.forEach(p => { p.update(); p.draw(ctx); });
+}
+
+function animate() { time++; updateAudio(); drawParticles(); animationId = requestAnimationFrame(animate); }
+
+// UI Handlers
+document.querySelectorAll('.gold-btn').forEach(btn => { btn.onclick = () => { document.querySelectorAll('.gold-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentStyle = btn.dataset.style; log(`Style: ${currentStyle.toUpperCase()}`, 'info'); if (streamId) setParams(); }; });
+document.querySelectorAll('.bg-thumb').forEach(thumb => { thumb.onclick = () => { document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); const src = thumb.dataset.bg; document.getElementById('interactiveBg').src = src; document.getElementById('containerBg').src = src; log(`Background: ${thumb.querySelector('.label').textContent}`, 'info'); }; thumb.onmouseenter = () => thumb.querySelector('video').play(); thumb.onmouseleave = () => thumb.querySelector('video').pause(); });
+document.getElementById('depthSlider').oninput = function() { params.depth = this.value / 100; document.getElementById('depthVal').textContent = params.depth.toFixed(2); if (streamId) setParams(); };
+document.getElementById('strengthSlider').oninput = function() { params.strength = parseInt(this.value); document.getElementById('strengthVal').textContent = params.strength; if (streamId) setParams(); };
+document.getElementById('edgeSlider').oninput = function() { params.edge = this.value / 100; document.getElementById('edgeVal').textContent = params.edge.toFixed(2); if (streamId) setParams(); };
+document.getElementById('poseSlider').oninput = function() { params.pose = this.value / 100; document.getElementById('poseVal').textContent = params.pose.toFixed(2); if (streamId) setParams(); };
+document.getElementById('blendSelect').onchange = function() { document.getElementById('output').style.mixBlendMode = this.value; document.getElementById('blendVal').textContent = this.options[this.selectedIndex].text.split(' ')[0]; log('Blend: ' + this.value, 'info'); };
+document.getElementById('contrastSlider').oninput = function() { const v = this.value / 100; document.getElementById('contrastVal').textContent = v.toFixed(1); updateOutputFilters(); };
+document.getElementById('brightnessSlider').oninput = function() { const v = this.value / 100; document.getElementById('brightnessVal').textContent = v.toFixed(1); updateOutputFilters(); };
+function updateOutputFilters() { const c = document.getElementById('contrastSlider').value / 100; const b = document.getElementById('brightnessSlider').value / 100; document.getElementById('output').style.filter = `contrast(${c}) saturate(1.4) brightness(${b})`; }
+document.getElementById('bgOpacitySlider').oninput = function() { bgParams.opacity = this.value / 100; document.getElementById('bgOpacityVal').textContent = this.value + '%'; document.getElementById('interactiveBg').style.opacity = bgParams.opacity; document.getElementById('containerBg').style.opacity = bgParams.opacity; };
+document.getElementById('bgSpeedSlider').oninput = function() { bgParams.speed = this.value / 100; document.getElementById('bgSpeedVal').textContent = bgParams.speed.toFixed(2) + 'x'; document.getElementById('interactiveBg').playbackRate = bgParams.speed; document.getElementById('containerBg').playbackRate = bgParams.speed; };
+document.getElementById('audioSlider').oninput = function() { audioParams.intensity = this.value / 100; document.getElementById('audioVal').textContent = this.value + '%'; };
+document.getElementById('motionSlider').oninput = function() { audioParams.motionSensitivity = this.value / 100; document.getElementById('motionVal').textContent = this.value + '%'; };
+document.getElementById('particleSlider').oninput = function() { audioParams.particleDensity = this.value / 100; document.getElementById('particleVal').textContent = this.value + '%'; };
+document.getElementById('startBtn').onclick = start;
+document.getElementById('stopBtn').onclick = stop;
+document.getElementById('fullscreenBtn').onclick = function() { const c = document.getElementById('videoContainer'); if (!document.fullscreenElement) c.requestFullscreen?.(); else document.exitFullscreen?.(); };
+document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreenBtn').textContent = document.fullscreenElement ? '✕' : '⛶'; });
+
+async function start() {
+    document.getElementById('startBtn').disabled = true;
+    try {
+        log('Getting camera & mic...', 'info');
+        // Get video for AI processing, audio ONLY for analysis (not output)
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, 
+            audio: true 
+        });
+        document.getElementById('local').srcObject = localStream;
+        log('Camera ready', 'success');
+        
+        // Initialize audio analysis from mic (input only, no output)
+        initAudioAnalysis(localStream);
+        
+        // Initialize motion detection
+        initMotionDetection();
+        
+        particleSystem = initParticles();
+        if (!animationId) animate();
+        
+        log('Creating stream...', 'info');
+        // Send ONLY video to Daydream (no audio)
+        const videoOnlyStream = new MediaStream(localStream.getVideoTracks());
+        
+        const createRes = await fetch(`${API_BASE}/streams`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify({ pipeline_id: PIPELINE_ID }) });
+        if (!createRes.ok) throw new Error(`Create failed: ${createRes.status}`);
+        const data = await createRes.json(); streamId = data.id; playbackId = data.output_playback_id;
+        log(`Stream: ${streamId.slice(-8)}`, 'success');
+        log('Connecting WebRTC...', 'info');
+        await connectWHIP(data.whip_url, videoOnlyStream);
+        log('Video streaming', 'success');
+        await new Promise(r => setTimeout(r, 3000));
+        await setParams();
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('stopBtn').style.display = 'block';
+        startPolling();
+    } catch (e) { log(`ERROR: ${e.message}`, 'error'); document.getElementById('startBtn').disabled = false; }
+}
+
+async function connectWHIP(whipUrl, streamToSend) {
+    inputPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    inputPC.oniceconnectionstatechange = () => { log(`ICE: ${inputPC.iceConnectionState}`, inputPC.iceConnectionState === 'connected' ? 'success' : 'info'); };
+    // Send only the provided stream (video only)
+    streamToSend.getTracks().forEach(track => inputPC.addTrack(track, streamToSend));
+    const offer = await inputPC.createOffer(); await inputPC.setLocalDescription(offer);
+    await new Promise(resolve => { if (inputPC.iceGatheringState === 'complete') resolve(); else { inputPC.onicegatheringstatechange = () => { if (inputPC.iceGatheringState === 'complete') resolve(); }; setTimeout(resolve, 3000); } });
+    const res = await fetch(whipUrl, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: inputPC.localDescription.sdp });
+    if (!res.ok) throw new Error(`WHIP failed: ${res.status}`);
+    await inputPC.setRemoteDescription({ type: 'answer', sdp: await res.text() });
+}
+
+async function setParams() {
+    const style = styles[currentStyle]; log(`Setting: ${currentStyle}`, 'info');
+    const body = { model_id: "streamdiffusion", pipeline: "live-video-to-video", params: { model_id: "stabilityai/sd-turbo", prompt: style.prompt, negative_prompt: style.negative, num_inference_steps: params.strength, seed: 42, controlnets: [
+        { conditioning_scale: params.pose, enabled: true, model_id: "thibaud/controlnet-sd21-openpose-diffusers", preprocessor: "pose_tensorrt" },
+        { conditioning_scale: params.edge, enabled: true, model_id: "thibaud/controlnet-sd21-hed-diffusers", preprocessor: "soft_edge" },
+        { conditioning_scale: params.depth, enabled: true, model_id: "thibaud/controlnet-sd21-depth-diffusers", preprocessor: "depth_tensorrt" }
+    ]}};
+    try { const res = await fetch(`${API_BASE}/streams/${streamId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` }, body: JSON.stringify(body) }); if (res.ok) log('Params set OK', 'success'); else log(`Params error ${res.status}`, 'error'); } catch (e) { log(`Error: ${e.message}`, 'error'); }
+}
+
+function startPolling() {
+    let attempts = 0, hlsConnected = false;
+    const poll = async () => {
+        attempts++;
+        try {
+            const res = await fetch(`https://livepeer.studio/api/playback/${playbackId}`);
+            const data = await res.json();
+            if (attempts % 5 === 0) log(`Waiting (${attempts})...`, 'info');
+            if (data.meta?.live === 1 && !hlsConnected) { log('LIVE!', 'success'); const hlsUrl = data.meta?.source?.find(s => s.hrn === 'HLS (TS)')?.url; if (hlsUrl) { hlsConnected = true; setTimeout(() => connectHLS(hlsUrl), 1500); } }
+            if (attempts < 120) pollTimer = setTimeout(poll, hlsConnected ? 5000 : 2000);
+        } catch (e) { if (attempts < 120) pollTimer = setTimeout(poll, 3000); }
+    };
+    pollTimer = setTimeout(poll, 3000);
+}
+
+function connectHLS(url) {
+    log('Connecting HLS...', 'info');
+    const video = document.getElementById('output');
+    if (Hls.isSupported()) {
+        if (hls) hls.destroy();
+        hls = new Hls({ lowLatencyMode: true, liveSyncDuration: 1, liveMaxLatencyDuration: 5, liveDurationInfinity: true });
+        hls.loadSource(url); hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { 
+            log('Manifest loaded', 'success'); 
+            video.muted = true; // Ensure no sound output
+            video.play().then(() => log('Golden sculpture live!', 'success')).catch(() => { video.play(); }); 
+        });
+        hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal) { if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(() => hls.startLoad(), 2000); else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError(); } });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = url; video.muted = true; video.addEventListener('loadedmetadata', () => video.play()); }
+}
+
+function stop() {
+    if (pollTimer) clearTimeout(pollTimer);
+    if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
+    if (inputPC) { inputPC.close(); inputPC = null; }
+    if (hls) { hls.destroy(); hls = null; }
+    if (audioContext) { audioContext.close(); audioContext = null; }
+    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+    document.getElementById('local').srcObject = null;
+    document.getElementById('output').src = '';
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('startBtn').style.display = 'block';
+    document.getElementById('stopBtn').style.display = 'none';
+    streamId = null; playbackId = null; particles = [];
+    document.getElementById('particleCanvas').getContext('2d').clearRect(0, 0, window.innerWidth, window.innerHeight);
+    log('Session ended', 'info');
+}
+
+window.addEventListener('load', () => {
+    loadCapturedStills();
+    particleSystem = initParticles();
+    function demoAnimate() {
+        time++;
+        bassLevel = 0.1 + Math.sin(time * 0.02) * 0.05;
+        midLevel = 0.1 + Math.sin(time * 0.03) * 0.05;
+        highLevel = 0.05 + Math.sin(time * 0.04) * 0.03;
+        drawParticles();
+        if (!localStream) animationId = requestAnimationFrame(demoAnimate);
+    }
+    demoAnimate();
+    
+    // Auto-play all thumbnail videos
+    document.querySelectorAll('.bg-thumb video').forEach(v => {
+        v.play().catch(e => console.log('Video autoplay blocked:', e));
+    });
+});
+</script>
+</body>
+</html>
