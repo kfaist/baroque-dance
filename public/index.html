@@ -904,18 +904,8 @@
         .shimmer-block .license-note { font-style: italic; opacity: 0.85; }
         
         /* ========== MOBILE RESPONSIVE ========== */
-        @media (max-width: 1200px) {
-            .main {
-                grid-template-columns: 1fr 200px;
-                grid-template-rows: auto 1fr;
-            }
-            .controls {
-                grid-column: 1 / -1;
-                grid-row: 1;
-            }
-        }
         
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .main {
                 display: flex !important;
                 flex-direction: column !important;
@@ -1105,7 +1095,7 @@
             display: none;
         }
         
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .mobile-action-bar {
                 display: flex !important;
                 justify-content: space-between;
@@ -1352,11 +1342,6 @@
                     </div>
                     <button class="fullscreen-btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
                     <div class="frame-overlay"></div>
-                    <div class="status-overlay" id="statusOverlay">
-                        <div class="status-message" id="statusMessage">Negotiating with pixels. Please wait up to 45 seconds...</div>
-                        <div class="status-debug" id="statusDebug"></div>
-                        <div class="status-hint" id="statusHint"></div>
-                    </div>
                 </div>
             </div>
             
@@ -1619,7 +1604,8 @@ function log(msg, type = '') {
     // Update status debug overlay
     const statusDebug = document.getElementById('statusDebug');
     const statusHint = document.getElementById('statusHint');
-    if (statusDebug && document.getElementById('statusOverlay').classList.contains('active')) {
+    const statusOverlay = document.getElementById('statusOverlay');
+    if (statusDebug && statusOverlay && statusOverlay.classList.contains('active')) {
         statusDebugLines.push({text: `[${timeStr}] ${msg}`, type: type});
         if (statusDebugLines.length > 5) statusDebugLines.shift();
         statusDebug.innerHTML = statusDebugLines.map(l => `<div class="status-debug-line ${l.type}">${l.text}</div>`).join('');
@@ -1633,6 +1619,7 @@ function log(msg, type = '') {
 
 function showStatusOverlay() {
     const overlay = document.getElementById('statusOverlay');
+    if (!overlay) return;
     overlay.classList.add('active');
     countdownValue = 45;
     statusDebugLines = [];
@@ -1642,6 +1629,7 @@ function showStatusOverlay() {
 
 function updateCountdown() {
     const msg = document.getElementById('statusMessage');
+    if (!msg) return;
     if (countdownValue > 0) {
         msg.textContent = `Negotiating with pixels. Please wait up to ${countdownValue} seconds...`;
         countdownValue--;
@@ -1652,6 +1640,7 @@ function updateCountdown() {
 
 function hideStatusOverlay() {
     const overlay = document.getElementById('statusOverlay');
+    if (!overlay) return;
     overlay.classList.remove('active');
     if (countdownTimer) {
         clearInterval(countdownTimer);
@@ -2051,7 +2040,6 @@ function buildPrompt() {
 async function start() {
     document.getElementById('startBtn').disabled = true;
     document.getElementById('startBtn2').disabled = true;
-    showStatusOverlay();
     try {
         log('Getting camera...', 'info');
         localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: true });
